@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+<!DOCTYPE project SYSTEM "../project.dtd" >
+-->
+<project default="undeploy">
+  <target name="deploy" depends="undeploy">
+     <copy file="${samples.home}/${appname}/jaxrpc-${appname}.war" todir="${sjsas.root}/domains/domain1/autodeploy"/>
+
+  </target>
+  <target name="undeploy">
+    <delete>
+      <fileset dir="${sjsas.root}/domains/domain1/autodeploy">
+        <include name="**/Hello.war*"/>
+      </fileset>
+    </delete>
+    <delete dir="${sjsas.root}/domains/domain1/applications/j2ee-modules/Hello"/>
+  </target>
+</project>

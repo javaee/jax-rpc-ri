@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="GENERATOR" content="Quadralay WebWorks Publisher Professional Edition 7.0.5.1025" />
+    <meta name="TEMPLATEBASE" content="jaxrpc-tools" />
+    <meta name="LASTUPDATED" content="Tue Oct 7 17:03:08 2003" />
+    <title>Java(TM) API for XML-based RPC (JAX-RPC) Tools</title>
+    <link rel="StyleSheet" href="document.css" type="text/css" media="all" />
+    <link rel="StyleSheet" href="catalog.css" type="text/css" media="all" />
+  </head>
+
+  <body>
+
+    <blockquote>
+<center> <h1>
+<a name="wp81613"> </a><h1 class="pTitle">
+Java(TM) API for XML-based RPC (JAX-RPC) Tools
+</h1>
+</h1> </center>
+
+<center> <h1>
+<a name="wp81594"> </a><h1 class="pTitle">
+
+</h1>
+</h1> </center>
+
+<a name="wp81595"> </a><p class="pBody">
+Revised: 7 October, 2003
+</p>
+<a name="wp80806"> </a><h1 class="pHeading1NoSplit">
+Contents
+</h1>
+<div class="pSmartList1"><ul class="pSmartList1">
+<a name="wp80807"> </a><div class="pSmartList1"><li><a  href="jaxrpc-tools.html#wp80809">wscompile</a></li></div>
+<a name="wp80816"> </a><div class="pSmartList1"><li><a  href="jaxrpc-tools.html#wp80532">wsdeploy</a></li></div>
+<a name="wp80821"> </a><div class="pSmartList1"><li><a  href="jaxrpc-tools.html#wp80642">Advanced Topics</a></li></div>
+</ul></div>
+<a name="wp80809"> </a><h1 class="pHeading1NoSplit">
+wscompile
+</h1>
+<a name="wp79856"> </a><p class="pBody">
+The <code class="cCode">wscompile</code> tool generates stubs, ties, serializers, and WSDL files used in JAX-RPC clients and services. The tool reads a configuration file, which specifies either a WSDL file, a model file, or a compiled service endpoint interface.
+</p>
+<a name="wp79857"> </a><h3 class="pHeading2">
+Syntax
+</h3>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+wscompile [options] &lt;configuration-file&gt;<a name="wp79898"> </a>
+</pre></div>
+<a name="wp79899"> </a><p class="pBody">
+By convention, the configuration file is named <code class="cCode">config.xml</code>, but this is not a requirement. The following table lists the wscompile options. Note that exactly one of the <code class="cCode">-import</code>, <code class="cCode">-define</code>, or <code class="cCode">-gen</code> options must be specified.
+</p>
+<a name="wp81633"> </a><p class="pBody">
+</p><div align="left">
+<table border="1" summary="wscompile options" id="wp80107">
+  <caption><a name="wp80107"> </a><div class="pTableTitle">
+Table 1-1   wscompile Options
+</div>
+</caption>
+  <tr align="center">    <th><a name="wp80111"> </a><div class="pCellHeading">
+Option
+</div>
+</th>
+    <th><a name="wp80113"> </a><div class="pCellHeading">
+Description
+</div>
+</th>
+</tr>
+  <tr align="left">    <td><a name="wp80923"> </a><div class="pCellBody">
+<code class="cCode">-classpath &lt;path&gt;</code>
+</div>
+</td>
+    <td><a name="wp80924"> </a><div class="pCellBody">
+Specify where to find input class files</code>
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80922"> </a><div class="pCellBody">
+<code class="cCode">-cp &lt;path&gt;</code>
+</div>
+</td>
+    <td><a name="wp80924"> </a><div class="pCellBody">
+Same as <code class="cCode">-classpath &lt;path&gt;</code>
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80918"> </a><div class="pCellBody">
+<code class="cCode">-d &lt;directory&gt;</code>
+</div>
+</td>
+    <td><a name="wp80920"> </a><div class="pCellBody">
+Specify where to place generated output files
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80914"> </a><div class="pCellBody">
+<code class="cCode">-define</code>
+</div>
+</td>
+    <td><a name="wp80916"> </a><div class="pCellBody">
+Read the service endpoint interface, define a service
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80910"> </a><div class="pCellBody">
+<code class="cCode">-f:&lt;features&gt;</code>
+</div>
+</td>
+    <td><a name="wp80912"> </a><div class="pCellBody">
+Enable the given features (See the below below table for a list of features.  When specifying multiple features, separate them with commas.)
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80906"> </a><div class="pCellBody">
+<code class="cCode">-features:&lt;features&gt;</code>
+</div>
+</td>
+    <td><a name="wp80908"> </a><div class="pCellBody">
+Same as <code class="cCode">-f:&lt;features&gt;</code>
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80902"> </a><div class="pCellBody">
+<code class="cCode">-g</code>
+</div>
+</td>
+    <td><a name="wp80904"> </a><div class="pCellBody">
+Generate debugging info
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80898"> </a><div class="pCellBody">
+<code class="cCode">-gen</code>
+</div>
+</td>
+    <td><a name="wp80900"> </a><div class="pCellBody">
+Same as <code class="cCode">-gen:client</code>
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80930"> </a><div class="pCellBody">
+<code class="cCode">-gen:both</code>
+</div>
+</td>
+    <td><a name="wp80932"> </a><div class="pCellBody">
+Generate both client and server artifacts
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80938"> </a><div class="pCellBody">
+<code class="cCode">-gen:client</code>
+</div>
+</td>
+    <td><a name="wp80940"> </a><div class="pCellBody">
+Generate client artifacts (stubs, etc.)
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80934"> </a><div class="pCellBody">
+<code class="cCode">-gen:server</code>
+</div>
+</td>
+    <td><a name="wp80936"> </a><div class="pCellBody">
+Generate server artifacts (ties, etc.) and the WSDL file (If you are using <code class="cCode">wsdeploy</code> you do not specify this option.)
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80970"> </a><div class="pCellBody">
+<code class="cCode">-httpproxy:&lt;host&gt;:&lt;port&gt;</code>
+</div>
+</td>
+    <td><a name="wp80972"> </a><div class="pCellBody">
+Specify a HTTP proxy server (port defaults to 8080 on JWSDP)
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80966"> </a><div class="pCellBody">
+<code class="cCode">-import</code>
+</div>
+</td>
+    <td><a name="wp80968"> </a><div class="pCellBody">
+Read a WSDL file, generate the service endpoint interface and a template of the class that implements the interface
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80962"> </a><div class="pCellBody">
+<code class="cCode"> -keep</code>
+</div>
+</td>
+    <td><a name="wp80964"> </a><div class="pCellBody">
+Keep generated files
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80986"> </a><div class="pCellBody">
+<code class="cCode">-mapping &lt;file&gt;</code>
+</div>
+</td>
+    <td><a name="wp80988"> </a><div class="pCellBody">
+Generate a J2EE <code class="cCode">mapping.xml</code> file (This option is not available in JWSDP.)
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80958"> </a><div class="pCellBody">
+<code class="cCode">-model &lt;file&gt;</code>
+</div>
+</td>
+    <td><a name="wp80960"> </a><div class="pCellBody">
+Write the internal model to the given file
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80954"> </a><div class="pCellBody">
+<code class="cCode">-nd &lt;directory&gt;</code>
+</div>
+</td>
+    <td><a name="wp80956"> </a><div class="pCellBody">
+Specify where to place non-class generated files
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80950"> </a><div class="pCellBody">
+<code class="cCode">-O</code>
+</div>
+</td>
+    <td><a name="wp80952"> </a><div class="pCellBody">
+Optimize generated code
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80946"> </a><div class="pCellBody">
+<code class="cCode">-s &lt;directory&gt;</code>
+</div>
+</td>
+    <td><a name="wp80948"> </a><div class="pCellBody">
+Specify where to place generated source files
+</div>
+</td>
+</tr>
+
+
+
+  <tr align="left">    <td><div class="pCellBody">
+<code class="cCode">-security &lt;security-configuration-file&gt;</code>
+</div>
+</td>
+    <td><div class="pCellBody">
+Use the contents of the security configuration file to generate security 
+code that performs security operations on the client and the server
+</div>
+</td>
+</tr>
+
+
+
+  <tr align="left">    <td><a name="wp80944"> </a><div class="pCellBody">
+<code class="cCode">-source &lt;version&gt;</code>
+</div>
+</td>
+    <td><a name="wp81931"> </a><div class="pCellBody">
+Generate code for the specified JAX-RPC SI version. Supported versions are: 1.0.1, 1.0.3, and 1.1 (default).
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80942"> </a><div class="pCellBody">
+<code class="cCode">-verbose</code>
+</div>
+</td>
+    <td><a name="wp80944"> </a><div class="pCellBody">
+Output messages about what the compiler is doing
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80974"> </a><div class="pCellBody">
+<code class="cCode">-version</code>
+</div>
+</td>
+    <td><a name="wp80976"> </a><div class="pCellBody">
+Print version information
+</div>
+</td>
+</tr>
+</table>
+</div>
+<p class="pBody">
+</p>
+<a name="wp80073"> </a><p class="pBody">
+The following table lists the features (delimited by commas) that may follow the <code class="cCode">-f</code> option. The wscompile tool reads as input either a WSDL file, compiled service endpoint interface (SEI), or model file. The Type of File column indicates which of these files can be used with a particular feature.
+</p>
+<a name="wp80403"> </a><p class="pBody">
+</p><div align="left">
+<table border="1" summary="wscompile -f features" id="wp80407">
+  <caption><a name="wp80407"> </a><div class="pTableTitle">
+Table 1-2   wscompile -f Features
+</div>
+</caption>
+  <tr align="center">    <th><a name="wp80411"> </a><div class="pCellHeading">
+Feature
+</div>
+</th>
+    <th><a name="wp80413"> </a><div class="pCellHeading">
+Description
+</div>
+</th>
+    <th><a name="wp81532"> </a><div class="pCellHeading">
+Type of File
+</div>
+</th>
+</tr>
+  <tr align="left">    <td><a name="wp81277"> </a><div class="pCellBody">
+<code class="cCode">datahandleronly</code>
+</div>
+</td>
+    <td><a name="wp81279"> </a><div class="pCellBody">
+Always map attachments to the <code class="cCode">DataHandler</code> type
+</div>
+</td>
+    <td><a name="wp81534"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81273"> </a><div class="pCellBody">
+<code class="cCode">documentliteral</code>
+</div>
+</td>
+    <td><a name="wp81275"> </a><div class="pCellBody">
+Use document literal encoding
+</div>
+</td>
+    <td><a name="wp81536"> </a><div class="pCellBody">
+SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81671"> </a><div class="pCellBody">
+<code class="cCode">donotoverride</code>
+</div>
+</td>
+    <td><a name="wp81673"> </a><div class="pCellBody">
+Do not regenerate classes that already exist in the classpath
+</div>
+</td>
+    <td><a name="wp81675"> </a><div class="pCellBody">
+WSDL, SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81655"> </a><div class="pCellBody">
+<code class="cCode">donotunwrap</code>
+</div>
+</td>
+    <td><a name="wp81661"> </a><div class="pCellBody">
+Disable unwrapping of document/literal wrapper elements in WSI mode (default)
+</div>
+</td>
+    <td><a name="wp81659"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81269"> </a><div class="pCellBody">
+<code class="cCode">explicitcontext</code>
+</div>
+</td>
+    <td><a name="wp81271"> </a><div class="pCellBody">
+Turn on explicit service context mapping
+</div>
+</td>
+    <td><a name="wp81538"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81281"> </a><div class="pCellBody">
+<code class="cCode">infix:&lt;name&gt;</code>
+</div>
+</td>
+    <td><a name="wp81283"> </a><div class="pCellBody">
+Specify an infix to use for generated ties and serializers
+</div>
+</td>
+    <td><a name="wp81540"> </a><div class="pCellBody">
+WSDL, SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81293"> </a><div class="pCellBody">
+<code class="cCode">infix=&lt;name&gt;</code>
+</div>
+</td>
+    <td><a name="wp81295"> </a><div class="pCellBody">
+Same as <code class="cCode">infix:&lt;name&gt;</code> (not for Windows)
+</div>
+</td>
+    <td><a name="wp81542"> </a><div class="pCellBody">
+WSDL, SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81289"> </a><div class="pCellBody">
+<code class="cCode">jaxbenumtype</code>
+</div>
+</td>
+    <td><a name="wp81291"> </a><div class="pCellBody">
+Map anonymous enumeration to its base type
+</div>
+</td>
+    <td><a name="wp81544"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81285"> </a><div class="pCellBody">
+<code class="cCode">nodatabinding</code>
+</div>
+</td>
+    <td><a name="wp81287"> </a><div class="pCellBody">
+Turn off data binding for literal encoding
+</div>
+</td>
+    <td><a name="wp81546"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81297"> </a><div class="pCellBody">
+<code class="cCode">noencodedtypes</code>
+</div>
+</td>
+    <td><a name="wp81299"> </a><div class="pCellBody">
+Turn off encoding type information
+</div>
+</td>
+    <td><a name="wp81548"> </a><div class="pCellBody">
+WSDL, SEI, model
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81345"> </a><div class="pCellBody">
+<code class="cCode">nomultirefs</code>
+</div>
+</td>
+    <td><a name="wp81347"> </a><div class="pCellBody">
+Turn off support for multiple references
+</div>
+</td>
+    <td><a name="wp81550"> </a><div class="pCellBody">
+WSDL, SEI, model
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81341"> </a><div class="pCellBody">
+<code class="cCode">norpcstructures</code>
+</div>
+</td>
+    <td><a name="wp81343"> </a><div class="pCellBody">
+Do not generate RPC structures (<code class="cCode">-import</code> only)
+</div>
+</td>
+    <td><a name="wp81552"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81337"> </a><div class="pCellBody">
+<code class="cCode">novalidation</code>
+</div>
+</td>
+    <td><a name="wp81339"> </a><div class="pCellBody">
+Turn off full validation of imported WSDL documents
+</div>
+</td>
+    <td><a name="wp81554"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81333"> </a><div class="pCellBody">
+<code class="cCode">resolveidref</code>
+</div>
+</td>
+    <td><a name="wp81335"> </a><div class="pCellBody">
+Resolve <code class="cCode">xsd:IDREF</code>
+</div>
+</td>
+    <td><a name="wp81556"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81329"> </a><div class="pCellBody">
+<code class="cCode">rpcliteral</code>
+</div>
+</td>
+    <td><a name="wp81331"> </a><div class="pCellBody">
+Use rpc literal encoding
+</div>
+</td>
+    <td><a name="wp81558"> </a><div class="pCellBody">
+SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81325"> </a><div class="pCellBody">
+<code class="cCode">searchschema</code>
+</div>
+</td>
+    <td><a name="wp81327"> </a><div class="pCellBody">
+Search schema aggressively for types
+</div>
+</td>
+    <td><a name="wp81560"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81313"> </a><div class="pCellBody">
+<code class="cCode">serializeinterfaces</code>
+</div>
+</td>
+    <td><a name="wp81315"> </a><div class="pCellBody">
+Turn on direct serialization of interface types
+</div>
+</td>
+    <td><a name="wp81566"> </a><div class="pCellBody">
+WSDL, SEI, model
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81309"> </a><div class="pCellBody">
+<code class="cCode">strict</code>
+</div>
+</td>
+    <td><a name="wp81311"> </a><div class="pCellBody">
+Generate code strictly compliant with JAXRPC spec
+</div>
+</td>
+    <td><a name="wp81568"> </a><div class="pCellBody">
+WSDL, SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81637"> </a><div class="pCellBody">
+<code class="cCode">unwrap</code>
+</div>
+</td>
+    <td><a name="wp81639"> </a><div class="pCellBody">
+Enable unwrapping of document/literal wrapper elements in WSI mode
+</div>
+</td>
+    <td><a name="wp81641"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81305"> </a><div class="pCellBody">
+<code class="cCode">useonewayoperations</code>
+</div>
+</td>
+    <td><a name="wp81307"> </a><div class="pCellBody">
+Allow generation of one-way operations
+</div>
+</td>
+    <td><a name="wp81570"> </a><div class="pCellBody">
+SEI
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81301"> </a><div class="pCellBody">
+<code class="cCode">wsi</code>
+</div>
+</td>
+    <td><a name="wp81303"> </a><div class="pCellBody">
+Enable WSI-Basic Profile features, to be used for document/literal and rpc/literal
+</div>
+</td>
+    <td><a name="wp81572"> </a><div class="pCellBody">
+WSDL
+</div>
+</td>
+</tr>
+</table>
+</div>
+<p class="pBody">
+</p>
+<a name="wp79942"> </a><h3 class="pHeading2">
+Configuration File
+</h3>
+<a name="wp80460"> </a><p class="pBody">
+The <code class="cCode">wscompile</code> tool reads the configuration file (<code class="cCode">config.xml</code>), which contains information that describes the web service.  The basic structure of <code class="cCode">config.xml</code> follows:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<a name="wp80463"> </a>
+&lt;configuration<a name="wp80473"> </a>
+    xmlns=&quot;http://java.sun.com/xml/ns/jax-rpc/ri/config&quot;&gt;<a name="wp80474"> </a>
+        &lt;service&gt; or &lt;wsdl&gt; or &lt;modelfile&gt;<a name="wp80749"> </a>
+&lt;/configuration&gt;<a name="wp80750"> </a>
+</pre></div>
+<a name="wp80476"> </a><p class="pBody">
+The <code class="cCode">&lt;configuration&gt;</code> element may contain exactly one <code class="cCode">&lt;service&gt;</code>, <code class="cCode">&lt;wsdl&gt;</code>, or <code class="cCode">&lt;modelfile&gt;</code> element.
+</p>
+<a name="wp80491"> </a><h4 class="pHeading3">
+The &lt;service&gt; Element
+</h4>
+<a name="wp80492"> </a><p class="pBody">
+If you specify this element, wscompile reads the service endpoint interface that describes the service and generates a WSDL file.  In the <code class="cCode">&lt;interface&gt;</code> subelement, the name attribute specifies the service endpoint interface, and the <code class="cCode">servantName</code> attribute specifies the class that implements the interface.  For example:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;service name=&quot;CollectionIF_Service&quot; <a name="wp80497"> </a>
+targetNamespace=&quot;http://echoservice.org/wsdl&quot; <a name="wp80502"> </a>
+      typeNamespace=&quot;http://echoservice.org/types&quot; <a name="wp80503"> </a>
+      packageName=&quot;stub_tie_generator_test&quot;&gt; <a name="wp80504"> </a>
+    &lt;interface name=&quot;stub_tie_generator_test.CollectionIF&quot; <a name="wp80505"> </a>
+          servantName=&quot;stub_tie_generator_test.CollectionImpl&quot;/&gt; <a name="wp80506"> </a>
+&lt;/service&gt; <a name="wp80507"> </a>
+</pre></div>
+<a name="wp80508"> </a><h4 class="pHeading3">
+The &lt;wsdl&gt; Element
+</h4>
+<a name="wp80513"> </a><p class="pBody">
+If you specify this element, <code class="cCode">wscompile</code> reads the service's WSDL file and generates the service endpoint interface.  The location attribute specifies the URL of the WSDL file, and the <code class="cCode">packageName</code> attribute specifies the package of the classes generated by <code class="cCode">wscompile</code>.  For example:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;wsdl<a name="wp80516"> </a>
+    location=&quot;http://tempuri.org/sample.wsdl&quot;<a name="wp80518"> </a>
+    packageName=&quot;org.tempuri.sample&quot; /&gt;<a name="wp80519"> </a>
+</pre></div>
+<a name="wp80520"> </a><h4 class="pHeading3">
+The &lt;modelfile&gt; Element
+</h4>
+<a name="wp80529"> </a><p class="pBody">
+This element is for advanced users.
+</p>
+<a name="wp80530"> </a><p class="pBody">
+If <code class="cCode">config.xml</code> contains a <code class="cCode">&lt;service&gt;</code> or <code class="cCode">&lt;wsdl&gt;</code> element, <code class="cCode">wscompile</code> generates a model file that contains the internal data structures that describe the service.  If you've already generated a model file in this manner, then you can reuse it the next time you run <code class="cCode">wscompile</code>.  For example:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;modelfile location=&quot;mymodel.xml.gz&quot;/&gt; <a name="wp80531"> </a>
+</pre></div>
+<a name="wp80532"> </a><h1 class="pHeading1NoSplit">
+wsdeploy
+</h1>
+<a name="wp80533"> </a><p class="pBody">
+The <code class="cCode">wsdeploy</code> tool reads a WAR file and the <code class="cCode">jaxrpc-ri.xml</code> file and then generates another WAR file that is ready for deployment. Behind the scenes, <code class="cCode">wsdeploy</code> runs <code class="cCode">wscompile</code> with the <code class="cCode">-gen:server</code> option.  The <code class="cCode">wscompile</code> command generates classes and a WSDL file that <code class="cCode">wsdeploy</code> includes in the generated WAR file.
+</p>
+<a name="wp81521"> </a><p class="pBody">
+On JWSDP, the <code class="cCode">wsdeploy</code> tool must be run. However, on J2EE you don't have to run <code class="cCode">wsdeploy</code> because the functions it performs are done automatically when you deploy a WAR with <code class="cCode">deploytool</code> or <code class="cCode">asadmin</code>.
+</p>
+<a name="wp80534"> </a><h3 class="pHeading2">
+Syntax
+</h3>
+<a name="wp80535"> </a><p class="pBody">
+The syntax for wsdeploy follows:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+wsdeploy -o &lt;output-war-file&gt; &lt;input-war-file&gt; &lt;options&gt;<a name="wp80536"> </a>
+</pre></div>
+<a name="wp80537"> </a><p class="pBody">
+The following table lists the tool's options.  Note that the <code class="cCode">-o</code> option is required.
+</p>
+<a name="wp80556"> </a><p class="pBody">
+</p><div align="left">
+<table border="1" summary="wsdeploy options" id="wp80559">
+  <caption><a name="wp80559"> </a><div class="pTableTitle">
+Table 1-3   wsdeploy Options
+</div>
+</caption>
+  <tr align="center">    <th><a name="wp80563"> </a><div class="pCellHeading">
+Option
+</div>
+</th>
+    <th><a name="wp80565"> </a><div class="pCellHeading">
+Description
+</div>
+</th>
+</tr>
+  <tr align="left">    <td><a name="wp80567"> </a><div class="pCellBody">
+<code class="cCode">-classpath &lt;path&gt;</code>
+</div>
+</td>
+    <td><a name="wp80569"> </a><div class="pCellBody">
+specify an optional classpath
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80571"> </a><div class="pCellBody">
+<code class="cCode">-keep</code>
+</div>
+</td>
+    <td><a name="wp80573"> </a><div class="pCellBody">
+keep temporary files
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80574"> </a><div class="pCellBody">
+<code class="cCode">-o &lt;output WAR file&gt;</code>
+</div>
+</td>
+    <td><a name="wp80575"> </a><div class="pCellBody">
+specify where to place the generated WAR file
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp81929"> </a><div class="pCellBody">
+<code class="cCode">-source &lt;version&gt;</code>
+</div>
+</td>
+    <td><a name="wp81931"> </a><div class="pCellBody">
+Generate code for the specified JAX-RPC SI version. Supported versions are: 1.0.1, 1.0.3, and 1.1 (default).
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80579"> </a><div class="pCellBody">
+<code class="cCode">-tmpdir &lt;directory&gt;</code>
+</div>
+</td>
+    <td><a name="wp80581"> </a><div class="pCellBody">
+specify the temporary directory to use
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80583"> </a><div class="pCellBody">
+<code class="cCode">-verbose</code>
+</div>
+</td>
+    <td><a name="wp80585"> </a><div class="pCellBody">
+output messages about what the compiler is doing
+</div>
+</td>
+</tr>
+  <tr align="left">    <td><a name="wp80587"> </a><div class="pCellBody">
+<code class="cCode">-version</code>
+</div>
+</td>
+    <td><a name="wp80589"> </a><div class="pCellBody">
+print version information
+</div>
+</td>
+</tr>
+</table>
+</div>
+<p class="pBody">
+</p>
+<a name="wp80545"> </a><h4 class="pHeading3">
+The Input WAR File
+</h4>
+<a name="wp80596"> </a><p class="pBody">
+Typically, you create the input WAR file with a GUI development tool or with the <code class="cCode">ant</code> <code class="cCode">war</code> task.  Here are the contents of a simple input WAR file:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+META-INF/MANIFEST.MF<a name="wp80599"> </a>
+WEB-INF/classes/hello/HelloIF.class<a name="wp80601"> </a>
+WEB-INF/classes/hello/HelloImpl.class<a name="wp80602"> </a>
+WEB-INF/jaxrpc-ri.xml<a name="wp80603"> </a>
+WEB-INF/web.xml<a name="wp80604"> </a>
+</pre></div>
+<a name="wp80605"> </a><p class="pBody">
+In this example, <code class="cCode">HelloIF</code> is the service endpoint interface and <code class="cCode">HelloImpl</code> is the class that implements the interface.  The <code class="cCode">web.xml</code> file is the deployment descriptor of a web component.  The <code class="cCode">jaxrpc-ri.xml</code> file is described in the next section.
+</p>
+<a name="wp80612"> </a><h4 class="pHeading3">
+The jaxrpc-ri.xml File
+</h4>
+<a name="wp80756"> </a><p class="pBody">
+The listing that follows shows a <code class="cCode">jaxrpc-ri.xml</code> file for a simple <code class="cCode">HelloWorld</code> service.
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; <a name="wp81392"> </a>
+&lt;webServices <a name="wp81397"> </a>
+       xmlns=&quot;http://java.sun.com/xml/ns/jax-rpc/ri/dd&quot; <a name="wp81398"> </a>
+       version=&quot;1.0&quot; <a name="wp81399"> </a>
+       targetNamespaceBase=&quot;http://com.test/wsdl&quot; <a name="wp81400"> </a>
+       typeNamespaceBase=&quot;http://com.test/types&quot; <a name="wp81401"> </a>
+       urlPatternBase=&quot;/ws&quot;&gt; <a name="wp81402"> </a>
+       &lt;endpoint <a name="wp81403"> </a>
+           name=&quot;MyHello&quot; <a name="wp81404"> </a>
+           displayName=&quot;HelloWorld Service&quot; <a name="wp81405"> </a>
+           description=&quot;A simple web service&quot; <a name="wp81406"> </a>
+           wsdl=&quot;/WEB-INF/&lt;wsdlame&gt; <a name="wp81407"> </a>
+           interface=&quot;hello.HelloIF&quot; <a name="wp81408"> </a>
+           implementation=&quot;hello.HelloImpl&quot;/&gt; <a name="wp81409"> </a>
+       &lt;endpointMapping <a name="wp81410"> </a>
+           endpointName=&quot;MyHello&quot; <a name="wp81411"> </a>
+           urlPattern=&quot;/hello&quot;/&gt; <a name="wp81412"> </a>
+&lt;/webServices&gt; <a name="wp81413"> </a>
+</pre></div>
+<a name="wp80632"> </a><p class="pBody">
+The <code class="cCode">&lt;webServices&gt;</code> element must contain one or more <code class="cCode">&lt;endpoint&gt;</code> elements.  In this example, note that the interface and implementation attributes of <code class="cCode">&lt;endpoint&gt;</code> specify the service's interface and implementation class.  The <code class="cCode">&lt;endpointMapping&gt;</code> element associates the service name with a URL.
+</p>
+<a name="wp80642"> </a><h1 class="pHeading1NoSplit">
+Advanced Topics
+</h1>
+<a name="wp80643"> </a><p class="pBody">
+This section is for developers who are familiar with WSDL, SOAP, and the JAX-RPC specifications.
+</p>
+<a name="wp80644"> </a><h3 class="pHeading2">
+Namespace Mappings
+</h3>
+<a name="wp81437"> </a><p class="pBody">
+For the below <code class="cCode">namespaceMappingRegistry</code> element in the <code class="cCode">config.xml </code>file, <code class="cCode">wscompile</code> behaves as follows. When going from WSDL types to Java types, for all types defined in the <code class="cCode">http://echoservice.org/types</code> namespace, <code class="cCode">wscompile</code> will generate Java classes in the <code class="cCode">echoservice.org.types</code> package. Likewise, for all schema types defined in the <code class="cCode">http://echoservice.org/types2 </code>namespace, <code class="cCode">wscompile</code> generate Java classes in the <code class="cCode">echoservice.org.types2</code> package.
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;namespaceMappingRegistry&gt; <a name="wp81462"> </a>
+  &lt;namespaceMapping <a name="wp81446"> </a>
+    namespace=&quot;http://echoservice.org/types&quot; <a name="wp81447"> </a>
+    packageName=&quot;echoservice.org.types&quot;/&gt; <a name="wp81448"> </a>
+  &lt;namespaceMapping <a name="wp81449"> </a>
+    namespace=&quot;http://echoservice.org/types2&quot; <a name="wp81450"> </a>
+    packageName=&quot;echoservice.org.types2&quot;/&gt; <a name="wp81451"> </a>
+&lt;/namespaceMappingRegistry&gt; <a name="wp81452"> </a>
+</pre></div>
+<a name="wp80682"> </a><h3 class="pHeading2">
+Handlers
+</h3>
+<a name="wp80687"> </a><p class="pBody">
+A handler accesses a SOAP message that represents an RPC request or response.  A handler class must implement the <code class="cCode">javax.xml.rpc.handler</code> interface.  Because it accesses a SOAP message, a handler can manipulate the message with the APIs of the <code class="cCode">javax.xml.soap</code> package.
+</p>
+<div class="pSmartList1"><ul class="pSmartList1">
+<a name="wp80688"> </a><div class="pSmartList1"><li>Examples of handler tasks: </li></div>
+<a name="wp80691"> </a><div class="pSmartList1"><li>Encryption and decryption</li></div>
+<a name="wp80693"> </a><div class="pSmartList1"><li>Logging and auditing</li></div>
+<a name="wp80694"> </a><div class="pSmartList1"><li>Caching</li></div>
+<a name="wp80695"> </a><div class="pSmartList1"><li>Application-specific SOAP header processing</li></div>
+</ul></div>
+<a name="wp80696"> </a><p class="pBody">
+A handler chain is a list of handlers.  You may specify one handler chain for the server and one for the client.  On the server, you include the <code class="cCode">&lt;handlerChains&gt;</code> element in the <code class="cCode">jaxrpc-ri.xml</code> file.  On the client , you include this element in the <code class="cCode">config.xml</code> file.  Here is an example of the <code class="cCode">&lt;handlerChains&gt;</code> element in <code class="cCode">config.xml</code>:
+</p>
+<div class="pPreformattedRelative"><pre class="pPreformattedRelative">
+&lt;handlerChains&gt;<a name="wp80709"> </a>
+  &lt;chain runAt=&quot;server&quot;<a name="wp80717"> </a>
+     roles=<a name="wp80718"> </a>
+      &quot;http://acme.org/auditing<a name="wp80719"> </a>
+       http://acme.org/morphing&quot;<a name="wp80720"> </a>
+       xmlns:ns1=&quot;http://foo/foo-1&quot;&gt;<a name="wp80721"> </a>
+    &lt;handler className=&quot;acme.MyHandler&quot;<a name="wp80722"> </a>
+      headers =&quot;ns1:foo ns1:bar&quot;/&gt;<a name="wp80723"> </a>
+      &lt;property <a name="wp80724"> </a>
+        name=&quot;property&quot; value=&quot;xyz&quot;/&gt;<a name="wp80725"> </a>
+    &lt;/handler&gt;<a name="wp80726"> </a>
+  &lt;/chain&gt;<a name="wp80727"> </a>
+&lt;/handlerChains&gt;<a name="wp80728"> </a>
+</pre></div>
+<a name="wp80731"> </a><p class="pBody">
+For more information on handlers, see the SOAP Message Handlers chapter of the JAX-RPC specifications.
+</p>
+<a name="wp80733"> </a><p class="pBody">
+
+</p>
+<a name="wp73902"> </a><p class="pBodyRelative">
+
+</p>
+    </blockquote>
+
+<p>
+<hr>
+<p>
+<a href="Copyright.html">
+<font size=-1><i>Copyright &#169; 2005 Sun Microsystems, Inc.
+All rights reserved.</i></font></a>
+
+  </body>
+</html>

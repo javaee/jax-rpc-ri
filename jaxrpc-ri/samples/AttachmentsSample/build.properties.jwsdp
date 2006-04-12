@@ -1,0 +1,45 @@
+<!-- This file is referenced by the build.xml file.
+     Used only for jwsdp environment
+-->
+<!-- 
+change only the container property and it's root
+ -->
+<!-- container is sjsas or tomcat -->
+<!-- If you are using Tomcat as the container, then please change container value to "tomcat" instead of "sjsas" -->
+<property name="container" value="sjsas"/>
+<property name="sjsas.root" location="REPLACE_WITH_APPSERVER_HOME"/>
+<property name="tomcat.root" location="REPLACE_WITH_TOMCAT_HOME"/>
+
+<!-- 
+    Do not modify these properties unless required 
+ -->
+<property name="catalina.home" location="${tomcat.root}"/>
+<property name="buildhome" location="build"/>
+<property name="build.dir" location="${buildhome}"/>
+<property name="jwsdphome" location="../../.."/>
+<property name="samplesbuild" location="../../build/samples"/>
+<property name="jwsdpshared" location="${jwsdphome}/jwsdp-shared"/>
+<property name="jaxphome" location="${jwsdphome}/jaxp"/>
+<property name="jaxrpchome" location="${jwsdphome}/jaxrpc"/>
+<property name="samples.home" location="${jaxrpchome}/samples"/>
+<property name="saajhome" location="${jwsdphome}/saaj"/>
+<property name="javamail.jar" location="${jwsdphome}/jwsdp-shared/lib/mail.jar"/>
+<property name="jaf.jar" location="${saajhome}/lib/activation.jar"/>
+<property name="jaxp-api.jar" value="${jaxphome}/lib/jaxp-api.jar"/>
+<property name="dom.jar" value="${jaxphome}/lib/endorsed/dom.jar"/>
+<property name="sax.jar" value="${jaxphome}/lib/endorsed/sax.jar"/>
+<property name="xalan.jar" value="${jaxphome}/lib/endorsed/xalan.jar"/>
+<property name="xercesImpl.jar" value="${jaxphome}/lib/endorsed/xercesImpl.jar"/>
+<property name="jaxrpc-api.jar" value="${jaxrpchome}/lib/jaxrpc-api.jar"/>
+<property name="jaxrpc-impl.jar" value="${jaxrpchome}/lib/jaxrpc-impl.jar"/>
+<property name="jaxrpc-spi.jar" value="${jaxrpchome}/lib/jaxrpc-spi.jar"/>
+<property name="saaj-api.jar" value="${saajhome}/lib/saaj-api.jar"/>
+<property name="saaj-impl.jar" value="${saajhome}/lib/saaj-impl.jar"/>
+<property name="relaxngDatatype.jar" value="${jwsdpshared}/lib/relaxngDatatype.jar"/>
+<property name="xsdlib.jar" value="${jwsdpshared}/lib/xsdlib.jar"/>
+<property name="jax-qname.jar" value="${jaxrpchome}/lib/jax-qname.jar"/>
+<property name="ant.jar" value="${jwsdphome}/apache-ant/lib/ant.jar"/>
+<property name="sjsas.servlet.jar" value="${sjsas.root}/lib/j2ee.jar"/>
+<property name="tomcat.servlet.jar" value="${tomcat.root}/common/lib/servlet-api.jar"/>
+<property name="FastInfoset.jar" value="${jwsdphome}/fastinfoset/lib/FastInfoset.jar"/>
+<property name="jsr173_api.jar" value="${jwsdphome}/sjsxp/lib/jsr173_api.jar"/>

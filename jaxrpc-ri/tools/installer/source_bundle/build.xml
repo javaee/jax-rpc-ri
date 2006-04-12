@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Simple build script for the source code bundle
+-->
+<project name="test" default="build">
+
+  <target name="build">
+    <mkdir dir="build"/>
+    <javac srcdir="src" destdir="build">
+      <classpath>
+        <fileset dir="lib" includes="**/*.jar"/>
+      </classpath>
+    </javac>
+  </target>
+</project>

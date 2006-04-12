@@ -1,0 +1,446 @@
+/*
+ * $Id: LiteralObjectArraySerializer.java,v 1.1 2006-04-12 20:34:37 kohlert Exp $
+ */
+
+/*
+ * Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
+package com.sun.xml.rpc.encoding.literal;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+
+import com.sun.xml.rpc.encoding.CombinedSerializer;
+import com.sun.xml.rpc.encoding.DeserializationException;
+import com.sun.xml.rpc.encoding.EncodingException;
+import com.sun.xml.rpc.encoding.InternalTypeMappingRegistry;
+import com.sun.xml.rpc.encoding.JAXRPCDeserializer;
+import com.sun.xml.rpc.encoding.JAXRPCSerializer;
+import com.sun.xml.rpc.encoding.SOAPDeserializationContext;
+import com.sun.xml.rpc.encoding.SOAPDeserializationState;
+import com.sun.xml.rpc.encoding.SOAPInstanceBuilder;
+import com.sun.xml.rpc.encoding.SOAPSerializationContext;
+import com.sun.xml.rpc.encoding.SerializationException;
+import com.sun.xml.rpc.encoding.SerializerBase;
+import com.sun.xml.rpc.encoding.SerializerCallback;
+import com.sun.xml.rpc.encoding.xsd.XSDConstants;
+import com.sun.xml.rpc.streaming.Attributes;
+import com.sun.xml.rpc.streaming.XMLReader;
+import com.sun.xml.rpc.streaming.XMLReaderUtil;
+import com.sun.xml.rpc.streaming.XMLWriter;
+import com.sun.xml.rpc.streaming.XMLWriterUtil;
+import com.sun.xml.rpc.util.exception.JAXRPCExceptionBase;
+import com.sun.xml.rpc.util.exception.LocalizableExceptionAdapter;
+
+/**
+ *
+ * @author JAX-RPC Development Team
+ */
+public class LiteralObjectArraySerializer extends LiteralObjectSerializerBase {
+
+    protected Class javaType;
+    protected Class componentType;
+    protected InternalTypeMappingRegistry typeRegistry = null;
+    protected JAXRPCSerializer componentSerializer;
+    protected JAXRPCDeserializer componentDeserializer;
+
+    public LiteralObjectArraySerializer(
+        QName type,
+        boolean isNullable,
+        String encodingStyle,
+        Class javaType,
+        JAXRPCSerializer componentSerializer,
+        Class componentType) {
+            
+        super(type, isNullable, encodingStyle, false);
+        this.componentSerializer = componentSerializer;
+        this.componentDeserializer = (JAXRPCDeserializer) componentSerializer;
+        this.javaType = javaType;
+        this.componentType = componentType;
+
+    }
+
+    public LiteralObjectArraySerializer(
+        QName type,
+        boolean isNullable,
+        String encodingStyle,
+        boolean encodeType,
+        Class javaType,
+        JAXRPCSerializer componentSerializer,
+        Class componentType) {
+
+        super(type, isNullable, encodingStyle, encodeType);
+        this.javaType = javaType;
+        this.componentSerializer = componentSerializer;
+        this.componentType = componentType;
+    }
+
+    //need to modify this
+    private void init(
+        QName type,
+        boolean isNullable,
+        String encodingStyle,
+        boolean encodeType) {
+            
+        if (type == null) {
+            throw new IllegalArgumentException();
+        }
+
+        this.type = type;
+        this.isNullable = isNullable;
+        this.encodingStyle = encodingStyle;
+        this.encodeType = encodeType;
+    }
+
+    public QName getXmlType() {
+        return type;
+    }
+
+    public boolean getEncodeType() {
+        return false;
+    }
+
+    public CombinedSerializer getInnermostSerializer() {
+        return (CombinedSerializer) this.componentSerializer;
+    }
+
+    public boolean isNullable() {
+        return isNullable;
+    }
+
+    public String getEncodingStyle() {
+        return encodingStyle;
+    }
+
+    public void serialize(
+        Object value,
+        QName name,
+        SerializerCallback callback,
+        XMLWriter writer,
+        SOAPSerializationContext context) {
+
+        try {
+            internalSerialize(value, name, writer, context);
+        } catch (JAXRPCExceptionBase e) {
+            throw new SerializationException(e);
+        } catch (Exception e) {
+            throw new SerializationException(
+                new LocalizableExceptionAdapter(e));
+        }
+    }
+
+    public Object deserialize(
+        QName name,
+        XMLReader reader,
+        SOAPDeserializationContext context) {
+
+        try {
+            return internalDeserialize(name, reader, context);
+        } catch (JAXRPCExceptionBase e) {
+            throw new DeserializationException(e);
+        } catch (Exception e) {
+            throw new DeserializationException(
+                new LocalizableExceptionAdapter(e));
+        }
+    }
+
+    protected void internalSerialize(
+        Object obj,
+        QName name,
+        XMLWriter writer,
+        SOAPSerializationContext context)
+        throws Exception {
+
+        context.beginSerializing(obj);
+
+        boolean pushedEncodingStyle = false;
+        if (encodingStyle != null)
+            pushedEncodingStyle =
+                context.pushEncodingStyle(encodingStyle, writer);
+
+        if (encodeType) {
+            String attrVal = XMLWriterUtil.encodeQName(writer, type);
+            writer.writeAttributeUnquoted(XSDConstants.QNAME_XSI_TYPE, attrVal);
+        }
+        if (obj == null) {
+            if (!isNullable) {
+                throw new SerializationException("literal.unexpectedNull");
+            }
+
+            writer.writeAttributeUnquoted(XSDConstants.QNAME_XSI_NIL, "1");
+        } else {
+            writeAdditionalNamespaceDeclarations(obj, writer);
+            doSerializeAttributes(obj, writer, context);
+            doSerialize(obj, writer, context);
+        }
+
+        if (pushedEncodingStyle) {
+            context.popEncodingStyle();
+        }
+
+        context.doneSerializing(obj);
+    }
+
+    protected Object internalDeserialize(
+        QName name,
+        XMLReader reader,
+        SOAPDeserializationContext context)
+        throws Exception {
+
+        boolean pushedEncodingStyle = context.processEncodingStyle(reader);
+        try {
+            context.verifyEncodingStyle(encodingStyle);
+
+            if (name != null) {
+                QName actualName = reader.getName();
+                if (!actualName.equals(name)) {
+                    throw new DeserializationException(
+                        "xsd.unexpectedElementName",
+                        new Object[] { name.toString(), actualName.toString()});
+                }
+            }
+
+            verifyType(reader);
+
+            Attributes attrs = reader.getAttributes();
+            String nullVal = attrs.getValue(XSDConstants.URI_XSI, "nil");
+            boolean isNull =
+                (nullVal != null && SerializerBase.decodeBoolean(nullVal));
+            Object obj = null;
+
+            if (isNull) {
+                if (!isNullable) {
+                    throw new DeserializationException("xsd.unexpectedNull");
+                }
+                reader.next();
+            } else {
+                obj = doDeserialize(reader, context);
+            }
+
+            XMLReaderUtil.verifyReaderState(reader, XMLReader.END);
+            return obj;
+        } finally {
+            if (pushedEncodingStyle) {
+                context.popEncodingStyle();
+            }
+        }
+    }
+
+    protected Object doDeserialize(
+        XMLReader reader,
+        SOAPDeserializationContext context)
+        throws Exception {
+        if (typeRegistry == null) {
+            throw new EncodingException("initializable.not.initialized");
+        }
+        if (this.componentDeserializer == null)
+            this.componentDeserializer =
+                (JAXRPCDeserializer) this.componentSerializer;
+
+        ArrayList values = null;
+        Object currentValue = null;
+        Object array = null;
+        QName elementName = null;
+        boolean rpclit = true;
+        elementName = reader.getName();
+
+        //check to see if the state is start and if the elementName is what you expect(Qname of each arrayElement)
+        if ((reader.getState() == XMLReader.START)
+            && (elementName.equals(super.type))) {
+
+            values = new ArrayList();
+            for (;;) {
+
+                if ((reader.getName().equals(super.type))
+                    && (reader.getState() == XMLReader.END)) {
+                    reader.nextElementContent();
+                }
+                elementName = reader.getName();
+                if ((reader.getState() == XMLReader.START)
+                    && (elementName.equals(super.type))) {
+                    //super - we got what we expect
+                    //the next thing should be a value
+                    currentValue =
+                        componentDeserializer.deserialize(
+                            super.type,
+                            reader,
+                            context);
+
+                    if (currentValue != null)
+                        values.add(currentValue);
+                    else
+                        throw new DeserializationException("literal unexpected null");
+
+                    //sequence past next name tag
+                    XMLReaderUtil.verifyReaderState(reader, XMLReader.END);
+                    while (!super.type.equals(reader.getName()))
+                        reader.nextElementContent();
+                } else {
+                    break;
+                }
+            } // done reading components of array - need to create the array with
+            //with the values;
+            //create array
+            array = Array.newInstance(componentType, values.size());
+            Object[] valuesArray = values.toArray();
+
+            //populate array
+            for (int i = 0; i < valuesArray.length; i++) {
+                Array.set(array, i, valuesArray[i]);
+            }
+        } else {
+            array = Array.newInstance(componentType, 0);
+        }
+
+        XMLReaderUtil.verifyReaderState(reader, XMLReader.END);
+
+        return array;
+    }
+
+    protected void verifyType(XMLReader reader) throws Exception {
+        QName actualType = getType(reader);
+
+        if (actualType != null) {
+            if (!actualType.equals(type) && !isAcceptableType(actualType)) {
+                throw new DeserializationException(
+                    "xsd.unexpectedElementType",
+                    new Object[] { type.toString(), actualType.toString()});
+            }
+        }
+    }
+
+    protected boolean isAcceptableType(QName actualType) {
+        return false;
+    }
+
+    protected void writeAdditionalNamespaceDeclarations(
+        Object obj,
+        XMLWriter writer)
+        throws Exception {
+    }
+
+    protected void doSerialize(
+        Object obj,
+        XMLWriter writer,
+        SOAPSerializationContext context)
+        throws Exception {
+
+        doSerializeInstance(obj, writer, context);
+
+    }
+
+    protected void doSerializeInstance(
+        Object instance,
+        XMLWriter writer,
+        SOAPSerializationContext context)
+        throws Exception {
+        if (typeRegistry == null) {
+            throw new EncodingException("initializable.not.initialized");
+        }
+        //causes classcast exeption
+        if (instance.getClass().isArray()) {
+            int length = Array.getLength(instance);
+
+            for (int i = 0; i < length; i++) {
+                Object parameter = Array.get(instance, i);
+ 
+                if (componentSerializer != null) {
+                }
+                ((CombinedSerializer) componentSerializer).serialize(
+                    parameter,
+                    null,
+                    null,
+                    writer,
+                    context);
+            }
+        }
+    }
+
+    protected void doSerializeAttributes(
+        Object obj,
+        XMLWriter writer,
+        SOAPSerializationContext context)
+        throws Exception {
+    }
+
+    public String getMechanismType() {
+        return com.sun.xml.rpc.encoding.EncodingConstants.JAX_RPC_RI_MECHANISM;
+    }
+
+    public static QName getType(XMLReader reader) throws Exception {
+        QName type = null;
+
+        Attributes attrs = reader.getAttributes();
+        String typeVal = attrs.getValue(XSDConstants.URI_XSI, "type");
+
+        if (typeVal != null) {
+            type = XMLReaderUtil.decodeQName(reader, typeVal);
+        }
+
+        return type;
+    }
+
+    protected JAXRPCSerializer getParameterSerializer(
+        int index,
+        Object parameter)
+        throws Exception {
+
+        return null;
+    }
+
+    protected JAXRPCDeserializer getParameterDeserializer(
+        int index,
+        XMLReader reader)
+        throws Exception {
+
+        return null;
+    }
+
+    public static SOAPDeserializationState registerWithMemberState(
+        Object instance,
+        SOAPDeserializationState state,
+        Object member,
+        int memberIndex,
+        SOAPInstanceBuilder builder) {
+        try {
+            SOAPDeserializationState deserializationState;
+            if (state == null) {
+                deserializationState = new SOAPDeserializationState();
+            } else {
+                deserializationState = state;
+            }
+
+            deserializationState.setInstance(instance);
+            if (deserializationState.getBuilder() == null) {
+                if (builder == null) {
+                    throw new IllegalArgumentException();
+                }
+                deserializationState.setBuilder(builder);
+            }
+
+            SOAPDeserializationState memberState =
+                (SOAPDeserializationState) member;
+            memberState.registerListener(deserializationState, memberIndex);
+
+            return deserializationState;
+        } catch (JAXRPCExceptionBase e) {
+            throw new DeserializationException(e);
+        } catch (Exception e) {
+            throw new DeserializationException(
+                new LocalizableExceptionAdapter(e));
+        }
+    }
+
+    public void initialize(InternalTypeMappingRegistry registry)
+        throws Exception {
+            
+        if (typeRegistry != null) {
+            return;
+        }
+        typeRegistry = registry;
+    }
+}

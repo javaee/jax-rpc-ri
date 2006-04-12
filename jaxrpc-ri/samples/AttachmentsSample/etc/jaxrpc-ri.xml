@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<webServices
+    xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/dd"
+    version="1.0"
+    targetNamespaceBase="urn:example:PhotoCatalog"
+    typeNamespaceBase="urn:example:photoCatalog:types"
+    urlPatternBase="/ws">
+
+    <endpoint
+        name="PhotoCatalog"
+        displayName="Photo Catalog Service"
+        description="Sample Attachments Web Service" 
+        wsdl="/WEB-INF/PhotoCatalogService.wsdl"
+        interface="com.example.photo.PhotoCatalog"  
+        implementation="photocatalog.PhotoCatalogImpl" 
+	     model="/WEB-INF/model-wsdl-doclit.xml.gz"/>
+ 
+    <endpointMapping
+        endpointName="PhotoCatalog"
+        urlPattern="/photocatalog"/>
+
+</webServices>

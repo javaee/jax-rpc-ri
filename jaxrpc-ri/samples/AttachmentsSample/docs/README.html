@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Attachmnets Sample Application: Photo Catalog Readme</title>
+                                         
+  <link rel="stylesheet" type="text/css" href="style/default.css">
+</head>
+  <body>
+           
+<h1 style="text-align: center; color: rgb(0,0,153);">Java<sup><font
+ size="-2">TM</font></sup> APIs for XML based RPC<br>
+   Attachments Sample Application: Photo Catalog&nbsp;</h1>
+          
+<center></center>
+    &nbsp;  <br>
+            
+<div style="margin-left: 40px;">This sample attachments application uses wsdl
+as a starting  point to generate client and server artifacts. The client for
+this example  uses static stub to connect to the server.<br>
+      </div>
+      &nbsp; <a name="manual"></a><br>
+      <a name="manual"> </a>      
+<div style="margin-left: 40px;"><a name="manual"
+ style="font-weight: bold;">Building And Running The Attachments Sample Application: 
+Photo Catalog Manually</a><a name="manual"></a><br>
+      </div>
+           
+<blockquote><a name="manual">For Solaris/Linux:</a>                  
+  <ol>
+          <li><tt>Edit build.properties and set the container specific properties
+(container and its root)</tt></li>
+          <li><tt>%</tt><tt>export&nbsp;</tt><tt>JAVA_HOME=&lt;<i>your J2SE 
+ installation  directory&gt;</i></tt><tt>&nbsp;</tt></li>
+          <li><tt>%export JWSDP_HOME=</tt><tt>&lt;<i>your JWSDP installation
+  directory</i>&gt;</tt><br>
+          </li>
+          <li><tt>%</tt><tt>export ANT_HOME=$JWSDP_HOME/apache-ant</tt></li>
+          <li><tt>%</tt>export&nbsp;<tt>PATH</tt> =<tt>$</tt><tt>ANT_HOME</tt><tt><tt><a
+ name="manual"></a></tt></tt><a name="manual"><tt><tt><tt>/</tt></tt></tt></a><tt><tt><a
+ name="manual"></a></tt></tt><tt><tt><tt>bin:$JAVA_HOME/bin:$PATH</tt></tt></tt></li>
+          <li><tt>%cd $</tt><tt><tt><a name="manual"><tt>JWSDP_HOME/jaxrpc</tt></a></tt></tt><tt>/samples/AttachmentsSample</tt></li>
+          <li><tt>%</tt>ant deploy-war    </li>
+          <li><tt>Wait for the application to finish deploying. You can browse
+  http://localhost:8080/jaxrpc-AttachmentsSample/photocatalog to check.&nbsp;</tt></li>
+               <li>ant run-client<a name="manual"></a></li>
+                       
+  </ol>
+        <a name="manual"></a><br>
+        <a name="manual"> For WindowsNT/2000/XP</a><a name="manual"></a><a
+ name="manual"></a>                  
+  <ol>
+          <li><tt>Edit build.properties and set the container specific properties
+(container and its root)</tt></li>
+          <li><tt>&gt; set JAVA_HOME=&lt;<i>your J2SE installation directory</i>&gt;</tt></li>
+          <li><tt>&gt; set JWSDP_HOME=&lt;<i>your JWSDP installation directory</i>&gt;</tt></li>
+          <li><tt>&gt; set ANT_HOME=%JWSDP_HOME%\apache-ant</tt></li>
+          <li><tt>&gt; set PATH</tt> =<a name="manual"><tt>%</tt></a><tt><tt><a
+ name="manual"></a></tt></tt><a name="manual"><tt>ANT_HOME</tt></a><tt><tt><a
+ name="manual"></a></tt></tt><a name="manual"><tt>%</tt></a><tt><tt><a
+ name="manual"><tt>/</tt></a></tt></tt><a name="manual"></a><tt><tt><a
+ name="manual"></a></tt></tt><tt><tt><tt>bin;</tt></tt></tt><tt>%</tt><tt><tt><tt>JAVA_HOME</tt></tt></tt><tt>%</tt><tt><tt><tt>/bin;</tt></tt></tt><tt>%</tt><tt><tt><tt>PATH</tt></tt></tt><tt>%</tt> 
+      </li>
+          <li><tt>&gt; cd %JWSDP_HOME%\jaxrpc\samples\AttachmentsSample</tt></li>
+          <li><tt>&gt; </tt><a name="manual">ant deploy-war &nbsp; &nbsp;
+      </a></li>
+          <li><tt>Wait for the application to finish deploying. You can browse
+  http://localhost:8080/jaxrpc-</tt><tt>AttachmentsSample/photocatalog</tt><tt> 
+ to check.&nbsp;</tt></li>
+               <li><tt>&gt; </tt><a name="manual">ant run-client</a><a
+ name="manual"></a></li>
+                       
+  </ol>
+      </blockquote>
+      <a name="manual"> </a> <br>
+      <br>
+     <br>
+    <br>
+   <br>
+  <br>
+ <br>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<!--
+  called from jaxrpc-ri/build.xml
+-->
+<project name="installer" basedir="." default="compile">
+    <!-- "name" already in top level overriding this
+    <property name="name" value="installer" />-->
+    <property name="compile.debug" value="true"/>
+    <property name="compile.optimize" value="true"/>
+
+    <property name="root" value="${build.home}/${installer.name}" />
+    
+    <target name="compile">
+        <mkdir dir="${root}/build/classes"/>
+        <javac srcdir="${basedir}/src" destdir="${root}/build/classes"
+               debug="${compile.debug}" optimize="${compile.optimize}">
+          <classpath>
+            <fileset dir="${build.home}/lib" includes="*.jar"/>
+          </classpath>
+        </javac>
+    </target>
+</project>

@@ -1,0 +1,39 @@
+# This file is referenced by the build.xml file.
+# Used only for jwsdp environment
+
+buildhome=../../build
+build.dir=${buildhome}
+jwsdphome=${buildhome}/../..
+samplesbuild=${buildhome}/samples
+jwsdpshared=${jwsdphome}/jwsdp-shared
+jaxphome=${jwsdphome}/jaxp
+jaxrpchome=${jwsdphome}/jaxrpc
+samples.home=${jaxrpchome}/samples
+saajhome=${jwsdphome}/saaj
+javamail.jar=${jwsdpshared}/lib/mail.jar
+jaf.jar=${jwsdpshared}/lib/activation.jar
+jaxp-api.jar=${jaxphome}/lib/jaxp-api.jar
+dom.jar=${jaxphome}/lib/endorsed/dom.jar
+sax.jar=${jaxphome}/lib/endorsed/sax.jar
+xalan.jar=${jaxphome}/lib/endorsed/xalan.jar
+xercesImpl.jar=${jaxphome}/lib/endorsed/xercesImpl.jar
+jaxrpc-api.jar=${jaxrpchome}/lib/jaxrpc-api.jar
+jaxrpc-impl.jar=${jaxrpchome}/lib/jaxrpc-impl.jar
+jaxrpc-spi.jar=${jaxrpchome}/lib/jaxrpc-spi.jar
+saaj-api.jar=${saajhome}/lib/saaj-api.jar
+saaj-impl.jar=${saajhome}/lib/saaj-impl.jar
+relaxngDatatype.jar=${jwsdpshared}/lib/relaxngDatatype.jar
+xsdlib.jar=${jwsdpshared}/lib/xsdlib.jar
+jax-qname.jar=${jwsdpshared}/lib/jax-qname.jar
+ant.jar=${jwsdphome}/apache-ant/lib/ant.jar
+junit.jar=${jaxrpchome}/lib/junit.jar
+FastInfoset.jar=${jaxrpchome}/lib/FastInfoset.jar
+jsr173_api.jar=${jaxrpchome}/lib/jsr173_api.jar
+# container is sjsas, or sjsws, or tomcat
+container=sjsws
+sjsas.root=/opt/Sun/AppServer
+sjsws.root=/opt/Sun/WebServer
+tomcat.root=/opt/Sun/Tomcat
+catalina.home=${tomcat.root}
+sjsws.instance=localhost
+

@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Sample Apps Readme</title>
+             
+<link rel="stylesheet" type="text/css" href="style/default.css">
+</head>
+<body>
+   
+<h1 style="text-align: center; color: rgb(0,0,153);">Java<sup><font
+ size="-2">TM</font></sup> APIs for XML based RPC<br>
+  Sample Application HelloWorld</h1>
+  
+<p>This sample application uses wsdl as a starting point to generate client 
+   and server artifacts. The client for this example uses static stub to 
+   connect to the server.</p>
+
+<p><font size="+2">Building And Running The Sample Application Manually</font></p>
+
+<p><u><b>For Solaris/Linux:</b></u></p>      
+<ol>
+<li>Edit the <tt>build.properties</tt> file and set the container-specific properties 
+    at the end of the file.</</li>
+<li><tt>%</tt><tt>export&nbsp;</tt><tt>JAVA_HOME=&lt;<i>your J2SE installation 
+directory&gt;</i></tt><tt>&nbsp;</tt></li>
+<li><tt>%export JWSDP_HOME=</tt><tt>&lt;<i>your JWSDP installation directory</i>&gt;</tt></li>
+<li><tt>% export ANT_HOME=$JWSDP_HOME/apache-ant</tt></li>
+<li><tt>% export PATH=$ANT_HOME/bin:$JAVA_HOME/bin:$PATH</tt></li>
+<li><tt>% cd $JWSDP_HOME/jaxrpc/samples/HelloWorld</tt></li>
+<li><tt>% ant deploy-war</tt> (This step is not required as long as the 
+    pre-packaged WAR file is not changed.)</li>
+<li>Wait for the application to finish deploying. You can browse
+    <tt>http://localhost:8080/jaxrpc-HelloWorld/hello</tt> to check.</li>
+<li><tt>ant run-client</tt></li>
+</ol>
+
+<br>
+<p><u><b>For WindowsNT/2000/XP</b></u></p>
+<ol>
+<li>Edit the <tt>build.properties</tt> file and set the container-specific properties 
+    at the end of the file.</li>
+<li><tt>&gt; set JAVA_HOME=&lt;<i>your J2SE installation directory</i>&gt;</tt></li>
+<li><tt>&gt; set JWSDP_HOME=&lt;<i>your JWSDP installation directory</i>&gt;</tt></li>
+<li><tt>&gt; set ANT_HOME=%JWSDP_HOME%\apache-ant</tt></li>
+<li><tt>&gt; set PATH</tt> =%ANT_HOME%/bin;%JAVA_HOME%/bin;%PATH%</tt></li>
+<li><tt>&gt; cd %JWSDP_HOME%\jaxrpc\samples\HelloWorld</tt></li>
+<li><tt>&gt; ant deploy-war</tt> (This step is not required, as long as the 
+    pre-packaged WAR file has not been changed.)</li>
+<li>Wait for the application to finish deploying. You can browse
+    <tt>http://localhost:8080/jaxrpc-HelloWorld/hello</tt> to check.</li>
+<li><tt>&gt; ant run-client</tt></li>
+</ol>
+</blockquote>
+
+</body>
+</html>

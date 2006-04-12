@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!--
+<!DOCTYPE project SYSTEM "../project.dtd" >
+-->
+<project default="undeploy">
+  <target name="deploy" depends="undeploy">
+    <exec executable="${sjsws.root}/bin/https/bin/wdeploy" os="SunOS,Linux">
+      <arg value="deploy" />
+      <arg value="-u" />
+      <arg value="/jaxrpc-HelloWorld" />
+      <arg value="-i" />
+      <arg value="${sjsws.instance}" />
+      <arg value="-v" />
+      <arg value="https-${sjsws.instance}" />
+      <arg value="${samples.home}/${appname}/jaxrpc-HelloWorld.war"/>
+    </exec>
+    <exec executable="${sjsws.root}/bin/https/bin/wdeploy.bat" os="Windows XP,Windows 2000, Windows 2003">
+      <arg value="deploy" />
+      <arg value="-u" />
+      <arg value="/jaxrpc-HelloWorld" />
+      <arg value="-i" />
+      <arg value="${sjsws.instance}" />
+      <arg value="-v" />
+      <arg value="https-${sjsws.instance}" />
+      <arg value="${samples.home}/${appname}/jaxrpc-HelloWorld.war"/>
+    </exec>
+  </target>
+  <target name="undeploy">
+    <exec executable="${sjsws.root}/bin/https/bin/wdeploy" os="SunOS,Linux">
+      <arg value="delete" />
+      <arg value="-u" />
+      <arg value="/jaxrpc-HelloWorld" />
+      <arg value="-i" />
+      <arg value="${sjsws.instance}" />
+      <arg value="-v" />
+      <arg value="https-${sjsws.instance}" />
+      <arg value="hard"/>
+    </exec>
+    <exec executable="${sjsws.root}/bin/https/bin/wdeploy.bat" os="Windows XP,Windows 2000, Windows 2003">
+      <arg value="delete" />
+      <arg value="-u" />
+      <arg value="/jaxrpc-HelloWorld" />
+      <arg value="-i" />
+      <arg value="${sjsws.instance}" />
+      <arg value="-v" />
+      <arg value="https-${sjsws.instance}" />
+      <arg value="hard"/>
+    </exec>
+  </target>
+</project>

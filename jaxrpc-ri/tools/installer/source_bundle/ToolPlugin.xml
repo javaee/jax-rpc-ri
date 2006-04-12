@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toolPlugins xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/tool-plugin">
+    <toolPlugin
+        pluginId="com.sun.xml.rpc.tools.wscompile"
+        class="com.sun.xml.rpc.tools.wscompile.WscompileToolPlugin"
+        >
+        <extensionPoint
+            extendId="com.sun.xml.rpc.tools.wscompile.usage"
+            type="com.sun.xml.rpc.tools.wscompile.UsageIf"
+        />
+        <extensionPoint
+            extendId="com.sun.xml.rpc.tools.wscompile.processorAction"
+            type="com.sun.xml.rpc.tools.wscompile.ProcessorAction"
+        />
+        <extensionPoint
+            extendId="com.sun.xml.rpc.tools.wscompile.modelInfo"
+            type="com.sun.xml.rpc.processor.config.parser.ModelInfoPlugin"
+        />
+    </toolPlugin>
+</toolPlugins>

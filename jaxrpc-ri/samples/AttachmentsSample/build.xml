@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+<!ENTITY buildProps SYSTEM "./build.properties">
+]>
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+<project name="AttachmentsSample" default="build" basedir="."> 
+&buildProps;
+ <property
+    name="endpoint" value="http://localhost:8080/jaxrpc-AttachmentsSample/photocatalog"/>
+  
+  <property name="appname" value="${ant.project.name}"/>
+  <property name="source.home" location="${samplesbuild}/${appname}/src"/>
+  <property name="compile.debug" value="true"/>
+  <property name="compile.optimize" value="false"/>
+  <property name="log.dir" location="${samples.home}/${appname}/logs"/>
+  <property name="log.file" value="messages.log"/>
+  <property name="config.server.doclit.file" value="${basedir}/etc/config-server.xml"/>
+  <property name="config.client.doclit.file" value="${basedir}/etc/config-client.xml"/>
+  <property name="model.doclit.file" value="model-wsdl-doclit.xml.gz"/>
+  <property name="webapp.webxml" value="${basedir}/etc/web.xml"/>
+  <property name="url" value="http://localhost:8080/manager"/>
+  <property name="username" value="admin"/>
+  <property name="password" value="admin"/>
+  <property name="context-path" value="jaxrpc-AttachmentsSample"/>
+ 
+  <path id="compile.classpath">
+    <pathelement location="${javamail.jar}"/>
+    <pathelement location="${jaf.jar}"/>
+    <pathelement location="${jaxp-api.jar}"/>
+    <pathelement location="${dom.jar}"/>
+    <pathelement location="${sax.jar}"/>
+    <pathelement location="${xalan.jar}"/>
+    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${jaxrpc-api.jar}"/>
+    <pathelement location="${jaxrpc-spi.jar}"/>
+    <pathelement location="${jaxrpc-impl.jar}"/>
+    <pathelement location="${saaj-api.jar}"/>
+    <pathelement location="${saaj-impl.jar}"/>
+    <pathelement location="${relaxngDatatype.jar}"/>
+    <pathelement location="${xsdlib.jar}"/>
+    <pathelement location="${jax-qname.jar}"/>
+    <pathelement location="${ant.jar}"/>
+    <pathelement location="${samplesbuild}/${appname}/classes/util"/>
+    <pathelement location="${tomcat.servlet.jar}"/>
+    <pathelement location="${sjsas.servlet.jar}"/>
+    <pathelement location="${sjsws.servlet.jar}"/>
+    <pathelement location="${FastInfoset.jar}"/>
+    <pathelement location="${jsr173_api.jar}"/>
+  </path>
+  <taskdef name="wscompile" classname="com.sun.xml.rpc.tools.ant.Wscompile">
+    <classpath refid="compile.classpath"/>
+  </taskdef>
+  <taskdef name="wsdeploy" classname="com.sun.xml.rpc.tools.ant.Wsdeploy">
+    <classpath refid="compile.classpath"/>
+  </taskdef>
+  
+  <target name="init">
+    <echo message="-------- ${appname} --------"/>
+  </target>
+  
+  <target name="build" depends="build-war ">
+    <echo message=" Building...."/>
+  </target>
+  
+  <target name="prepare" depends="init">
+    <mkdir dir="${buildhome}"/>
+    <mkdir dir="${log.dir}"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes/server"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes/client"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes/util"/>
+  </target>
+  
+  <target name="generate-client" depends="compile-client-handler">
+    <wscompile debug="true" keep="true" client="true"
+      base="${samplesbuild}/${appname}/classes/client" features="wsi" xPrintStackTrace="true"
+      verbose="true" classpath="${compile.classpath}:${samplesbuild}/${appname}/classes/client"
+      sourcebase="${basedir}/src/client" config="${config.client.doclit.file}">
+      <classpath>
+        <path refid="compile.classpath"/>
+      </classpath>
+    </wscompile>
+  </target>
+  
+  <target name="generate-server" depends="prepare">
+    <antcall target="edit-config">
+      <param name="config.server.doclit.file" value="${config.server.doclit.file}"/>
+    </antcall>
+    <wscompile keep="true" import="true" base="${samplesbuild}/${appname}/classes/server"
+      features="wsi" xPrintStackTrace="true" verbose="false"
+      model="${samplesbuild}/${appname}/${model.doclit.file}" classpath="${compile.classpath}"
+      config="${config.server.doclit.file}">
+      <classpath>
+        <path refid="compile.classpath"/>
+      </classpath>
+    </wscompile>
+    <antcall target="unedit-config">
+      <param name="config.server.doclit.file" value="${config.server.doclit.file}"/>
+    </antcall>
+  </target>
+  
+  <target name="build-util" depends="prepare">
+    <javac srcdir="${samples.home}/${appname}/src/util"
+      destdir="${samplesbuild}/${appname}/classes/util" debug="${compile.debug}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+  </target>
+  <target name="compile-client-handler" depends="prepare">
+    <javac srcdir="${samples.home}/${appname}/src/client"
+      destdir="${samplesbuild}/${appname}/classes/client" debug="${compile.debug}"
+      includes="**/LoggingHandler.java, **/LogOutputStream.java ">
+      <classpath refid="compile.classpath"/>
+    </javac>
+  </target>
+  
+  <target name="compile-server" depends="generate-server, build-util">
+    <javac srcdir="${samples.home}/${appname}/src/server"
+      destdir="${samplesbuild}/${appname}/classes/server" debug="${compile.debug}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+  </target>
+  
+  <target name="create-war" depends="compile-server">
+    <war warfile="${samplesbuild}/${appname}/jaxrpc-${appname}-raw.war" webxml="${webapp.webxml}">
+      <fileset dir="${basedir}/etc/" includes="**/*xsd"/>
+      <webinf dir="${basedir}/etc/" includes="*.wsdl,jaxrpc-ri.xml"/>
+      <webinf dir="${basedir}/data" includes="duke1.jpg,status.xml,status.fi"/>
+      <webinf dir="${basedir}/etc/" includes="${webapp.jaxrpc.file}" defaultexcludes="no"/>
+      <webinf dir="${samplesbuild}/${appname}" includes="${model.doclit.file}" defaultexcludes="no"/>
+      <classes dir="${samplesbuild}/${appname}/classes/server" includes="**/*.class"
+        defaultexcludes="no"/>
+      <classes dir="${samplesbuild}/${appname}/classes/util" includes="**/*.class"
+        defaultexcludes="no"/>
+    </war>
+    <delete dir="${samplesbuild}/${appname}/classes/server"/>
+  </target>
+  
+  <target name="build-war" depends="create-war">
+    <echo message="-------- ${appname} --------"/>
+    <wsdeploy keep="true" inWarFile="${samplesbuild}/${appname}/jaxrpc-${appname}-raw.war"
+      outWarFile="${samplesbuild}/${appname}/jaxrpc-${appname}.war" verbose="true">
+      <classpath refid="compile.classpath"/>
+    </wsdeploy>
+    <echo message="Copying jaxrpc-${appname}.war to ${samples.home}/${appname}"/>
+    <copy file="${samplesbuild}/${appname}/jaxrpc-${appname}.war" todir="${samples.home}/${appname}"
+    />
+  </target>
+
+  <target name="deploy-war" depends="build-war" description="Deploy war to container">
+    <ant antfile="${container}.xml" target="deploy"/>
+  </target>
+
+<!--  
+  <target name="deploy-war" depends="build-war" description="Deploy war to Tomcat">
+    <taskdef name="install" classname="org.apache.catalina.ant.InstallTask"
+      classpath="${env.TOMCAT_HOME}/server/lib/catalina-ant.jar"/>
+    <echo message="Installing the application...."/>
+    <install url="${url}" username="${username}" password="${password}" path="/${context-path}"
+      war="file:${basedir}/jaxrpc-${appname}.war"/>
+  </target>
+-->
+  
+  <target name="undeploy-war" >
+    <echo message="Removing the application...."/>
+    <taskdef name="remove" classname="org.apache.catalina.ant.RemoveTask"
+      classpath="${env.TOMCAT_HOME}/server/lib/catalina-ant.jar"/>
+    <remove url="${url}" username="${username}" password="${password}" path="/${context-path}"/>
+  </target>
+  
+  <target name="compile-client" depends="generate-client, build-util">
+    <javac srcdir="${samples.home}/${appname}/src/client"
+      destdir="${samplesbuild}/${appname}/classes/client" debug="${compile.debug}"
+      optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+  </target>
+  
+  <path id="run.classpath">
+    <path refid="compile.classpath"/>
+    <pathelement location="${samplesbuild}/${appname}/classes/client"/>
+    <pathelement location="${jaxrpchome}/lib/jsr173_api.jar"/>
+    <pathelement location="${jaxrpchome}/lib/FastInfoset.jar"/>
+  </path>
+  
+  <target name="run-client" depends="compile-client" description="Execute attachments client">
+    <!--
+         <waitfor>
+            <http url="http://localhost:8080/jaxrpc-AttachmentsSample"/>
+         </waitfor>
+         -->
+    <java classname="photocatalog.PhotoCatalogClient" classpathref="run.classpath" fork="true">
+      <sysproperty key="log.dir" value="${log.dir}"/>
+      <sysproperty key="soap.msgs.file" value="${log.file}"/>
+    </java>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${log.dir}"/>
+    <delete dir="${samplesbuild}/${appname}"/>
+  </target>
+  
+  <!--
+   @param: config.file - file to be edited
+-->
+    <target name="edit-config">
+    <replace file="${config.server.doclit.file}" token="location=&quot;"
+      value="location=&quot;${basedir}/"/>
+    </target>
+  
+  <!--
+   @param: config.file - file to be edited
+-->
+  <target name="unedit-config">
+    <replace file="${config.server.doclit.file}" token="location=&quot;${basedir}/"
+      value="location=&quot;"/>
+  </target>
+</project>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<configuration
+    xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
+    <wsdl
+        location="http://localhost:8080/jaxrpc-AttachmentsSample/photocatalog?WSDL"
+        packageName="com.example.photo">
+        <handlerChains>
+            <chain runAt="client">
+                <handler className="photocatalog.LoggingHandler"/>
+            </chain>
+        </handlerChains>
+    </wsdl>      
+</configuration>

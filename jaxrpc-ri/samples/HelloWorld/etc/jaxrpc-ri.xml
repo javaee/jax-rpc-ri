@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<webServices
+    xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/dd"
+    version="1.0"
+    targetNamespaceBase="http://hello.org/wsdl"
+    typeNamespaceBase="http://hello.org/types"
+    urlPatternBase="/ws">
+
+    <endpoint
+        name="Hello"
+        displayName="Hello Service"
+        description="A simple web service" 
+        wsdl="/WEB-INF/HelloWorldService.wsdl"
+        interface="hello.HelloIF"  
+        implementation="hello.HelloImpl" 
+	     model="/WEB-INF/model-wsdl-rpcenc.xml.gz"/>
+ 
+    <endpointMapping
+        endpointName="Hello"
+        urlPattern="/hello"/>
+
+</webServices>

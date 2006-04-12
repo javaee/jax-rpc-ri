@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+
+<!--
+ Copyright 2004 Sun Microsystems, Inc. All rights reserved.
+ SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+-->
+
+<project name="HelloWorld" default="build" basedir=".">
+  
+  <property file="build.properties"/>
+
+  <property name="endpoint"         value="http://localhost:8080/jaxrpc-HelloWorld/hello"/>
+  <property name="server.port.url"  value="http://localhost:8080/jaxrpc-HelloWorld/hello"/>
+  <property name="appname"          value="${ant.project.name}"/>
+  <property name="source.home"      value="${samplesbuild}/${appname}/src"/>
+  <property name="compile.debug"    value="true"/>
+  <property name="compile.optimize" value="false"/>
+
+  <property name="config.rpcenc.file" value="${basedir}/etc/config.xml"/>
+  <property name="model.rpcenc.file" value="model-wsdl-rpcenc.xml.gz"/>
+  <property name="webapp.webxml" value="${basedir}/etc/web.xml"/>
+
+  <path id="compile.classpath">
+    <pathelement location="${javamail.jar}"/>
+    <pathelement location="${jaf.jar}"/>
+    <pathelement location="${jaxp-api.jar}"/>
+    <pathelement location="${dom.jar}"/>
+    <pathelement location="${sax.jar}"/>
+    <pathelement location="${xalan.jar}"/>
+    <pathelement location="${xercesImpl.jar}"/>
+    <pathelement location="${jaxrpc-api.jar}"/>
+    <pathelement location="${jaxrpc-spi.jar}"/>
+    <pathelement location="${jaxrpc-impl.jar}"/>
+    <pathelement location="${saaj-api.jar}"/>
+    <pathelement location="${saaj-impl.jar}"/>
+    <pathelement location="${relaxngDatatype.jar}"/>
+    <pathelement location="${xsdlib.jar}"/>
+    <pathelement location="${jax-qname.jar}"/>
+    <pathelement location="${ant.jar}"/>
+  </path>
+
+  <taskdef name="wscompile" classname="com.sun.xml.rpc.tools.ant.Wscompile">
+     <classpath refid="compile.classpath"/>
+  </taskdef>
+  <taskdef name="wsdeploy" classname="com.sun.xml.rpc.tools.ant.Wsdeploy">
+     <classpath refid="compile.classpath"/>
+  </taskdef>
+
+  <target name="init">
+    <echo message="-------- ${appname} Sample --------"/>
+  </target>
+
+  <target name="build" depends="build-war ">
+	<echo message=" Building...."/>
+  </target>
+
+  <target name="prepare" depends="init">
+    <mkdir dir="${buildhome}"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes/server"/>
+    <mkdir dir="${samplesbuild}/${appname}/classes/client"/>
+
+  </target>
+
+  <target name="generate-client" depends="prepare">
+    <antcall target="edit-config">
+        <param name="config.rpcenc.file" value="${config.rpcenc.file}"/>
+    </antcall>
+    <wscompile
+         keep="true"
+         client="true"
+         base="${samplesbuild}/${appname}/classes/client"
+         xPrintStackTrace="true"
+         verbose="false"
+         classpath="${compile.classpath}"
+         config="${config.rpcenc.file}">
+         <classpath>
+            <path refid="compile.classpath"/>
+         </classpath>
+    </wscompile>
+   <antcall target="unedit-config">
+      <param name="config.rpcenc.file" value="${config.rpcenc.file}"/>
+   </antcall>
+  </target>
+
+  <target name="generate-server" depends="prepare">
+    <antcall target="edit-config">
+        <param name="config.rpcenc.file" value="${config.rpcenc.file}"/>
+    </antcall>
+    <wscompile
+         keep="true"
+         import="true"
+         base="${samplesbuild}/${appname}/classes/server"
+         xPrintStackTrace="true"
+         verbose="false"
+         model="${samplesbuild}/${appname}/${model.rpcenc.file}"
+         classpath="${compile.classpath}"
+         config="${config.rpcenc.file}">
+         <classpath>
+            <path refid="compile.classpath"/>
+         </classpath>
+    </wscompile>
+    <antcall target="unedit-config">
+      <param name="config.rpcenc.file" value="${config.rpcenc.file}"/>
+    </antcall>
+  </target>
+
+  <target name="compile-server" depends="generate-server">
+    <javac srcdir="${samples.home}/${appname}/src/server"
+           destdir="${samplesbuild}/${appname}/classes/server"
+           debug="${compile.debug}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+  </target>
+
+  <target name="create-war" depends="compile-server">
+    <war warfile="${samplesbuild}/${appname}/jaxrpc-${appname}-raw.war"
+         webxml="${webapp.webxml}">
+        <webinf dir="${basedir}/etc/" includes="*.wsdl,jaxrpc-ri.xml"/>
+        <webinf dir="${basedir}/etc/" includes="${webapp.jaxrpc.file}" defaultexcludes="no"/>
+        <webinf dir="${samplesbuild}/${appname}" includes="${model.rpcenc.file}" defaultexcludes="no"/>
+        <classes dir="${samplesbuild}/${appname}/classes/server" includes="**/*.class" defaultexcludes="no"/>
+    </war>
+
+    <delete    dir="${samplesbuild}/${appname}/classes/server"/>
+  </target>
+
+  <target name="build-war" depends="create-war">
+    <echo message="-------- ${appname} --------"/>
+
+    <wsdeploy
+         keep="true"
+         inWarFile="${samplesbuild}/${appname}/jaxrpc-${appname}-raw.war"
+         outWarFile="${samplesbuild}/${appname}/jaxrpc-${appname}.war"
+         verbose="true">
+         <classpath refid="compile.classpath"/>
+     </wsdeploy>
+    
+     <echo message="Copying jaxrpc-${appname}.war to ${samples.home}/${appname}" /> 
+     <copy file="${samplesbuild}/${appname}/jaxrpc-${appname}.war" todir="${samples.home}/${appname}"/>
+
+  </target>
+
+  <target name="deploy-war" depends="build-war">
+    <ant antfile="${container}.xml" target="deploy"/>
+  </target>
+
+
+
+  <target name="compile-client"  depends="generate-client">
+    <javac  srcdir="${samples.home}/${appname}/src/client"
+           destdir="${samplesbuild}/${appname}/classes/client"
+             debug="${compile.debug}"
+          optimize="${compile.optimize}">
+      <classpath refid="compile.classpath"/>
+    </javac>
+  </target>
+
+  <path id="run.classpath">
+      <path refid="compile.classpath"/>
+      <pathelement location="${samplesbuild}/${appname}/classes/client"/>
+  </path>
+
+  <target name="run-client" depends="compile-client">
+  
+         <waitfor>
+            <http url="http://localhost:8080/jaxrpc-HelloWorld"/>
+         </waitfor>
+
+
+    <java classname="hello.HelloClient"
+          classpathref="run.classpath"
+          fork="true">
+	      <sysproperty key="endpoint" value="${endpoint}"/>
+        <arg value="${server.port.url}"/>
+    </java>
+
+
+  </target>
+
+  <target name="clean">
+    <delete dir="${buildhome}"/>
+    <delete dir="${samplesbuild}/${appname}"/>
+  </target>
+
+<!--
+   @param: config.file - file to be edited
+-->
+   <target name="edit-config">
+   <replace
+      file="${config.rpcenc.file}"
+      token='location="'
+      value='location="${basedir}/'/>
+   </target>
+
+<!--
+   @param: config.file - file to be edited
+-->
+   <target name="unedit-config">
+   <replace
+      file="${config.rpcenc.file}"
+      token='location="${basedir}/'
+      value='location="'/>
+   </target>
+
+</project>

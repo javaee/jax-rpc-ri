@@ -1,0 +1,191 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Fast Infoset in Java Web Services Developer Pack, Version 2.0</title><meta name="generator" content="DocBook XSL Stylesheets V1.67.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h1 class="title"><a name="d0e2"></a>Fast Infoset in Java Web Services Developer Pack, Version 2.0</h1></div><div><div class="author"><h3 class="author"><span class="firstname">Santiago</span> <span class="surname">Pericas-Geertsen</span></h3><code class="email">&lt;<a href="mailto:Santiago.PericasGeertsen@sun.com">Santiago.PericasGeertsen@sun.com</a>&gt;</code></div></div><div><div class="author"><h3 class="author"><span class="firstname">Paul</span> <span class="surname">Sandoz</span></h3><code class="email">&lt;<a href="mailto:Paul.Sandoz@sun.com">Paul.Sandoz@sun.com</a>&gt;</code></div></div><div><p class="pubdate">April 12, 2005</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="sect1"><a href="#d0e21">Introduction</a></span></dt><dt><span class="sect1"><a href="#Using-FI">Using Fast Infoset</a></span></dt><dt><span class="sect1"><a href="#d0e103">Base64 Data</a></span></dt><dt><span class="sect1"><a href="#d0e123">Fast Infoset Documents as Attachments</a></span></dt><dt><span class="sect1"><a href="#d0e181">Web Services Security</a></span></dt><dt><span class="sect1"><a href="#d0e197">Performance</a></span></dt><dt><span class="sect1"><a href="#d0e206">Conclusions</a></span></dt><dt><span class="sect1"><a href="#d0e215">References</a></span></dt></dl></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e21"></a>Introduction</h2></div></div></div><p>The Fast Infoset specification (ITU-T Rec. X.891 | ISO/IEC 24824-1) describes an open,
+            standards-based "binary XML" format that is based on the XML Information Set [<a href="#Infoset"><span class="abbrev">XML Information Set</span></a>]. JWSDP 2.0 now supports this optimized encoding as part of
+            JAX-RPC 1.1.3_01 EA. For ease of deployment, this new version of JAX-RPC also support a form
+            of HTTP content negotiation that can be used to "turn on" Fast Infoset during message
+            exchanges. By default, the Fast Infoset encoding is turned off. For more information on
+            how to use this feature see <a href="#Using-FI" title="Using Fast Infoset">the section called &#8220;Using Fast Infoset&#8221;</a>.</p><p>The XML Information Set specifies the result of parsing an XML document, referred to
+            as an XML infoset (or simply an infoset), and a glossary of terms to identify infoset
+            components, referred to as information items and properties. An XML infoset is an
+            abstract model of the information stored in an XML document; it establishes a separation
+            between data and information in a way that suits most common uses of XML. In fact,
+            several of the concrete XML data models are defined by referring to XML infoset items
+            and their properties. For example, SOAP Version 1.2 [<a href="#SOAP"><span class="abbrev">SOAP 1.2</span></a>] makes use of
+            this abstraction to define the information in a SOAP message without ever referring to
+            XML 1.X, and the SOAP HTTP binding specifically allows for alternative media types that
+            "provide for at least the transfer of the SOAP XML Infoset".</p><p>The Fast Infoset specification is jointly standardized at the ITU-T and ISO. As of
+            this writing, the ISO Final Committee Draft ballot has been completed, and the
+            specification has gone for Consent to Last Call at the ITU-T Study Group 17 meeting in
+            Moscow, 30 March - 8 April 2005. The specification is available to all ITU-T sector
+            members and can also be obtained via the corresponding ISO national body in your
+            location. These specifications recommend the use of the MIME type
+                <code class="filename">application/fastinfoset</code>, which has recently been approved by
+            the Internet Engineering Steering Group (IESG) for documents serialized using this
+            format.</p><p>Fast Infoset @ Java.net [<a href="#FI-Java.net"><span class="abbrev">Fast Infoset @ Java.net</span></a>] is an open-source project
+            initiated by Sun Microsystems to provide access to a fast, fully-featured and robust
+            implementation of the Fast Infoset specification. JAX-RPC 1.1.3_01 EA employs the basic Fast
+            Infoset parsers and serializers that are available from that project.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="Using-FI"></a>Using Fast Infoset</h2></div></div></div><p>Content negotiation is completely <span class="emphasis"><em>driven by the client</em></span> and uses
+            the standard HTTP headers <code class="filename">Accept</code> and
+            <code class="filename">Content-Type</code>. The initial request is always encoded in XML, but the
+            client has the option of including the MIME type
+            <code class="filename">application/fastinfoset</code> as part of the
+            <code class="filename">Content-Type</code> list. If the request is received by a Fast
+            Infoset-enabled service, the reply will be encoded in Fast Infoset. The remainder of the
+            conversation between the client and the service will also be encoded in Fast Infoset as
+            long as the client continues to use the same artifact (e.g., the same stub instance) to
+            converse with the server. We call this form of negotiation as
+            <span class="emphasis"><em>pessimistic</em></span>, in contrast to the <span class="emphasis"><em>optimistic</em></span>
+            case, in which a client directly initiates a message exchange using the more efficient
+            encoding.</p><p>Content negotiation can be enabled in two different ways: (i) by setting a system
+            property on the VM used to run the client, and (ii) by setting a property on the
+            static/dynamic stub or DII instance of <code class="filename">Call</code> used by the client. In
+            either case, both the property name and its value are identical.</p><p>A system-wide property can be set using the -D option of the Java command, as shown
+            below: </p><div class="example"><a name="d0e76"></a><p class="title"><b>Example&nbsp;1.&nbsp;Setting the System Property</b></p><pre class="programlisting">        java -Dcom.sun.xml.rpc.client.ContentNegotiation=pessimistic ...</pre></div><p> The following example shows how set the property on a stub:</p><div class="example"><a name="d0e82"></a><p class="title"><b>Example&nbsp;2.&nbsp;Setting Content Negotiation on a Stub</b></p><pre class="programlisting">        stub = ...;    // Obtain reference to stub
+        stub._setProperty(
+             com.sun.xml.rpc.client.StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY,
+             "pessimistic");     </pre></div><p> These properties accept one of two values: <code class="filename">none</code> and
+                <code class="filename">pessimistic</code>, with the former set as the default. If the client
+            uses a Dynamic Instance Invocation (DII), the same property can be set as follows: </p><div class="example"><a name="d0e94"></a><p class="title"><b>Example&nbsp;3.&nbsp;Setting Content Negotiation on an instance of Call</b></p><pre class="programlisting">        call = ...;    // Obtain reference to call
+        call.setProperty(
+             com.sun.xml.rpc.client.dii.CallPropertyConstants.CONTENT_NEGOTIATION_PROPERTY,
+             "pessimistic");     </pre></div><p> Even though a different Java constant was used in the DII case, the actual
+            name of the property is the same as in the previous two examples (i.e.,
+                <code class="filename">com.sun.xml.rpc.client.ContentNegotiation</code>). </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e103"></a>Base64 Data</h2></div></div></div><p>Because XML is a textual format, binary blobs must be represented using character
+            sequences before they can be embedded in an XML document. A popular encoding that
+            permits this embedding is known as base64 encoding, and it corresponds to the XML Schema
+            data type xsd:base64Binary. In a Web services toolkit that supports a binding framework,
+            as it is the case in JAX-RPC, a value of this type must be encoded before transmission
+            and decoded before binding. The encoding and decoding process is expensive and linear to
+            the size of the binary object.</p><p>JAX-RPC 1.1.3_01 EA provides support for the so-called Fast Infoset base64 encoding
+            algorithm. This is one of several built-in encoding algorithms in Fast Infoset that
+            facilitate the encoding of character chunks (or text nodes) using a more efficient
+            representation. More specifically, in the case of value of type xsd:base64Binary, byte
+            sequences that are used to represent these blobs in memory can be parsed and serialized
+            directly without the need for any encoding or decoding step. In JAX-RPC 1.1.3_01 EA, this
+            optimization is supported only for element content of type xsd:base64Binary; it is
+            currently <span class="emphasis"><em>not</em></span> supported for attribute values.</p><p>The SOAP Message Transmission Optimization Mechanism [<a href="#MTOM"><span class="abbrev">MTOM</span></a>], paired
+            with the XML-binary Optimized Packaging [<a href="#XOP"><span class="abbrev">XOP</span></a>], was proposed to address
+            the inefficiencies related to the transmission of binary data in SOAP documents. This
+            solution proposes a method in which XML messages are dissected in order to transmit
+            binary blobs as MIME attachments in a way that is transparent to the application. It is
+            worth pointing out that, in order to preserve full infoset fidelity, this transformation
+            is restricted to base64 content in canonical form as defined in [<a href="#XSD-Datatypes"><span class="abbrev">XSD Datatypes</span></a>]. </p><p> Conceptually, Fast Infoset and MTOM/XOP are similar enough with respect to the
+            management of binary data. In particular, supporting either of them requires Web
+            services toolkits to be updated to avoid base64 encoding and decoding during parsing and
+            data binding. We believe Fast Infoset's solution is not only much simpler to implement
+            (it is a binary format after all!) but is likely to result in even better performance
+            because there is no need to use a packaging technology such as MIME.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e123"></a>Fast Infoset Documents as Attachments</h2></div></div></div><p>JAX-RPC supports the encoding of procedure call parameters and return values as MIME
+            attachments. A SOAP message package with attachments is constructed using the MIME
+                <code class="filename">multipart/related</code> type. This is typically accomplished by
+            employing a MIME binding in the WSDL file. For example, the following snipet shows how
+            to bind the <code class="filename">addPhoto</code> operation so that it returns the
+                <code class="filename">status</code> part as a MIME attachment. </p><div class="example"><a name="d0e137"></a><p class="title"><b>Example&nbsp;4.&nbsp;Binding a part to a MIME attachment</b></p><pre class="programlisting">        &lt;wsdl:operation name="addPhoto"&gt;
+            &lt;wsdl:input&gt;
+                ...
+            &lt;/wsdl:input&gt;
+            
+            &lt;wsdl:output&gt;
+                &lt;mime:multipartRelated&gt;
+                    &lt;mime:part&gt;
+                        &lt;soap:body use="literal"/&gt;
+                    &lt;/mime:part&gt;
+                    &lt;mime:part&gt;
+                        &lt;!-- Use application/fastinfoset to indicate an FI attachment --&gt;
+                        &lt;mime:content part="status" type="application/fastinfoset"/&gt;
+                    &lt;/mime:part&gt;
+                &lt;/mime:multipartRelated&gt;
+            &lt;/wsdl:output&gt;
+        &lt;/wsdl:operation&gt;</pre></div><p> This binding indicates not only that the <code class="filename">status</code> part is
+            bound to a MIME part but also that the type of this attachment is
+                <code class="filename">application/fastinfoset</code>, that is, a Fast Infoset document.</p><p>JAX-RPC uses the Java Beans Activation framework to support various MIME content
+            types. The WSDL/XML to Java mapping in JAX-RPC will map the <code class="filename">status</code>
+            part defined above to an instance of <code class="filename">javax.activation.DataHandler</code>
+            whose content is of type <code class="filename">org.jvnet.fastinfoset.FastInfosetSource</code>.
+            Thus, the return statement of the <code class="filename">addPhoto</code> operation would create
+            an instance of <code class="filename">DataHandler</code> as shown below.</p><div class="example"><a name="d0e166"></a><p class="title"><b>Example&nbsp;5.&nbsp;Fast Infoset Attachments in Java</b></p><pre class="programlisting">        public javax.activation.DataHandler addPhoto(...)
+            throws java.rmi.RemoteException 
+        {
+            ...
+            return new DataHandler(
+                new FastInfosetSource(...), "application/fastinfoset");
+        }</pre></div><p>
+        </p><p>Please refer to the [<a href="#JAXRPC"><span class="abbrev">JAX-RPC 1.1 Specification</span></a>] for more information on how to use MIME
+            attachments in JAX-RPC and to [<a href="#FI-Java.net"><span class="abbrev">Fast Infoset @ Java.net</span></a>] for more information on how
+            to use Fast Infoset sources and results. The example used in this section is available
+            as part of the set of JAX-RPC samples in
+            <code class="filename">$JWSDP_HOME/jaxrpc/samples</code>.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e181"></a>Web Services Security</h2></div></div></div><p>JWSDP 2.0 also includes support for XML and Web Services Security (XWSS). This library
+            is integrated into JAX-RPC and can be used to define message level security in Web
+            services conversations. Message-level security has a number of advantages over transport
+            level solutions in that security information, as an intrinsic part of a message, can
+            persist over the lifetime of a connection. In addition, XWSS supports features such as
+            signing, which are not commonly supported in transport-level protocols. </p><p>Even though it is conceivably possible to modify the XWSS library to support Fast
+            Infoset natively (e.g., by extending it to support a canonical version of Fast Infoset),
+            we have decided against it at this point due to a lack of (i) interoperable standards
+            and (ii) empirical evidence showing a significant performance improvement in switching
+            to a binary encoding. Research in this area is currently undergoing at Sun as well as at
+            the ITU-T and ISO study groups, so readers should anticipate more information about
+            these research directions. </p><p>Conceptually, the operation of securing a message can be regarded as an
+                <span class="emphasis"><em>infoset transformation</em></span>, which is guided by certain
+            configuration parameters defined by the application's developer. In this sense, securing
+            a message takes place after its infoset is produced and before it is serialized;
+            conversely, unsecuring a message takes place after a message is parsed and before it is
+            consumed. Therefore, Fast Infoset can still be used as the on-the-wire encoding without
+            affecting these two pre-serialization and post-parsing steps. <sup>[<a name="LexicalSpace" href="#ftn.LexicalSpace">1</a>]</sup> Note that this approach still requires the use of an XML parser and an XML
+            serializer (or XML canonicalizer) during the message securing and unsecuring phases. In
+            particular, an XML parser is required to process decrypted fragments and an XML
+            canonicalizer is required to both generate and verify signatures.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e197"></a>Performance</h2></div></div></div><p>As the saying goes, when it comes to performance, "your mileage will vary." Fast
+            Infoset is designed to optimize parsing and serialization, so the key to understanding
+            the potential gains associated with using this technology is understanding the
+            percentage of time your application spends in these two tasks. The greater the
+            percentage, the greater the improvement will be.</p><p>As part of the source code available from the Fast Infoset @ Java.net project [<a href="#FI-Java.net"><span class="abbrev">Fast Infoset @ Java.net</span></a>], there is a tool called Japex that we have used to write a
+            number of different micro-benchmarks for our Fast Infoset implementation. All these
+            performance reports are available from the project's Web page. To summarize, parsing
+            micro-benchmarks show an average improvement of 3-10X depending on the XML parser in
+            question, and JAX-RPC micro-benchmarks show an improvement of 2-5X depending on the
+            structure of the messages exchanged &#8212;with the higher improvements achieved
+            when base64 encoding is avoided. </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e206"></a>Conclusions</h2></div></div></div><p>Fast Infoset @ Java.net [<a href="#FI-Java.net"><span class="abbrev">Fast Infoset @ Java.net</span></a>] is still a young project, and
+            the performance potentials of this technology are yet to be fully explored (especially
+            in relation to advanced features like encoding algorithms, restricted alphabets and
+            external vocabularies). The integration of Fast Infoset into JAX-RPC 1.1.3_01 EA is just a
+            first step towards understanding the benefits of using this technology to speed up Web
+            services. Future versions of JAX-RPC and JWSDP will provide support for many more of the
+            advanced features defined in the Fast Infoset specification.</p><p>Your experience and feedback using this technology are important! Please refer to the
+            Java.net's project page on information about becoming a participant in the Fast Infoset
+            project.</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="d0e215"></a>References</h2></div></div></div><div class="bibliography"><div class="titlepage"><div><div><h3 class="title"><a name="d0e218"></a>Bibliography</h3></div></div></div><div class="bibliomixed"><a name="FI-Java.net"></a><p class="bibliomixed">[<span class="abbrev">Fast Infoset @ Java.net</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://fi.dev.java.net" target="_top">Fast Infoset @ Java.net</a>.</em></span>
+            </p></div><div class="bibliomixed"><a name="JAXRPC"></a><p class="bibliomixed">[<span class="abbrev">JAX-RPC 1.1 Specification</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://www.jcp.org/en/jsr/detail?id=101" target="_top">Java API for XML-based RPC
+                        1.1</a>.</em></span>
+            </p></div><div class="bibliomixed"><a name="Infoset"></a><p class="bibliomixed">[<span class="abbrev">XML Information Set</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://www.w3.org/TR/xml-infoset/" target="_top">XML Information
+                Set</a>.</em></span>
+            </p></div><div class="bibliomixed"><a name="SOAP"></a><p class="bibliomixed">[<span class="abbrev">SOAP 1.2</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://www.w3.org/TR/soap12-part1/" target="_top">SOAP Version 1.2 Part 1:
+                        Messaging Framework</a>.</em></span>
+            </p></div><div class="bibliomixed"><a name="MTOM"></a><p class="bibliomixed">[<span class="abbrev">MTOM</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://www.w3.org/TR/soap12-mtom/" target="_top">SOAP Message Transmission
+                        Optimization Mechanism</a>.</em></span>
+            </p></div><div class="bibliomixed"><a name="XOP"></a><p class="bibliomixed">[<span class="abbrev">XOP</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://www.w3.org/TR/xop10/" target="_top">XML-binary Optimized
+                Packaging</a>.</em></span>
+            </p></div><div class="bibliomixed"><a name="XSD-Datatypes"></a><p class="bibliomixed">[<span class="abbrev">XSD Datatypes</span>] 
+                
+                <span class="citetitle"><em class="citetitle">
+                    <a href="http://www.w3.org/TR/xmlschema-2/" target="_top">XML Schema Part 2: Datatypes
+                        Second Edition</a>.</em></span>
+            </p></div></div></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.LexicalSpace" href="#LexicalSpace">1</a>] </sup>Care should be exercised if, in a given implementation, encoding algorithms do
+                    not preserve a datatype's lexical space because this may result in errors during
+                    the signature verification process.</p></div></div></div></body></html>

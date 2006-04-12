@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+<!DOCTYPE project SYSTEM "../project.dtd" >
+-->
+<project default="deploy">
+  <property file="build.properties"/>
+  <target name="deploy" >
+     
+     <copy file="${samples.home}/${appname}/jaxrpc-${appname}.war" todir="${tomcat.root}/webapps"/>
+     
+  </target>
+</project>

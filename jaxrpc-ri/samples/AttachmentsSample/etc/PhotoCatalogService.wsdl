@@ -1,0 +1,116 @@
+<wsdl:definitions
+  name="PhotoCatalogService"
+  targetNamespace="http://examples.com/PhotoCatalog"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:types="http://examples.com/PhotoCatalog/types"
+  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+  xmlns:tns="http://examples.com/PhotoCatalog">
+
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://examples.com/PhotoCatalog/types"
+        xmlns:wsi="http://ws-i.org/profiles/basic/1.1/xsd"
+        xmlns:types="http://examples.com/PhotoCatalog/types">
+        <xsd:import namespace="http://ws-i.org/profiles/basic/1.1/xsd" schemaLocation="WS-ISwA.xsd"/>
+    <!-- Status contains the references the old photo available as attachment. -->
+    <xsd:element name="Status" type="wsi:swaRef" />
+      
+    <!-- passed in as parameter of replacePhoto operation, contains the order. -->
+    <xsd:element name="PhotoInfo">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="customerName" type="xsd:string"/>
+                <xsd:element name="photoID" type="xsd:int"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="addPhotoRequest">
+    <wsdl:part name="photo" type="xsd:hexBinary"/>
+  </wsdl:message>
+
+  <wsdl:message name="addPhotoResponse">
+    <wsdl:part name="status" type="xsd:string"/>
+  </wsdl:message>
+
+  <wsdl:message name="replacePhotoRequest">
+    <wsdl:part name="oldPhoto" element="types:PhotoInfo"/>
+    <wsdl:part name="newPhoto" type="xsd:hexBinary"/>
+  </wsdl:message>
+
+  <wsdl:message name="replacePhotoResponse">
+    <wsdl:part name="status" element="types:Status"/>
+  </wsdl:message>
+
+  <wsdl:portType name="PhotoCatalog">
+    <wsdl:operation name="addPhoto">
+      <wsdl:input message="tns:addPhotoRequest"/>
+      <wsdl:output message="tns:addPhotoResponse"/>
+    </wsdl:operation>
+
+    <wsdl:operation name="replacePhoto">
+      <wsdl:input message="tns:replacePhotoRequest"/>
+      <wsdl:output message="tns:replacePhotoResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="PhotoCatalogBinding" type="tns:PhotoCatalog">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <wsdl:operation name="addPhoto">
+      <wsdl:input>
+        <mime:multipartRelated>
+          <mime:part>
+            <soap:body use="literal"/>
+          </mime:part>
+          <mime:part>
+            <mime:content part="photo" type="image/jpeg"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </wsdl:input>
+
+      <wsdl:output>
+        <mime:multipartRelated>
+          <mime:part>
+            <soap:body use="literal"/>
+          </mime:part>
+          <mime:part>
+            <!-- <mime:content part="status" type="text/xml"/> -->
+            <mime:content part="status" type="application/fastinfoset"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="replacePhoto">
+      <wsdl:input>
+        <mime:multipartRelated>
+          <mime:part>
+            <soap:body parts="oldPhoto" use="literal"/>
+          </mime:part>
+          <mime:part>
+            <mime:content part="newPhoto" type="image/jpeg"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </wsdl:input>
+
+      <wsdl:output>
+        <mime:multipartRelated>
+          <mime:part>
+            <soap:body parts="status" use="literal"/>
+          </mime:part>
+        </mime:multipartRelated>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="PhotoCatalogService">
+    <wsdl:port name="PhotoCatalogPort" binding="tns:PhotoCatalogBinding">
+      <soap:address location="http://localhost:8080/jaxrpc-AttachmentsSample/photocatalog"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
