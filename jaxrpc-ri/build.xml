@@ -638,18 +638,32 @@
       </fileset>
     </copy>
 
-    <!-- copy jaxrpc bin files into the right directory structure -->
-    <copy tofile="${zip.build.dir}/jaxrpc/bin/wscompile.sh" overwrite="yes">
+    <copy todir="${zip.build.dir}" overwrite="yes">
       <fileset dir="${basedir}/zip">
-        <include name="wscompile.sh"/>
+        <include name="filelist.txt"/>
+        <include name="version"/>
       </fileset>
     </copy>
 
-    <copy tofile="${zip.build.dir}/jaxrpc/bin/wsdeploy.sh" overwrite="yes">
-      <fileset dir="${basedir}/zip">
-        <include name="wsdeploy.sh"/>
-      </fileset>
-    </copy>
+    <!-- replace parameters in filelist.txt  -->
+    <replace file="${zip.build.dir}/filelist.txt" value="${pkg.version}">
+      <replacetoken>@jaxrpc.version@</replacetoken>
+    </replace>
+
+    <!-- replace parameters in version file  -->
+    <replace file="${zip.build.dir}/version" value="${pkg.version}">
+      <replacetoken>@jaxrpc.version@</replacetoken>
+    </replace>
+    <!-- replace date stamp... 1st specify correct format  -->
+    <tstamp>
+      <format property="pkg.datestamp" pattern="yyyyMMdd"/>
+    </tstamp>
+    <replace file="${zip.build.dir}/version" value="${pkg.datestamp}">
+      <replacetoken>@datestamp@</replacetoken>
+    </replace>
+    <replace file="${zip.build.dir}/version" value="${rpm.release}">
+      <replacetoken>@rpm.release@</replacetoken>
+    </replace>
 
     <!-- copy jaxrpc specific jar files into the right directory structure -->
     <copy todir="${zip.build.dir}/jaxrpc/lib" overwrite="yes">
@@ -659,7 +673,7 @@
     </copy>
 
     <!-- make zip file -->
-    <zip destfile="${zip.release.dir}/JAXRPC-${pkg.version}.zip" basedir="${zip.build.dir}" whenempty="fail"/>
+    <zip destfile="${zip.release.dir}/jaxrpc.zip" basedir="${zip.build.dir}" whenempty="fail"/>
 
 
   </target>
