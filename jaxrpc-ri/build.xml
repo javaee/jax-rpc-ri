@@ -33,6 +33,7 @@
   <property name="rpm.version" value="1.1.3"/>
   <property name="version" value="${pkg.version}-INTERNAL"/>
   <property name="rpm.release" value="1"/>
+  <property name="zip.release" value="1"/>
 
 <!-- ************ Per user local properties ******************************* -->
 
@@ -645,11 +646,6 @@
       </fileset>
     </copy>
 
-    <!-- replace parameters in filelist.txt  -->
-    <replace file="${zip.build.dir}/filelist.txt" value="${pkg.version}">
-      <replacetoken>@jaxrpc.version@</replacetoken>
-    </replace>
-
     <!-- replace parameters in version file  -->
     <replace file="${zip.build.dir}/version" value="${pkg.version}">
       <replacetoken>@jaxrpc.version@</replacetoken>
@@ -661,7 +657,7 @@
     <replace file="${zip.build.dir}/version" value="${pkg.datestamp}">
       <replacetoken>@datestamp@</replacetoken>
     </replace>
-    <replace file="${zip.build.dir}/version" value="${rpm.release}">
+    <replace file="${zip.build.dir}/version" value="${zip.release}">
       <replacetoken>@rpm.release@</replacetoken>
     </replace>
 
