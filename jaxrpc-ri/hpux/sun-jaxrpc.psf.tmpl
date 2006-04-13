@@ -1,0 +1,44 @@
+depot
+	layout_version 1.0
+vendor 
+	tag SUN
+	title SUN Microsystems
+	description "JES"
+end
+
+product
+	tag 		sun-jaxrpc
+	title		Java API for XML-based RPC
+	description 	"Java API for XML-based RPC 1.1.2"
+	copyright	"Copyright 2003 Sun Microsystems, Inc.  All rights reserved.
+Use is subject to license terms."
+	revision	@jaxrpc.version@
+	number		REV=@datestamp@
+	architecture	HP-UX_B.11.11_32/64
+	vendor_tag	SUN
+	machine_type	*
+	os_name 	HP-UX
+	os_release	B.11.11
+	os_version	*
+	is_locatable	true
+	directory	/
+
+	fileset
+		tag		sun-jaxrpc
+		prerequisite	sun-saaj
+		prerequisite	sun-wscl
+
+		file -m 0755 -t d -o root -g sys /opt/sun/bin
+		file -m 0755 -t d -o root -g sys /opt/sun/share
+		file -m 0755 -t d -o root -g sys /opt/sun/private
+		file -m 0755 -t d -o root -g sys /opt/sun/private/share
+		file -m 0755 -t d -o root -g sys /opt/sun/share/lib
+		file -m 0755 -t d -o root -g sys /opt/sun/private/share/lib
+
+		file -m 0644 -o root -g root @libdir@/jaxrpc-api.jar /opt/sun/share/lib/jaxrpc-api.jar
+		file -m 0644 -o root -g root @libdir@/jaxrpc-impl.jar /opt/sun/share/lib/jaxrpc-impl.jar
+		file -m 0644 -o root -g root @libdir@/jaxrpc-spi.jar /opt/sun/private/share/lib/jaxrpc-spi.jar
+		file -m 0755 -o root -g root @bindir@/wscompile.sh /opt/sun/bin/wscomplie
+		file -m 0755 -o root -g root @bindir@/wsdeploy.sh /opt/sun/bin/wsdeploy
+	end
+end
