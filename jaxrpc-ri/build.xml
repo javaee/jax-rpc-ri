@@ -341,8 +341,8 @@
     </copy>
 
     <!-- add a copy of the license and README files to the top level -->
-    <copy todir="${dist.home}"
-          file="LICENSE.html" />
+<!--    <copy todir="${dist.home}"
+          file="LICENSE.html" /> -->
     <copy todir="${dist.home}"
           file="README" />
   </target>
