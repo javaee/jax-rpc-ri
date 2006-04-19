@@ -658,7 +658,7 @@
       <replacetoken>@datestamp@</replacetoken>
     </replace>
     <replace file="${zip.build.dir}/version" value="${zip.release}">
-      <replacetoken>@rpm.release@</replacetoken>
+      <replacetoken>@zip.release@</replacetoken>
     </replace>
 
     <!-- copy jaxrpc specific jar files into the right directory structure -->
