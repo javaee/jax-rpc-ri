@@ -1,5 +1,5 @@
 /*
- * $Id: CookieJar.java,v 1.2 2006-04-13 01:26:55 ofung Exp $
+ * $Id: CookieJar.java,v 1.3 2006-06-13 17:23:42 jitu Exp $
  */
 
 /*
@@ -39,13 +39,13 @@ import java.util.Vector;
  *
  * @author JAX-RPC Development Team
  */
-public class CookieJar {
+public class CookieJar implements java.io.Serializable {
 
     // The representation of cookies is relatively simple right now:
     // a hash table with key being the domain and the value being
     // a vector of cookies for that domain.
     // REMIND: create this on demand in the future
-    private transient Hashtable cookieJar = new Hashtable();
+    private Hashtable cookieJar = new Hashtable();
 
     /**
      * Create a new, empty cookie jar.

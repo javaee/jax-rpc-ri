@@ -1,5 +1,5 @@
 /*
- * $Id: HttpCookie.java,v 1.2 2006-04-13 01:26:57 ofung Exp $
+ * $Id: HttpCookie.java,v 1.3 2006-06-13 17:23:42 jitu Exp $
  */
 
 /*
@@ -41,7 +41,7 @@ import java.util.StringTokenizer;
  *
  * @author JAX-RPC Development Team
  */
-public class HttpCookie {
+public class HttpCookie implements java.io.Serializable {
 
     private Date expirationDate = null;
     private String nameAndValue;
