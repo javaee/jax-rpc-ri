@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<!--
+ The contents of this file are subject to the terms
+ of the Common Development and Distribution License
+ (the "License").  You may not use this file except
+ in compliance with the License.
+ 
+ You can obtain a copy of the license at
+ https://jwsdp.dev.java.net/CDDLv1.0.html
+ See the License for the specific language governing
+ permissions and limitations under the License.
+ 
+ When distributing Covered Code, include this CDDL
+ HEADER in each file and include the License file at
+ https://jwsdp.dev.java.net/CDDLv1.0.html  If applicable,
+ add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your
+ own identifying information: Portions Copyright [yyyy]
+ [name of copyright owner]
+-->
+
+<project name="JAXRPC-RI-MAVEN" basedir=".">
+
+<target name="push-to-maven-prepare">
+  <taskdef resource="maven-repository-importer.properties">
+    <classpath>
+      <pathelement path="lib/maven-repository-importer-1.1.jar" />
+    </classpath>
+  </taskdef>
+  <delete dir="build/maven-repo" /><!-- clean it -->
+  <maven-repository-importer destdir="build/maven-repo" version="1.1.3_01">
+    <artifact jar="../build/lib/jaxrpc-api.jar"  pom="jaxrpc-api.pom" />
+    <artifact jar="../build/lib/jaxrpc-impl.jar" pom="jaxrpc-impl.pom" />
+    <artifact jar="../build/lib/jaxrpc-spi.jar" pom="jaxrpc-spi.pom" />
+  </maven-repository-importer>
+</target>
+
+<target name="push-to-maven" depends="push-to-maven-prepare">
+  <!-- import to CVS-->
+  <tstamp />
+  <echo>importing to CVS...</echo>
+  <cvs dest="build/maven-repo">
+    <commandline>
+      <argument value="-d:pserver:${user.name}@kohsuke.sfbay.sun.com:/cvs" />
+      <argument line="-z9 import -ko -W *.jar -kb -m" />
+      <argument value="deploying new jars to the java.net maven repository" />
+
+      <argument value="jax-rpc/repo" />
+      <argument line="deployment-to-maven-repository t${DSTAMP}${TSTAMP}" />
+    </commandline>
+  </cvs>
+</target>
+
+</project>

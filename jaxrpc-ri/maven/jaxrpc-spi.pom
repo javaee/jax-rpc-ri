@@ -1,0 +1,13 @@
+<project>
+ <modelVersion>4.0.0</modelVersion>
+ <groupId>com.sun.xml.rpc</groupId>
+ <artifactId>jaxrpc-spi</artifactId>
+ <version>1.1.3_01</version>
+ <dependencies>
+   <dependency>
+     <groupId>javax.xml</groupId>
+     <artifactId>jaxrpc-api</artifactId>
+     <version>1.1</version>
+   </dependency>
+ </dependencies>
+</project>
