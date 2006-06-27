@@ -1,5 +1,0 @@
-jaxrpc/bin/wscompile.bat
-jaxrpc/bin/wsdeploy.bat
-jaxrpc/lib/jaxrpc-api.jar
-jaxrpc/lib/jaxrpc-impl.jar
-jaxrpc/lib/jaxrpc-spi.jar
