@@ -1,5 +1,5 @@
 /*
- * $Id: XSDDateTimeCalendarEncoder.java,v 1.2 2006-04-13 01:27:51 ofung Exp $
+ * $Id: XSDDateTimeCalendarEncoder.java,v 1.3 2006-07-13 20:59:20 jitu Exp $
  */
 
 /*
@@ -80,16 +80,35 @@ public class XSDDateTimeCalendarEncoder extends XSDDateTimeDateEncoder {
         if (c.get(Calendar.ERA) == GregorianCalendar.BC) {   
             resultBuf.append('-');     
         }
-        synchronized (calendarFormatter) {
-            zoneFormatter.setTimeZone(c.getTimeZone());
-            zone = zoneFormatter.format(c.getTime());
-            calendarFormatter.setTimeZone(c.getTimeZone());
-            resultBuf.append(calendarFormatter.format(c.getTime()));
-        }
+		SimpleDateFormat calendarFormat = getCalendarFormat();
+		SimpleDateFormat zoneFormat = getZoneFormat();
+        zoneFormat.setTimeZone(c.getTimeZone());
+        zone = zoneFormat.format(c.getTime());
+        calendarFormat.setTimeZone(c.getTimeZone());
+        resultBuf.append(calendarFormat.format(c.getTime()));
         offsetStr = zone.substring(0, 3)+":"+zone.substring(3,5);
         resultBuf.append(offsetStr);
         return resultBuf.toString();
     }
+
+	public SimpleDateFormat getCalendarFormat() {
+		SimpleDateFormat format = (SimpleDateFormat)calendarFormatter.get();
+		if (format == null) {
+			format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
+        	format.setTimeZone(gmtTimeZone);
+			calendarFormatter.set(format);
+		}
+		return format;
+	}
+
+	public SimpleDateFormat getZoneFormat() {
+		SimpleDateFormat format = (SimpleDateFormat)zoneFormatter.get();
+		if (format == null) {
+			format = new SimpleDateFormat("Z", locale);
+			zoneFormatter.set(format);
+		}
+		return format;
+	}
 
     public Object stringToObject(String str, XMLReader reader)
         throws Exception { 
@@ -134,17 +153,15 @@ public class XSDDateTimeCalendarEncoder extends XSDDateTimeDateEncoder {
         return ((SimpleTimeZone) tz).getDSTSavings();
     }
 
+    private static final ThreadLocal zoneFormatter = new ThreadLocal();
+    private static final ThreadLocal calendarFormatter = new ThreadLocal();
+
+/*
     private static final SimpleDateFormat zoneFormatter =
         new SimpleDateFormat("Z", locale);
     private static final SimpleDateFormat calendarFormatter =
         new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    private static final SimpleDateFormat calendarFormatterBC =
-        new SimpleDateFormat("'-'yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    
-    static {
-        calendarFormatter.setTimeZone(gmtTimeZone);
-        calendarFormatterBC.setTimeZone(gmtTimeZone);
-    }
+*/
 
     public void writeAdditionalNamespaceDeclarations(
         Object obj,
