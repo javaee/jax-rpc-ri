@@ -118,7 +118,7 @@
 
 <!-- ************ Dependencies **** *************************************** -->
   <!-- The locations of necessary jar files -->
-  <property name="javamail.jar" value="${java.mail}"/>
+  <property name="javamail.jar" value="${lib.home}/mail-1.4.jar"/>
   <property name="jaf.jar" value="${lib.home}/activation.jar"/>
   <property name="jaxp-api.jar" value="${lib.home}/jaxp-api.jar"/>
   <property name="dom.jar" value="${lib.home}/dom.jar"/>
@@ -203,23 +203,7 @@
 
 <!-- ************ Executable Targets ************************************** -->
 
-
-  <target name="init">
-    <echo message="-------- ${Name} ${version} --------"/>
-    <echo message="java.mail=${java.mail}"/>
-    <condition property="java.mail.set">
-      <isset property="java.mail"/>
-    </condition>
-    <condition property="java.mail.available">
-       <available
-                file="${java.mail}"
-                type="file"/>
-    </condition>
-    <fail message="Please set java.mail property to the location of the mail.jar file from JavaMail" unless="java.mail.set"/>
-    <fail message="The java.mail property does not reference an existing file: ${java.mail}" unless="java.mail.available"/>
-  </target>
-
-  <target name="prepare" depends="init">
+  <target name="prepare">
     <mkdir dir="${build.home}"/>
     <mkdir dir="${build.home}/bin"/>
     <mkdir dir="${build.home}/classes"/>
