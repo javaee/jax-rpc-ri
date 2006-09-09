@@ -42,9 +42,9 @@ goto setArgs
 
 setlocal
 
-set CLASSPATH=%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-impl.jar;%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-api.jar;%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-spi.jar;%WEBSERVICES_LIB%\jaf\lib\activation.jar;%WEBSERVICES_LIB%\saaj\lib\saaj-api.jar;%WEBSERVICES_LIB%\saaj\lib\saaj-impl.jar;%WEBSERVICES_LIB%\javamail\lib\mail.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\jaxp-api.jar;%WEBSERVICES_LIB%\jaxp\endorsed\lib\dom.jar;%WEBSERVICES_LIB%\jaxp\endorsed\lib\sax.jar;%WEBSERVICES_LIB%\jaxp\endorsed\lib\xalan.jar;%WEBSERVICES_LIB%\jaxp\endorsed\lib\xercesImpl.jar;%WEBSERVICES_LIB%\wscl\lib\relaxngDatatype.jar;%WEBSERVICES_LIB%\wscl\lib\xsdlib.jar;%JAVA_HOME%\lib\tools.jar
+set CLASSPATH=%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-impl.jar;%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-api.jar;%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-spi.jar;%WEBSERVICES_LIB%\jaf\lib\activation.jar;%WEBSERVICES_LIB%\saaj\lib\saaj-api.jar;%WEBSERVICES_LIB%\saaj\lib\saaj-impl.jar;%WEBSERVICES_LIB%\javamail\lib\mail.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\jaxp-api.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\dom.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\sax.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\xalan.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\xercesImpl.jar;%WEBSERVICES_LIB%\wscl\lib\relaxngDatatype.jar;%WEBSERVICES_LIB%\wscl\lib\xsdlib.jar;%JAVA_HOME%\lib\tools.jar
 
-"%JAVA_HOME%\bin\java" %WSCOMPILE_OPTS% -cp "%CLASSPATH%" com.sun.xml.rpc.tools.wscompile.Main %CMD_LINE_ARGS%
+"%JAVA_HOME%\bin\java" "%WSCOMPILE_OPTS%" -cp "%CLASSPATH%" com.sun.xml.rpc.tools.wscompile.Main %CMD_LINE_ARGS%
 
 endlocal
 
