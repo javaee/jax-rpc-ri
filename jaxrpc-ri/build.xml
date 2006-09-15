@@ -118,7 +118,7 @@
 
 <!-- ************ Dependencies **** *************************************** -->
   <!-- The locations of necessary jar files -->
-  <property name="javamail.jar" value="${lib.home}/mail-1.4.jar"/>
+  <property name="javamail.jar" value="${lib.home}/mail.jar"/>
   <property name="jaf.jar" value="${lib.home}/activation.jar"/>
   <property name="jaxp-api.jar" value="${lib.home}/jaxp-api.jar"/>
   <property name="dom.jar" value="${lib.home}/dom.jar"/>
