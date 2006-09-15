@@ -1,5 +1,5 @@
 /*
- * $Id: WSDLModelerBase.java,v 1.2 2006-04-13 01:31:33 ofung Exp $
+ * $Id: WSDLModelerBase.java,v 1.3 2006-09-15 23:15:12 vivekp Exp $
  */
 
 /*
@@ -2042,7 +2042,8 @@ public abstract class WSDLModelerBase implements Modeler {
             buildParameterList = true;
         }
 
-        Set partNames = new HashSet();
+        //bug fix 6468446 and 6471360
+        List partNames = new ArrayList();
         boolean gotOne = false;
 
         List inputMessageParts = getMessageParts(soapRequestBody, inputMessage, true);
@@ -2085,7 +2086,7 @@ public abstract class WSDLModelerBase implements Modeler {
                         !isStyleAndPartMatch(soapOperation, part)) {
 					continue;
 				}
-				
+
 				partNames.add(part.getName());
                 // bugid 4721551, parameterOrder bug.
                 // return void if no parameterOrder, all the return params go as holder in method in param      
