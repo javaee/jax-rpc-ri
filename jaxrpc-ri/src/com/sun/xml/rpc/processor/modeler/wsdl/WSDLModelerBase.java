@@ -1,5 +1,5 @@
 /*
- * $Id: WSDLModelerBase.java,v 1.3 2006-09-15 23:15:12 vivekp Exp $
+ * $Id: WSDLModelerBase.java,v 1.4 2006-09-18 22:29:42 vivekp Exp $
  */
 
 /*
@@ -26,15 +26,7 @@
 
 package com.sun.xml.rpc.processor.modeler.wsdl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 
@@ -2043,7 +2035,7 @@ public abstract class WSDLModelerBase implements Modeler {
         }
 
         //bug fix 6468446 and 6471360
-        List partNames = new ArrayList();
+        Set partNames = new LinkedHashSet();
         boolean gotOne = false;
 
         List inputMessageParts = getMessageParts(soapRequestBody, inputMessage, true);
