@@ -6,5 +6,5 @@ Implementation-Version: 1.1.3_01
 Implementation-Vendor: Sun Microsystems Inc
 Implementation-Vendor-Id: com.sun
 Extension-Name: com.sun.xml.rpc
-Class-Path: jaxrpc-spi.jar ../../private/share/lib/jaxrpc-spi.jar saaj-api.jar saaj-impl.jar jax-qname.jar namespace.jar relaxngDatatype.jar ../../private/share/lib/relaxngDatatype.jar xsdlib.jar ../../private/share/lib/xsdlib.jar FastInfoset.jar ../../../opt/SUNWjax/share/lib/FastInfoset.jar jsr173-api.jar
+Class-Path: jaxrpc-spi.jar ../../private/share/lib/jaxrpc-spi.jar saaj-api.jar saaj-impl.jar jax-qname.jar namespace.jar relaxngDatatype.jar ../../private/share/lib/relaxngDatatype.jar xsdlib.jar ../../private/share/lib/xsdlib.jar FastInfoset.jar ../../../opt/SUNWjax/share/lib/FastInfoset.jar jsr173_api.jar
 
