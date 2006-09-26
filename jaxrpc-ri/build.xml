@@ -669,7 +669,7 @@
     <copy tofile="${hpux.build.dir}/sun-jaxrpc.psf" file="${basedir}/hpux/sun-jaxrpc.psf.tmpl" overwrite="yes"/>
 
     <!-- replace jaxrpc version -->
-    <replace file="${hpux.build.dir}/sun-jaxrpc.psf" value="${pkg.version}">
+    <replace file="${hpux.build.dir}/sun-jaxrpc.psf" value="${rpm.version}">
       <replacetoken>@jaxrpc.version@</replacetoken>
     </replace>
 
