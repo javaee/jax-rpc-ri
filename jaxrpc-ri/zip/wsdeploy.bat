@@ -29,7 +29,7 @@ goto END
 :CONTA
 
 set PRG=%0
-set WEBSERVICES_LIB=%PRG%\..\..\..
+set WEBSERVICES_LIB=%PRG%\..\..\lib
 
 rem Get command line arguments and save them
 set CMD_LINE_ARGS=
@@ -42,7 +42,7 @@ goto setArgs
 
 setlocal
 
-set CLASSPATH=%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-impl.jar;%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-api.jar;%WEBSERVICES_LIB%\jaxrpc\lib\jaxrpc-spi.jar;%WEBSERVICES_LIB%\jaf\lib\activation.jar;%WEBSERVICES_LIB%\saaj\lib\saaj-api.jar;%WEBSERVICES_LIB%\saaj\lib\saaj-impl.jar;%WEBSERVICES_LIB%\javamail\lib\mail.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\jaxp-api.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\dom.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\sax.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\xalan.jar;%WEBSERVICES_LIB%\jaxp\lib\endorsed\xercesImpl.jar;%WEBSERVICES_LIB%\wscl\lib\relaxngDatatype.jar;%WEBSERVICES_LIB%\wscl\lib\xsdlib.jar;%JAVA_HOME%\lib\tools.jar
+set CLASSPATH=%WEBSERVICES_LIB%\jaxrpc-impl.jar;%WEBSERVICES_LIB%\jaxrpc-api.jar;%WEBSERVICES_LIB%\jaxrpc-spi.jar;%WEBSERVICES_LIB%\activation.jar;%WEBSERVICES_LIB%\saaj-api.jar;%WEBSERVICES_LIB%\saaj-impl.jar;%WEBSERVICES_LIB%\mail.jar;%WEBSERVICES_LIB%\endorsed\jaxp-api.jar;%WEBSERVICES_LIB%\endorsed\dom.jar;%WEBSERVICES_LIB%\endorsed\sax.jar;%WEBSERVICES_LIB%\endorsed\xalan.jar;%WEBSERVICES_LIB%\endorsed\xercesImpl.jar;%WEBSERVICES_LIB%\relaxngDatatype.jar;%WEBSERVICES_LIB%\xsdlib.jar;%JAVA_HOME%\lib\tools.jar
 
 "%JAVA_HOME%\bin\java" "%WSDEPLOY_OPTS%" -cp "%CLASSPATH%" com.sun.xml.rpc.tools.wsdeploy.Main %CMD_LINE_ARGS% 
 
