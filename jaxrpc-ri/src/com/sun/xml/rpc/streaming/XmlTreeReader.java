@@ -1,5 +1,5 @@
 /*
- * $Id: XmlTreeReader.java,v 1.2 2006-04-13 01:33:25 ofung Exp $
+ * $Id: XmlTreeReader.java,v 1.2.2.1 2008-02-08 02:47:41 venkatajetti Exp $
  */
 
 /*
@@ -146,24 +146,30 @@ public class XmlTreeReader extends XMLReaderBase {
         return state;
     }
 
-    public void parse() {
+	public void parse() {
 
         switch (state) {
             case BOF :
                 currentNode = root;
                 state = START;
                 break;
-
+                
             case START :
                 // SAAJ tree might contain multiple contiguous text nodes
                 currentNode.normalize();
                 org.w3c.dom.Node first = currentNode.getFirstChild();
                 if (first != null) {
                     if (first instanceof Text) {
-                        org.w3c.dom.Node sec = first.getNextSibling();
+                    	// CR-6633981, Jaxrpc backword compatibility merge from RTS
+                    	while(first != null && first.getNextSibling() != null && first.getNextSibling().getNodeType() != org.w3c.dom.Node.ELEMENT_NODE){
+                    		first = first.getNextSibling();
+                      	}
+                    	org.w3c.dom.Node sec = null;
+                      	if(first != null)
+                      		sec = first.getNextSibling();
                         if (sec != null) {
                             // ignoring inter-element whitespace
-                            currentNode = (SOAPElement) sec;
+                            currentNode = (SOAPElement)sec;
                             state = START;
                         } else {
                             state = CHARS;
@@ -174,10 +180,10 @@ public class XmlTreeReader extends XMLReaderBase {
                         }
                     } else if (first instanceof SOAPElement) {
                         state = START;
-                        currentNode = (SOAPElement) first;
+                        currentNode = (SOAPElement)first;
                     } else {
                         throw new XMLReaderException(
-                            "xmlreader.illegalType " + first.getClass());
+                            "xmlreader.illegalType "+first.getClass());
                     }
                 } else {
                     state = END;
@@ -187,9 +193,13 @@ public class XmlTreeReader extends XMLReaderBase {
             case END :
                 org.w3c.dom.Node nextNode = currentNode.getNextSibling();
                 if (nextNode != null && nextNode instanceof Text) {
-                    // ignoring inter-element whitespace
-                    nextNode = nextNode.getNextSibling();
-                }
+                	// CR-6633981, Jaxrpc backword compatibility merge from RTS
+                	while(nextNode != null && nextNode.getNextSibling() != null && nextNode.getNextSibling().getNodeType() != org.w3c.dom.Node.ELEMENT_NODE){
+                      nextNode = nextNode.getNextSibling();
+                	}
+                	if(nextNode != null)
+                	nextNode = nextNode.getNextSibling();
+                 }
                 if (nextNode == null) {
                     // use root instead null so that it works with subtrees
                     if (currentNode == root) {
@@ -199,8 +209,8 @@ public class XmlTreeReader extends XMLReaderBase {
                         currentNode = currentNode.getParentElement();
                     }
                 } else {
-                    state = START;
-                    currentNode = (SOAPElement) nextNode;
+                	state = START;
+                    currentNode = (SOAPElement)nextNode;
                 }
                 break;
 
@@ -213,8 +223,8 @@ public class XmlTreeReader extends XMLReaderBase {
                 break;
             default :
                 throw new XMLReaderException(
-                    "xmlreader.illegalStateEncountered",
-                    Integer.toString(state));
+					"xmlreader.illegalStateEncountered",
+                     Integer.toString(state));
         }
     }
 
