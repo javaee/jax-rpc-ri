@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractDocument.java,v 1.2.2.1 2008-02-08 02:52:19 venkatajetti Exp $
+ * $Id: AbstractDocument.java,v 1.2.2.2 2008-02-08 04:54:44 venkatajetti Exp $
  */
 
 /*
@@ -128,7 +128,7 @@ public abstract class AbstractDocument {
         //rollback this fix, as it breaks how wsdl is generated
 
         if (map.containsKey(name)) ;
-            // CR-6660331, Jaxrpc backword compatibility merge from RTS
+            // CR-6660331, Merge from JavaCAPS RTS for backward compatibility
             //throw new DuplicateEntityException(e);
         else
             map.put(name, e);
