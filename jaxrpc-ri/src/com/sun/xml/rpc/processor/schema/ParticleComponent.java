@@ -1,5 +1,5 @@
 /*
- * $Id: ParticleComponent.java,v 1.2 2006-04-13 01:31:48 ofung Exp $
+ * $Id: ParticleComponent.java,v 1.2.2.1 2008-02-08 02:59:21 venkatajetti Exp $
  */
 
 /*
@@ -47,9 +47,10 @@ public class ParticleComponent extends Component {
     }
     
     public int getMaxOccurs() {
+        // CR-6660318, Jaxrpc backword compatibility merge from RTS
         if (_maxOccurs == UNBOUNDED) {
-            throw new IllegalStateException();
-        }
+               return 1;
+		}
         return _maxOccurs;
     }
     
@@ -140,5 +141,6 @@ public class ParticleComponent extends Component {
     private WildcardComponent _wildcardTerm;
     private ElementDeclarationComponent _elementTerm;
     
-    private static final int UNBOUNDED = -1;
+    // CR-6660318, Jaxrpc backword compatibility merge from RTS
+    private static final int UNBOUNDED = 1;
 }
