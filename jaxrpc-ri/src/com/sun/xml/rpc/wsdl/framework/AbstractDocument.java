@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractDocument.java,v 1.2 2006-04-13 01:34:29 ofung Exp $
+ * $Id: AbstractDocument.java,v 1.2.2.1 2008-02-08 02:52:19 venkatajetti Exp $
  */
 
 /*
@@ -127,8 +127,9 @@ public abstract class AbstractDocument {
         // bug fix: 6264237, fix for curcular dependency, we dont throw error on duplicate entities.
         //rollback this fix, as it breaks how wsdl is generated
 
-        if (map.containsKey(name))
-            throw new DuplicateEntityException(e);
+        if (map.containsKey(name)) ;
+            // CR-6660331, Jaxrpc backword compatibility merge from RTS
+            //throw new DuplicateEntityException(e);
         else
             map.put(name, e);
     }
