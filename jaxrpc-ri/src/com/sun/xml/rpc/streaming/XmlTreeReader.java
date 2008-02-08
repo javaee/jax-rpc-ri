@@ -1,5 +1,5 @@
 /*
- * $Id: XmlTreeReader.java,v 1.2.2.1 2008-02-08 02:47:41 venkatajetti Exp $
+ * $Id: XmlTreeReader.java,v 1.2.2.2 2008-02-08 04:54:16 venkatajetti Exp $
  */
 
 /*
@@ -160,7 +160,7 @@ public class XmlTreeReader extends XMLReaderBase {
                 org.w3c.dom.Node first = currentNode.getFirstChild();
                 if (first != null) {
                     if (first instanceof Text) {
-                    	// CR-6633981, Jaxrpc backword compatibility merge from RTS
+                        // CR-6633981, Merge from JavaCAPS RTS for backward compatibility
                     	while(first != null && first.getNextSibling() != null && first.getNextSibling().getNodeType() != org.w3c.dom.Node.ELEMENT_NODE){
                     		first = first.getNextSibling();
                       	}
@@ -193,7 +193,7 @@ public class XmlTreeReader extends XMLReaderBase {
             case END :
                 org.w3c.dom.Node nextNode = currentNode.getNextSibling();
                 if (nextNode != null && nextNode instanceof Text) {
-                	// CR-6633981, Jaxrpc backword compatibility merge from RTS
+                	// CR-6633981, Merge from JavaCAPS RTS for backward compatibility
                 	while(nextNode != null && nextNode.getNextSibling() != null && nextNode.getNextSibling().getNodeType() != org.w3c.dom.Node.ELEMENT_NODE){
                       nextNode = nextNode.getNextSibling();
                 	}
