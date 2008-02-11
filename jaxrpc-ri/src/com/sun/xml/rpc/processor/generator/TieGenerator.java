@@ -21,7 +21,7 @@
  */
 
 /*
- * $Id: TieGenerator.java,v 1.2 2006-04-13 01:29:00 ofung Exp $
+ * $Id: TieGenerator.java,v 1.2.2.1 2008-02-11 10:41:48 venkatajetti Exp $
  */
 
 /*
@@ -192,7 +192,19 @@ public class TieGenerator extends StubTieGeneratorBase {
     }
 
     protected void preVisitOperation(Operation operation) throws Exception {
-        String name = operation.getName().getLocalPart();
+		// CR-6660354, Merge from JavaCAPS RTS for backward compatibility
+        //String name = operation.getName().getLocalPart();
+		QName name = null;
+    	 Message message = operation.getRequest();
+         boolean hasEmptyBody = message.getBodyBlockCount() == 0;
+         if (message.getBodyBlockCount() > 1) {
+            // throw an exception - we cannot dispatch unless there is exactly one body block
+            fail("generator.tie.cannot.dispatch", operation.getName().getLocalPart());
+         }
+         if (!(hasEmptyBody)) {
+            Block bodyBlock = (Block) message.getBodyBlocks().next();
+            name = bodyBlock.getName();
+         }
         if (operationNames.contains(name)) {
             hasUniqueOperationNames = false;
         }
@@ -1829,6 +1841,17 @@ public class TieGenerator extends StubTieGeneratorBase {
             }
             p.pln();
             addAttachmentsToResponse(p, operation.getResponse().getParameters());
+
+			// CR-6660354, Merge from JavaCAPS RTS for backward compatibility
+			if(!operation.getResponse().getParameters().hasNext()){
+				Block resBlock = (Block) message.getBodyBlocks().next();
+				
+				p.pln("SOAPBlockInfo bodyBlock = new SOAPBlockInfo("+
+						env.getNames().getBlockQNameName(operation, resBlock)+");");
+				String serializer = writerFactory.createWriter(servicePackage, (LiteralType)responseBlockType).serializerMemberName();
+				p.pln("bodyBlock.setSerializer("+serializer+");");
+				p.pln("state.getResponse().setBody(bodyBlock);");
+			}
         }
         writeCatchClauses(p, operation);
         p.pOln("}"); // catch
