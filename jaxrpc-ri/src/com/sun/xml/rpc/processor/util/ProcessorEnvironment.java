@@ -1,5 +1,5 @@
 /*
- * $Id: ProcessorEnvironment.java,v 1.2 2006-04-13 01:31:58 ofung Exp $
+ * $Id: ProcessorEnvironment.java,v 1.2.2.1 2008-02-13 10:59:40 venkatajetti Exp $
  */
 
 /*
@@ -81,7 +81,7 @@ public interface ProcessorEnvironment
     /**
      * Get a URLClassLoader from using the classpath
      */
-    public URLClassLoader getClassLoader();
+    public ClassLoader getClassLoader();
     
     /**
      * Release resources, if any.
