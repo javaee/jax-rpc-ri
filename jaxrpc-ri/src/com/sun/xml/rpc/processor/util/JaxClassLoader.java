@@ -543,9 +543,9 @@ public class JaxClassLoader extends SecureClassLoader {
     protected URL findResource(String name) {
 
         if( doneCalled ) {
-            _logger.log(Level.WARNING,
-                "Cannot access a classloader that was closed. Requested resource: "
-                    + name + "; classloader was closed here: " + doneSnapshot);
+            _logger.log(Level.WARNING, "findResource(" + name + ") was called on a "
+                + "classloader that was already closed.",
+                new Throwable("Illegal call on classloader " + this));
             return null;
         }
 
@@ -683,9 +683,9 @@ public class JaxClassLoader extends SecureClassLoader {
         try {
                
         if( doneCalled ) {
-            _logger.log(Level.WARNING, 
-                "Cannot access a classloader that was closed. Requested resource: "
-                + name + "; classloader was closed here: " + doneSnapshot);
+            _logger.log(Level.WARNING, "findClass(" + name + ") was called on a "
+                + "classloader that was already closed.",
+                new Throwable("Illegal call on classloader " + this));
             throw new ClassNotFoundException(name);
         }
 
