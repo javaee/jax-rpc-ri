@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2 2006-04-13 01:26:56 ofung Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.1 2008-02-13 17:33:21 venkatajetti Exp $
  */
 
 /*
@@ -62,6 +62,7 @@ import com.sun.xml.rpc.util.localization.Localizable;
  */
 public class HttpClientTransport
     implements ClientTransport, StubPropertyConstants {
+    static Logger _logger = Logger.getLogger(HttpClientTransport.class.getName());
 
     public static final String HTTP_SOAPACTION_PROPERTY = "http.soap.action";
     private static final SimpleTypeEncoder base64Encoder =
@@ -84,8 +85,8 @@ public class HttpClientTransport
         }
     }
 
-    public void invoke(String endpoint, SOAPMessageContext context)
-        throws ClientTransportException {
+    public void invoke(String endpoint, SOAPMessageContext context) throws ClientTransportException {
+         Measurement m1 = Measurement.begin("RTS.jaxrpc-ri:HttpClientTransport:invoke");
 
         //using an HttpURLConnection the soap message is sent
         //over the wire
@@ -127,7 +128,9 @@ public class HttpClientTransport
             SOAPMessage response = null;
             //get the response from the HttpURLConnection
             try {
+                Measurement m2 = Measurement.begin("RTS.jaxrpc-ri:HttpClientTransport:invoke:readResponse");
                 response = readResponse(httpConnection, isFailure, headers);
+                m2.end();
             } catch (SOAPException e) {
                 if (statusCode == HttpURLConnection.HTTP_NO_CONTENT
                     || (isFailure
@@ -166,6 +169,8 @@ public class HttpClientTransport
                     "http.client.failed",
                     new LocalizableExceptionAdapter(e));
             }
+        } finally {
+          m1.end();
         }
     }
 
@@ -415,7 +420,18 @@ public class HttpClientTransport
         SOAPMessageContext context,
         HttpURLConnection httpConnection)
         throws IOException, SOAPException {
-        OutputStream contentOut = httpConnection.getOutputStream();
+        //OutputStream contentOut = httpConnection.getOutputStream();
+        OutputStream contentOut = (OutputStream) java.security.AccessController
+            .doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        return httpConnection.getOutputStream();
+                    } catch (IOException e) {
+                        _logger.log(Level.SEVERE, "cannot get httpConnection outputstream", e);
+                    }
+                    return null;
+                }   
+            });
         context.getMessage().writeTo(contentOut);
         contentOut.flush();
         contentOut.close();

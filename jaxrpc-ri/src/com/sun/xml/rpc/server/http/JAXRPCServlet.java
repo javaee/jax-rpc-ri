@@ -1,5 +1,5 @@
 /*
- * $Id: JAXRPCServlet.java,v 1.2 2006-04-13 01:32:07 ofung Exp $
+ * $Id: JAXRPCServlet.java,v 1.2.2.1 2008-02-13 17:33:27 venkatajetti Exp $
  */
 
 /*
@@ -36,6 +36,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.hulp.measure.Measurement;
 
 import com.sun.xml.rpc.util.localization.LocalizableMessageFactory;
 import com.sun.xml.rpc.util.localization.Localizer;
@@ -48,6 +49,7 @@ import com.sun.xml.rpc.util.localization.Localizer;
 public class JAXRPCServlet extends HttpServlet {
     
     public void init(ServletConfig servletConfig) throws ServletException {
+        Measurement m1 = Measurement.begin("RTS.jaxrpc-ri:JAXRPCServlet:init");
         super.init(servletConfig);
 
         localizer = new Localizer();
@@ -102,6 +104,8 @@ public class JAXRPCServlet extends HttpServlet {
                         new Object[] { e }));
             logger.log(Level.SEVERE, message, e);
             throw new ServletException(message);
+        } finally {
+          m1.end();
         }
     }
 
@@ -115,18 +119,22 @@ public class JAXRPCServlet extends HttpServlet {
         HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException {
+        Measurement m1 = Measurement.begin("RTS.jaxrpc-ri:JAXRPCServlet:doPost");
         if (delegate != null) {
             delegate.doPost(request, response);
         }
+        m1.end();
     }
 
     protected void doGet(
         HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException {
+        Measurement m1 = Measurement.begin("RTS.jaxrpc-ri:JAXRPCServlet:doGet");
         if (delegate != null) {
             delegate.doGet(request, response);
         }
+        m1.end();
     }
 
     protected ServletDelegate delegate = null;
