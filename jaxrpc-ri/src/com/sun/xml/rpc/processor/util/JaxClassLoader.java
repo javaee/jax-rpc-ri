@@ -36,15 +36,41 @@
 
 package com.sun.xml.rpc.processor.util;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.net.URLStreamHandler;
+import java.net.UnknownServiceException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.SecureClassLoader;
-import java.util.*;
-import java.io.*;
-import java.util.jar.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -76,6 +102,8 @@ public class JaxClassLoader extends SecureClassLoader {
     /** snapshot of classloader state at the time done was called */
     private String doneSnapshot;
     
+    /** streams opened by this loader */
+    private Set streams = new HashSet(); // type: SentinelInputStream
 
     /**
      * Constructor.
@@ -113,6 +141,10 @@ public class JaxClassLoader extends SecureClassLoader {
         return stackTrace;
     }
 
+    public boolean isDone() {
+        return doneCalled;
+    }
+
     /** 
      * This method should be called to free up the resources.
      * It helps garbage collection.
@@ -138,7 +170,7 @@ public class JaxClassLoader extends SecureClassLoader {
          
             if (u.zip != null) {
                 try {
-                    u.zip.close();
+                    u.zip.reallyClose();
                 } catch (IOException ioe) {
                     //_logger.log(Level.FINE, "exception closing URLEntry zip" +
                     //            ioe);
@@ -157,6 +189,8 @@ public class JaxClassLoader extends SecureClassLoader {
             i++;
         }
 
+        closeOpenStreams();
+        
         // clears out the tables       
         if (this.urlSet != null)            { this.urlSet.clear();            }
         if (this.notFoundResources != null) { this.notFoundResources.clear(); }
@@ -348,6 +382,106 @@ public class JaxClassLoader extends SecureClassLoader {
             return text;
         }
     }
+    
+    /**
+     * To properly close streams obtained through URL.getResource().getStream():
+     * this opens the input stream on a JarFile that is already open as part 
+     * of the classloader, and returns a sentinel stream on it.
+     * 
+     * @author fkieviet
+     */
+    private class InternalJarURLConnection extends JarURLConnection {
+        private URL mURL;
+        private URLEntry mRes;
+        private String mName;
+        
+        /**
+         * Constructor
+         * 
+         * @param url the URL that is a stream for
+         * @param res URLEntry
+         * @param name String
+         * @throws MalformedURLException from super class
+         */
+        public InternalJarURLConnection(URL url, URLEntry res, String name)
+            throws MalformedURLException {
+            super(url);
+            mRes = res;
+            mName = name;
+        }
+
+        /**
+         * @see java.net.JarURLConnection#getJarFile()
+         */
+        public JarFile getJarFile() throws IOException {
+            return mRes.zip;
+        }
+
+        /**
+         * @see java.net.URLConnection#connect()
+         */
+        public void connect() throws IOException {
+            // Nothing
+        }
+        
+        /**
+         * @see java.net.URLConnection#getInputStream()
+         */
+        public InputStream getInputStream() throws IOException {
+            ZipEntry entry = mRes.zip.getEntry(mName);
+            return new SentinelInputStream(mRes.zip.getInputStream(entry), 1);
+        }
+    }
+    
+    /**
+     * To properly close streams obtained through URL.getResource().getStream():
+     * an instance of this class is instantiated for each and every URL object
+     * created by this classloader. It provides a custom JarURLConnection  
+     * (InternalJarURLConnection) so that the stream can be obtained from an already
+     * open jar file.
+     * 
+     * @author fkieviet
+     */
+    private class InternalURLStreamHandler extends URLStreamHandler {
+        private URL mURL; 
+        private URLEntry mRes;
+        private String mName;
+        
+        /**
+         * Constructor
+         * 
+         * @param res URLEntry
+         * @param name String
+         */
+        public InternalURLStreamHandler(URLEntry res, String name) {
+            mRes = res;
+            mName = name;
+        }
+        
+        /**
+         * @see java.net.URLStreamHandler#openConnection(java.net.URL)
+         */
+        protected URLConnection openConnection(URL u) throws IOException {
+            if (u != mURL) { // ref compare on purpose
+                // This should never happen
+                throw new IOException("Cannot open a foreign URL; this.url=" + mURL
+                    + "; foreign.url=" + u);
+            }
+            return new InternalJarURLConnection(u, mRes, mName);
+        }
+        
+        /**
+         * Ties the URL that this handler is associated with to the handler, so
+         * that it can be asserted that somehow no other URLs are mangled in (this
+         * is theoretically impossible)
+         * 
+         * @param url URL
+         */
+        public void tieUrl(URL url) {
+            mURL = url;
+        }
+    }
+
     /**
      * Internal implementation of find resource.
      *
@@ -367,7 +501,13 @@ public class JaxClassLoader extends SecureClassLoader {
                         JarEntry jarEntry = res.zip.getJarEntry(name);
 
                         if (jarEntry != null) {
-                            return new URL("jar:" + res.source + "!/" + escapePercents(name));
+                            // Provide a custom URL with a special handler to fix 
+                            // problems with URL.getResource().getStream().
+                            InternalURLStreamHandler handler = new InternalURLStreamHandler(res, name);
+                            URL ret = new URL(null, "jar:" + res.source + "!/"
+                                + escapePercents(name), handler);
+                            handler.tieUrl(ret);
+                            return ret;
                         }
 
                     } catch (IOException e) {                      
@@ -673,9 +813,68 @@ public class JaxClassLoader extends SecureClassLoader {
         return buffer.toString();
     }
     
+    /**
+     * @see java.lang.ClassLoader#getResourceAsStream(java.lang.String)
+     */
     public InputStream getResourceAsStream(final String name) {
-        final InputStream stream = super.getResourceAsStream(name);
-        return stream != null ? new SentinelInputStream(stream,1) : null;
+        InputStream ret = super.getResourceAsStream(name);
+        
+        // Wrap with sentinel to catch unclosed streams
+        if (ret != null) {
+            // The stream may be obtained through a URL object; in this case
+            // there is already a sentinel around the stream
+            if (!(ret instanceof SentinelInputStream)) {
+                ret = new SentinelInputStream(ret, 1);
+            }
+        }
+        return ret;
+    }
+    
+    /**
+     * The JarFile objects loaded in the classloader may get exposed to the 
+     * application code (e.g. EJBs) through calls of
+     * ((JarURLConnection) getResource().openConnection()).getJarFile().
+     * 
+     * This class protects the jar file from being closed by such an application.
+     * 
+     * @author fkieviet
+     */
+    private static class ProtectedJarFile extends JarFile {
+        /**
+         * Constructor
+         * 
+         * @param file File
+         * @throws IOException from parent
+         */
+        public ProtectedJarFile(File file) throws IOException {
+            super(file);
+        }
+        
+        /**
+         * Do nothing
+         * 
+         * @see java.util.zip.ZipFile#close()
+         */
+        public void close() {
+            // nothing
+            _logger.log(Level.WARNING, "Illegal call to close() detected", new Throwable());
+        }
+        
+        /**
+         * Really close the jar file
+         * 
+         * @throws IOException from parent
+         */
+        public void reallyClose() throws IOException {
+            super.close();
+        }
+        
+        /**
+         * @see java.lang.Object#finalize()
+         */
+        protected void finalize() throws IOException {
+            reallyClose();
+        }
     }
 
     /**
@@ -684,13 +883,13 @@ public class JaxClassLoader extends SecureClassLoader {
     protected static class URLEntry {
 
         /** the url */
-        URL source      = null;
+        URL source;
 
         /** file of the url */
-        File file       = null;
+        File file;
 
         /** jar file if url is a jar else null */
-        JarFile zip     = null;
+        ProtectedJarFile zip;
 
         /** true if url is a jar */
         boolean isJar  = false;
@@ -707,7 +906,7 @@ public class JaxClassLoader extends SecureClassLoader {
             isJar  = file.isFile();
 
             if (isJar) {
-                zip = new JarFile(file);
+                zip = new ProtectedJarFile(file);
             }
             
             table = new Hashtable();
@@ -794,13 +993,38 @@ public class JaxClassLoader extends SecureClassLoader {
 
     }
 
+    private Set getStreams() {
+        return streams;
+    }
+    
+    /**
+     *Closes any streams that remain open, logging a warning for each.
+     *<p>
+     *This method should be invoked when the loader will no longer be used
+     *and the app will no longer explicitly close any streams it may have opened.
+     */
+    private void closeOpenStreams() {
+        if (streams != null) {
+            SentinelInputStream[] toclose = (SentinelInputStream[]) streams.toArray(new SentinelInputStream[streams.size()]); 
+            for (int i = 0; i < toclose.length; i++) {
+                try {
+                    toclose[i].closeWithWarning();
+                } catch (IOException ioe) {
+                    _logger.log(Level.WARNING, "Error closing an open stream during loader clean-up", ioe);
+                }
+            }
+            streams.clear();
+            streams = null;
+        }
+    }
+
     /**
      * Lets give a push to release resources!
      * @author vtsyganok
      */
-    protected static class SentinelInputStream extends FilterInputStream {
-        private boolean closed;// = false;
-        private final Throwable throwable;
+    protected class SentinelInputStream extends FilterInputStream {
+        private boolean closed;
+        private final StackTraceElement[] stackAtAllocation;
         private final int skipFrames;
         
         /**
@@ -814,19 +1038,12 @@ public class JaxClassLoader extends SecureClassLoader {
          */
         protected SentinelInputStream(final InputStream in, final int skipFrames) {
             super(in);
-            throwable = new Throwable();
+            stackAtAllocation = new Throwable().getStackTrace();
             //We have to skip one extra frame for Throwable constructor
             //and one for SentinelInputStream constructor
             //but for convenience (0-based array indexes) I'm adding only 1 here:
             this.skipFrames = skipFrames + 1;
-        }
-        
-        /**
-         * Closes underlaying input stream.
-         */
-        public void close() throws IOException {
-            closed = true;
-            super.close();
+            getStreams().add(this);
         }
         
         /**
@@ -835,10 +1052,12 @@ public class JaxClassLoader extends SecureClassLoader {
          */
         protected void finalize() throws Throwable {
             if (!closed && this.in != null){
+                // This should never happen: the stream should already be closed by the
+                // done() method of the classloader
+
                 try {
                     in.close();
-                }
-                catch (IOException ignored){
+                } catch (IOException ignored) {
                     //Cannot do anything here.
                 }
                 //Well, give them a stack trace!
@@ -847,21 +1066,40 @@ public class JaxClassLoader extends SecureClassLoader {
             super.finalize();
         }
         
+        private void _close() throws IOException {
+            closed = true;
+            getStreams().remove(this);
+            super.close();
+        }
+        
+        /**
+         * Closes underlaying input stream.
+         */
+        public void close() throws IOException {
+            _close();
+        }
+        
+        private void closeWithWarning() throws IOException {
+            _close();
+            report();
+        }
+        
         /**
          * Report "left-overs"!
          */
         private void report(){
-            final StackTraceElement[] stack =  this.throwable.getStackTrace();
-            final int count = stack.length;
+            final int count = stackAtAllocation.length;
             //This is my estimate on the amount of memory required:
             final StringBuffer buffer = new StringBuffer(count << 16); // == 256 * count
-            buffer.append("Please close InputStream explicitly! This is the source for potential File Leaks.");
+            buffer.append("An InputStream was opened, but not closed explicitly. This may" +
+                    " cause undeployment problems. To help fixing this defect," +
+                    " following is the stacktrace of where the stream was opened: "
+                    );
             for (int i = this.skipFrames; i < count; i++){
                 buffer.append('\n');
-                buffer.append(stack[i].toString());
+                buffer.append(stackAtAllocation[i].toString());
             }
             _logger.warning(buffer.toString());
-            //System.out.println(buffer.toString());
         }
     }
 }
