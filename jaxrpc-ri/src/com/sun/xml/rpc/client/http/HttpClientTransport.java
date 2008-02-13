@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2.2.1 2008-02-13 17:33:21 venkatajetti Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.2 2008-02-13 23:54:03 anbubala Exp $
  */
 
 /*
@@ -36,10 +36,15 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+
+import java.security.PrivilegedAction;
+
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
@@ -63,7 +68,7 @@ import com.sun.xml.rpc.util.localization.Localizable;
 public class HttpClientTransport
     implements ClientTransport, StubPropertyConstants {
     static Logger _logger = Logger.getLogger(HttpClientTransport.class.getName());
-
+    
     public static final String HTTP_SOAPACTION_PROPERTY = "http.soap.action";
     private static final SimpleTypeEncoder base64Encoder =
         XSDBase64BinaryEncoder.getInstance();
@@ -86,8 +91,6 @@ public class HttpClientTransport
     }
 
     public void invoke(String endpoint, SOAPMessageContext context) throws ClientTransportException {
-         Measurement m1 = Measurement.begin("RTS.jaxrpc-ri:HttpClientTransport:invoke");
-
         //using an HttpURLConnection the soap message is sent
         //over the wire
         try {
@@ -128,9 +131,7 @@ public class HttpClientTransport
             SOAPMessage response = null;
             //get the response from the HttpURLConnection
             try {
-                Measurement m2 = Measurement.begin("RTS.jaxrpc-ri:HttpClientTransport:invoke:readResponse");
                 response = readResponse(httpConnection, isFailure, headers);
-                m2.end();
             } catch (SOAPException e) {
                 if (statusCode == HttpURLConnection.HTTP_NO_CONTENT
                     || (isFailure
@@ -169,9 +170,7 @@ public class HttpClientTransport
                     "http.client.failed",
                     new LocalizableExceptionAdapter(e));
             }
-        } finally {
-          m1.end();
-        }
+        } 
     }
 
     public void invokeOneWay(String endpoint, SOAPMessageContext context) {
@@ -418,9 +417,11 @@ public class HttpClientTransport
 
     protected void writeMessageToConnection(
         SOAPMessageContext context,
-        HttpURLConnection httpConnection)
+        final HttpURLConnection httpConnection)
         throws IOException, SOAPException {
         //OutputStream contentOut = httpConnection.getOutputStream();
+        //Performance improvement: wrap HttpURLConnection.getOutputStream in a doPrivileged block 
+        //to avoid the call for security check by the security manager for getPropertyAction 
         OutputStream contentOut = (OutputStream) java.security.AccessController
             .doPrivileged(new PrivilegedAction() {
                 public Object run() {
