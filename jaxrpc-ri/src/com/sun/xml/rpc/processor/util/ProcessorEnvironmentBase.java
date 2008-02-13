@@ -1,5 +1,5 @@
 /*
- * $Id: ProcessorEnvironmentBase.java,v 1.2.2.1 2008-02-13 10:59:40 venkatajetti Exp $
+ * $Id: ProcessorEnvironmentBase.java,v 1.2.2.2 2008-02-13 11:39:41 venkatajetti Exp $
  */
 
 /*
@@ -83,11 +83,14 @@ public abstract class ProcessorEnvironmentBase implements ProcessorEnvironment {
         StringTokenizer st = new StringTokenizer(path, File.pathSeparator);
         URL[] urls = new URL[st.countTokens()];
         int count = 0;
+        Set usedTokens = new HashSet();
         while (st.hasMoreTokens()) {
             String element = st.nextToken();
+            if (usedTokens.add(element)) {
             URL url = fileToURL(new File(element));
             if (url != null) {
                 urls[count++] = url;
+                }
             }
         }
         if (urls.length != count) {
