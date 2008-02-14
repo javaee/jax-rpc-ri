@@ -1,5 +1,5 @@
 /*
- * $Id: CompileTool.java,v 1.2 2006-04-13 01:33:30 ofung Exp $
+ * $Id: CompileTool.java,v 1.2.2.1 2008-02-14 09:16:46 venkatajetti Exp $
  */
 
 /*
@@ -1112,7 +1112,7 @@ public class CompileTool extends ToolBase
         for (Iterator iter = environment.getGeneratedFiles(); iter.hasNext();) {
             GeneratedFileInfo fileInfo = (GeneratedFileInfo)iter.next();
             File f = fileInfo.getFile();
-            if (f.exists() && f.getName().endsWith(".java")) {
+            if (f.exists() && f.getName().endsWith(".java") && !sourceFiles.contains(f.getAbsolutePath())) {
                 sourceFiles.add(f.getAbsolutePath());
             }
         }
