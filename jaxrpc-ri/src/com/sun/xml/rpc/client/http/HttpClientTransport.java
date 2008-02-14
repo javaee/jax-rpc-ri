@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2.2.2 2008-02-13 23:54:03 anbubala Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.3 2008-02-14 17:27:03 venkatajetti Exp $
  */
 
 /*
@@ -299,8 +299,12 @@ public class HttpClientTransport
 
         try {
             httpConnection.connect();
-            httpConnection.getInputStream();
+            // CR-6660386, Merge from JavaCAPS RTS for backward compatibility
+            // If there is an 404 HTTP status code getInputStream() will throw an IOException and will make checkResponseCode unreachable. 
+            //Move this call so that this method will be call in all scenario as it was designed. 
+            //checkResponseCode can throw IOException which has been designed to supressed.
             checkResponseCode(httpConnection, context);
+            httpConnection.getInputStream();
 
         } catch (IOException io) {
         }
