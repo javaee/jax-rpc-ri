@@ -1,5 +1,5 @@
 /*
- * $Id: DetailFragmentDeserializer.java,v 1.2 2006-04-13 01:27:32 ofung Exp $
+ * $Id: DetailFragmentDeserializer.java,v 1.2.2.1 2008-02-14 17:06:20 venkatajetti Exp $
  */
 
 /*
@@ -54,6 +54,8 @@ import com.sun.xml.rpc.streaming.XMLWriter;
 public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
 
     protected SOAPFactory soapFactory;
+    // CR-6660376, Merge from JavaCAPS RTS for backward compatibility
+    protected static final QName DETAIL_QNAME = new QName("", "detail");
 
     public DetailFragmentDeserializer(QName type, String encodingStyle) {
         this(type, false, encodingStyle);
@@ -189,6 +191,10 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
             
         Detail detail;
         detail = soapFactory.createDetail();
+        // CR-6660376, Merge from JavaCAPS RTS for backward compatibility
+        QName elementName;
+        boolean done=false;
+        while(!done) {
         String elementURI = reader.getURI();
         Name name;
         if (elementURI == null || elementURI.equals("")) {
@@ -202,6 +208,13 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
         }
         DetailEntry entry = detail.addDetailEntry(name);
         doDeserializeElement(entry, reader, context);
+        // CR-6660376, Merge from JavaCAPS RTS for backward compatibility
+        reader.nextElementContent();
+		elementName = reader.getName();
+		if (elementName.equals(DETAIL_QNAME)) {
+		    done=true;
+        }
+		}
         return detail;
     }
 
