@@ -1,5 +1,5 @@
 /*
- * $Id: SchemaParser.java,v 1.2 2006-04-13 01:34:44 ofung Exp $
+ * $Id: SchemaParser.java,v 1.2.2.1 2008-02-14 10:49:26 venkatajetti Exp $
  */
 
 /*
@@ -140,6 +140,10 @@ public class SchemaParser {
                         .getDocument()
                         .isImportedDocument(adjustedLocation)) {
                         // bug fix: 6264237, fix for curcular dependency
+                        // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+                        if (!mProcessedURL.contains(adjustedLocation)) {
+                            mProcessedURL.add(adjustedLocation);    
+
                         context.getDocument().addImportedDocument(
                             adjustedLocation);
 
@@ -148,6 +152,7 @@ public class SchemaParser {
                                 context,
                                 new InputSource(adjustedLocation),
                                 namespace));
+                        }
                     }
                 }
             } else if (
@@ -187,6 +192,8 @@ public class SchemaParser {
             }
         }
     }
+    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+    private java.util.List mProcessedURL = new java.util.ArrayList(0);
 
     protected Schema parseSchemaNoImport(
         ParserContext context,
