@@ -1,5 +1,5 @@
 /*
- * $Id: LiteralFragmentSerializer.java,v 1.2 2006-04-13 01:27:34 ofung Exp $
+ * $Id: LiteralFragmentSerializer.java,v 1.2.2.1 2008-02-15 03:56:43 venkatajetti Exp $
  */
 
 /*
@@ -217,6 +217,10 @@ public class LiteralFragmentSerializer extends LiteralObjectSerializerBase {
                 	element.addChildElement(child);
                 } else {
                 	child = soapFactory.createElement(reader.getLocalName(), FIRST_PREFIX, reader.getURI());
+                    // CR-6660371, Merge from JavaCAPS RTS for backward compatibility
+                	//Per comments by Nagesh, this block handles nil child elements, and needs to add xsi:nil attribute to these elements.
+                	Name name = soapFactory.createName("nil","xsi",XSDConstants.URI_XSI);
+                	child.addAttribute(name, "true");
                 	element.addChildElement(child);
                  }
                 	
