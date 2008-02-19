@@ -1,5 +1,5 @@
 /*
- * $Id: XMLReaderImpl.java,v 1.2 2006-04-13 01:33:20 ofung Exp $
+ * $Id: XMLReaderImpl.java,v 1.2.2.1 2008-02-19 10:51:18 venkatajetti Exp $
  */
 
 /*
@@ -198,13 +198,24 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public int getLength() {
-            return _attr.getLength();
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getLength();
+            int temp = 0;
+            if (_attr != null) {
+                temp = _attr.getLength();
+            }
+            return temp;
         }
 
         public boolean isNamespaceDeclaration(int index) {
-            // use "==" instead of equals() because we know that the string
-            // will always be interned
-            return _attr.getURI(index) == XMLNS_NAMESPACE_URI;
+            // use "==" instead of equals() because we know that the string will always be interned
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getURI(index) == XMLNS_NAMESPACE_URI;
+            boolean temp = false;
+            if (_attr != null) {
+                temp = (_attr.getURI(index) == XMLNS_NAMESPACE_URI);
+            }
+            return temp;
         }
 
         public QName getName(int index) {
@@ -212,15 +223,32 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getURI(int index) {
-            return _attr.getURI(index);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getURI(index);
+            String temp = null;
+            if (_attr != null) {
+                temp = _attr.getURI(index);
+            }
+            return temp;
         }
 
         public String getLocalName(int index) {
-            return _attr.getLocalName(index);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getLocalName(index);
+            String temp = null;
+            if (_attr != null) {
+                temp = _attr.getLocalName(index);
+            }
+            return temp;
         }
 
         public String getPrefix(int index) {
-            String qname = _attr.getQName(index);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //String qname = _attr.getQName(index);
+            String qname = null;
+            if (_attr != null) {
+                qname = _attr.getQName(index);
+            }
             if (qname == null) {
                 return null;
             } else {
@@ -229,31 +257,73 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getValue(int index) {
-            return _attr.getValue(index);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getValue(index);
+            String temp = null;
+            if (_attr != null) {
+                temp = _attr.getValue(index);
+            }
+            return temp;
         }
 
         public int getIndex(QName name) {
-            return _attr.getIndex(name.getNamespaceURI(), name.getLocalPart());
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getIndex(name.getNamespaceURI(), name.getLocalPart());
+            int temp = 0;
+            if (_attr != null) {
+                temp = _attr.getIndex(name.getNamespaceURI(), name.getLocalPart());
+            }
+            return temp;
         }
 
         public int getIndex(String uri, String localName) {
-            return _attr.getIndex(uri, localName);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getIndex(uri, localName);
+            int temp = 0;
+            if (_attr != null) {
+                temp = _attr.getIndex(uri, localName);
+            }
+            return temp;
         }
 
         public int getIndex(String localName) {
-            return _attr.getIndex(localName);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getIndex(localName);
+            int temp = 0;
+            if (_attr != null) {
+                temp = _attr.getIndex(localName);
+            }
+            return temp;
         }
 
         public String getValue(QName name) {
-            return _attr.getValue(name.getNamespaceURI(), name.getLocalPart());
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getValue(name.getNamespaceURI(), name.getLocalPart());
+            String temp = null;
+            if (_attr != null) {
+                temp = _attr.getValue(name.getNamespaceURI(), name.getLocalPart());
+            }
+            return temp;
         }
 
         public String getValue(String uri, String localName) {
-            return _attr.getValue(uri, localName);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getValue(uri, localName);
+            String temp = null;
+            if (_attr != null) {
+                temp = _attr.getValue(uri, localName);
+            }
+            return temp;
         }
 
         public String getValue(String localName) {
-            return _attr.getValue(localName);
+            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            //return _attr.getValue(localName);
+            String temp = null;
+            if (_attr != null) {
+                temp = _attr.getValue(localName);
+            }
+            return temp;
         }
 
         public String toString() {

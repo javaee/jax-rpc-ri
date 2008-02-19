@@ -1,5 +1,5 @@
 /*
- * $Id: LiteralFragmentSerializer.java,v 1.2.2.1 2008-02-15 03:56:43 venkatajetti Exp $
+ * $Id: LiteralFragmentSerializer.java,v 1.2.2.2 2008-02-19 10:51:24 venkatajetti Exp $
  */
 
 /*
@@ -213,17 +213,64 @@ public class LiteralFragmentSerializer extends LiteralObjectSerializerBase {
                  * When xsi:nil="true" found in soap response, deserializer is returning null. 
                  * When deserializer returns null then create new soapelement and add it to its parent element. 
                  */
+                try {
                 if(child != null) {
                 	element.addChildElement(child);
                 } else {
-                	child = soapFactory.createElement(reader.getLocalName(), FIRST_PREFIX, reader.getURI());
-                    // CR-6660371, Merge from JavaCAPS RTS for backward compatibility
-                	//Per comments by Nagesh, this block handles nil child elements, and needs to add xsi:nil attribute to these elements.
-                	Name name = soapFactory.createName("nil","xsi",XSDConstants.URI_XSI);
-                	child.addAttribute(name, "true");
+                    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+
+                        //child = soapFactory.createElement(reader.getLocalName(), FIRST_PREFIX, reader.getURI());
+
+                        /* 
+                         * HotFix 104035.  When xsi:nil="true", we first
+                         * create a new child element and add all namespaces and 
+                         * attributes to the new child element.  We then add the
+                         * child element to the parent element.
+                         */
+
+                        elementURI = reader.getURI();
+                        if (elementURI == null || elementURI.equals("") || elementURI.equals("http://schemas.xmlsoap.org/wsdl/")) {
+                            child = soapFactory.createElement(reader.getLocalName());
+                        } else {
+                            child = soapFactory.createElement(reader.getLocalName(), FIRST_PREFIX, reader.getURI());
+                        }
+
+                        defaultURI = reader.getURI("");
+                        
+                        if (defaultURI != null) {
+                            child.addNamespaceDeclaration("", defaultURI);
+                        }
+
+                        for (Iterator iter = reader.getPrefixes(); iter.hasNext();) {
+                            String prefix = (String) iter.next();
+                            String uri = reader.getURI(prefix);
+                            child.addNamespaceDeclaration(prefix, uri);
+                        }
+
+                        attributes = reader.getAttributes();
+                        for (int i = 0; i < attributes.getLength(); ++i) {
+                            if (attributes.isNamespaceDeclaration(i)) {
+                                continue;
+                            }
+                            
+                            Name name;
+                            String uri = attributes.getURI(i);
+                            if (uri == null) {
+                                // non-qualified attribute
+                                name = soapFactory.createName(attributes.getLocalName(i));
+                            }
+                            else {
+                                // qualified attribute
+                                String prefix = attributes.getPrefix(i);
+                                name = soapFactory.createName(attributes.getLocalName(i), prefix, uri);
+                            }
+                            child.addAttribute(name, attributes.getValue(i));
+                        }
                 	element.addChildElement(child);
                  }
-                	
+                } catch (Exception e) {
+                    throw e;
+                }
             }
             else if (state == XMLReader.CHARS) {
                 element.addTextNode(reader.getValue());

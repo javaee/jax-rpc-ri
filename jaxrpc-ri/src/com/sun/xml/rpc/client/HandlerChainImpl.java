@@ -1,5 +1,5 @@
 /*
- * $Id: HandlerChainImpl.java,v 1.2 2006-04-13 01:26:32 ofung Exp $
+ * $Id: HandlerChainImpl.java,v 1.2.2.1 2008-02-19 10:51:17 venkatajetti Exp $
  */
 
 /*
@@ -247,6 +247,8 @@ public class HandlerChainImpl extends Vector implements HandlerChain {
 
     public boolean checkMustUnderstand(MessageContext mc)
         throws SOAPException {
+        // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+        /*
         if (roles != null && !isEmpty()) {
             SOAPMessage soapMessage = ((SOAPMessageContext) mc).getMessage();
             SOAPHeader header =
@@ -269,6 +271,7 @@ public class HandlerChainImpl extends Vector implements HandlerChain {
                 }
             }
         }
+        */
         return true;
     }
 }

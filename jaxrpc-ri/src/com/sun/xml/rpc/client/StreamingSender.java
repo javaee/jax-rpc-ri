@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingSender.java,v 1.2 2006-04-13 01:26:37 ofung Exp $
+ * $Id: StreamingSender.java,v 1.2.2.1 2008-02-19 10:51:17 venkatajetti Exp $
  */
 
 /*
@@ -600,11 +600,18 @@ public abstract class StreamingSender {
         //look for request namspaces and write those
         String[] namespaceDeclarations = _getNamespaceDeclarations();
         if (namespaceDeclarations != null) {
+        // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+
+            /* 101878
+             * since the referenced namespaces will be declared at the subnodes inside both of the soap:Header and soap:Body, 
+             * we remove them from the top soap:Envelop node
+
             for (int i = 0; i < namespaceDeclarations.length; i += 2) {
                 writer.writeNamespaceDeclaration(
                     namespaceDeclarations[i],
                     namespaceDeclarations[i + 1]);
             }
+             */
         }
 
         if (_getDefaultEnvelopeEncodingStyle() != null) {
