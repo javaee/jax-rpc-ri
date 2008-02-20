@@ -1,5 +1,5 @@
 /*
- * $Id: ToolBase.java,v 1.2.2.1 2008-02-20 17:24:22 venkatajetti Exp $
+ * $Id: ToolBase.java,v 1.2.2.2 2008-02-20 17:48:38 venkatajetti Exp $
  */
 
 /*
@@ -112,8 +112,9 @@ public abstract class ToolBase {
             outstream.println(msg);
             outstream.flush();
         } else if (logger != null) {
-            logger.log(Level.SEVERE, "ToolBase Error occured: ", t);
+            logger.log(Level.INFO, msg);
         }
+
 	}
 
 	protected void report(Localizable msg) {

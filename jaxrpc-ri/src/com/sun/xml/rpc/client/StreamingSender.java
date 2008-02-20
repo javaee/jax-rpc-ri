@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingSender.java,v 1.2.2.2 2008-02-20 17:24:22 venkatajetti Exp $
+ * $Id: StreamingSender.java,v 1.2.2.3 2008-02-20 17:48:38 venkatajetti Exp $
  */
 
 /*
@@ -37,7 +37,13 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerChain;
 import javax.xml.rpc.soap.SOAPFaultException;
 import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -49,6 +55,7 @@ import com.sun.xml.rpc.encoding.SOAPDeserializationState;
 import com.sun.xml.rpc.encoding.SOAPFaultInfoSerializer;
 import com.sun.xml.rpc.encoding.SOAPSerializationContext;
 import com.sun.xml.rpc.encoding.soap.SOAPConstants;
+import com.sun.xml.rpc.soap.message.InternalSOAPMessage;
 import com.sun.xml.rpc.soap.message.SOAPBlockInfo;
 import com.sun.xml.rpc.soap.message.SOAPFaultInfo;
 import com.sun.xml.rpc.soap.message.SOAPHeaderBlockInfo;
