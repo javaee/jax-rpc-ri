@@ -1,5 +1,5 @@
 /*
- * $Id: SchemaParser.java,v 1.2.2.1 2008-02-14 10:49:26 venkatajetti Exp $
+ * $Id: SchemaParser.java,v 1.2.2.2 2008-02-20 08:20:17 venkatajetti Exp $
  */
 
 /*
@@ -61,6 +61,8 @@ import com.sun.xml.rpc.wsdl.framework.ValidationException;
  * @author JAX-RPC Development Team
  */
 public class SchemaParser {
+    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+    private java.util.List mProcessedURL = null; //99910, 103741, 105882, 106090
 
     public SchemaParser() {
     }
@@ -82,6 +84,18 @@ public class SchemaParser {
         return schemaDocument;
     }
 
+    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+    //start 99910, 103741, 105882, 106090
+    public Schema parseSchema(ParserContext context, InputSource source, String expectedTargetNamespaceURI) {
+        mProcessedURL = new java.util.ArrayList(0);
+        return parseSchema2(context, source, expectedTargetNamespaceURI);
+    }
+    public Schema parseSchema(ParserContext context, Element e, String expectedTargetNamespaceURI) {
+        mProcessedURL = new java.util.ArrayList(0);
+        return parseSchema2(context, e, expectedTargetNamespaceURI);
+    }
+
+/*
     public Schema parseSchema(
         ParserContext context,
         InputSource source,
@@ -104,6 +118,22 @@ public class SchemaParser {
         processImports(context, null, schema);
         return schema;
     }
+*/
+
+    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+    private Schema parseSchema2(ParserContext context, InputSource source, String expectedTargetNamespaceURI) {
+        Schema schema = parseSchemaNoImport(context, source, expectedTargetNamespaceURI);
+        schema.defineAllEntities();
+        processImports(context, source, schema);
+        return schema;
+    }
+    private Schema parseSchema2(ParserContext context, Element e, String expectedTargetNamespaceURI) {
+        Schema schema = parseSchemaNoImport(context, e, expectedTargetNamespaceURI);
+        schema.defineAllEntities();        
+        processImports(context, null, schema);
+        return schema;
+    }
+    //end 99910, 103741, 105882, 106090
 
     protected void processImports(
         ParserContext context,
@@ -148,7 +178,7 @@ public class SchemaParser {
                             adjustedLocation);
 
                         context.getDocument().addImportedEntity(
-                            parseSchema(
+                            parseSchema2(
                                 context,
                                 new InputSource(adjustedLocation),
                                 namespace));
@@ -179,8 +209,9 @@ public class SchemaParser {
                                     context.getDocument().getSystemId(),
                                     location);
                     }
+                    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
                     context.getDocument().addIncludedEntity(
-                        parseSchema(
+                        parseSchema2(
                             context,
                             new InputSource(adjustedLocation),
                             schema.getTargetNamespaceURI()));
@@ -192,8 +223,6 @@ public class SchemaParser {
             }
         }
     }
-    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
-    private java.util.List mProcessedURL = new java.util.ArrayList(0);
 
     protected Schema parseSchemaNoImport(
         ParserContext context,
