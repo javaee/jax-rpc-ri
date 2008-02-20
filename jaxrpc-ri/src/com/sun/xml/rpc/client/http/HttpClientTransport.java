@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2.2.3 2008-02-14 17:27:03 venkatajetti Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.4 2008-02-20 17:24:29 venkatajetti Exp $
  */
 
 /*
@@ -520,8 +520,9 @@ public class HttpClientTransport
         if (credentials != null) {
             credentials += ":"
                 + (String) context.getProperty(PASSWORD_PROPERTY);
+                // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
             credentials =
-                base64Encoder.objectToString(credentials.getBytes(), null);
+                base64Encoder.objectToString(credentials.getBytes("UTF-8"), null);
             context.getMessage().getMimeHeaders().setHeader(
                 "Authorization",
                 "Basic " + credentials);

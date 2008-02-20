@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingSender.java,v 1.2.2.1 2008-02-19 10:51:17 venkatajetti Exp $
+ * $Id: StreamingSender.java,v 1.2.2.2 2008-02-20 17:24:22 venkatajetti Exp $
  */
 
 /*
@@ -521,6 +521,46 @@ public abstract class StreamingSender {
                         fault.getString(),
                         obj));
             }
+            
+            // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
+
+            //If the header is not set in the InternalSOAPMessage, still look for it
+            //in the received soap message.  It is assumed here that the header in
+            //the SOAP response has the headerfault details.
+            //This will cover cases where the wsdl does not define the 
+            //headerfault SOAP binding, yet the server is throwing the
+            //headerfault.  For instance, even though the wsdl does not describe
+            //that the web service expects the ws-security header, the client
+            //is aware that it needs to send the ws-security header and therefore
+            //need to handle the headerfaults for the ws-security header.
+            //We put the SOAPFaultException inside the RemoteException to 
+            //indicate this fact.
+            Detail lDetail = null;
+            try {
+                SOAPMessage lMsg = ((InternalSOAPMessage) state.getResponse()).getMessage();
+                SOAPHeader lHeader = lMsg.getSOAPHeader();
+                if (lHeader != null) {
+                    SOAPFactory sf = SOAPFactory.newInstance();
+                    lDetail = sf.createDetail();
+                    DetailEntry lEntry = lDetail.addDetailEntry(sf.createName("Header", "env", "http://schemas.xmlsoap.org/soap/envelope/"));
+                    for (Iterator lIt = lHeader.examineAllHeaderElements(); lIt.hasNext();) {
+                        lEntry.addChildElement((SOAPElement) lIt.next());
+                    }
+                }
+            } catch (SOAPException e) {
+                //Failed to get the header; just ignore this excepion
+                //SOAPFaultException will be thrown without the detail
+                //by the code below.
+            }
+            
+            if (lDetail != null) {
+                throw new RemoteException(fault.getString(), 
+                                          new SOAPFaultException(fault.getCode(), fault.getString(), fault.getActor(), lDetail));
+            }
+            
+            //If header is null, a SOAPFaultException is thrown without detail
+            //by the code below.
+
         }
 
         if (fault.getCode().equals(SOAPConstants.FAULT_CODE_SERVER)) {
