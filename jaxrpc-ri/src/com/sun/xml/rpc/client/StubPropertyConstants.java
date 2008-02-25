@@ -1,5 +1,5 @@
 /*
- * $Id: StubPropertyConstants.java,v 1.2 2006-04-13 01:26:39 ofung Exp $
+ * $Id: StubPropertyConstants.java,v 1.2.2.1 2008-02-25 20:24:47 anbubala Exp $
  */
 
 /*
@@ -7,12 +7,12 @@
  * of the Common Development and Distribution License
  * (the License).  You may not use this file except in
  * compliance with the License.
- * 
+ *
  * You can obtain a copy of the license at
  * https://glassfish.dev.java.net/public/CDDLv1.0.html.
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at https://glassfish.dev.java.net/public/CDDLv1.0.html.
@@ -20,7 +20,7 @@
  * with the fields enclosed by brackets [] replaced by
  * you own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- * 
+ *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -35,6 +35,13 @@ public interface StubPropertyConstants {
     public static final String SERVICEIMPL_NAME = "serviceImplementationName";
     public static final String USERNAME_PROPERTY = Stub.USERNAME_PROPERTY;
     public static final String PASSWORD_PROPERTY = Stub.PASSWORD_PROPERTY;
+
+    public static final String HTTP_PROXY_SET_PROPERTY = "com.sun.xml.rpc.client.http.proxySet";
+    public static final String HTTP_PROXY_HOST_PROPERTY = "com.sun.xml.rpc.client.http.proxyHost";
+    public static final String HTTP_PROXY_PORT_PROPERTY = "com.sun.xml.rpc.client.http.proxyPort";
+    public static final String HTTP_PROXY_USER_NAME_PROPERTY = "com.sun.xml.rpc.client.http.proxyUserName";
+    public static final String HTTP_PROXY_USER_PASSWORD_PROPERTY = "com.sun.xml.rpc.client.http.proxyUserPassword";
+
     public static final String ENDPOINT_ADDRESS_PROPERTY =
         Stub.ENDPOINT_ADDRESS_PROPERTY;
     public static final String SESSION_MAINTAIN_PROPERTY =
@@ -59,7 +66,7 @@ public interface StubPropertyConstants {
         "com.sun.xml.rpc.attachment.SetAttachmentContext";
     public static final String GET_ATTACHMENT_PROPERTY =
         "com.sun.xml.rpc.attachment.GetAttachmentContext";
-    
+
     // A string-valued property "none", "pessimistic" and "optimistic"
     // Used for Fast Infoset content negotiation
     public static final String CONTENT_NEGOTIATION_PROPERTY =

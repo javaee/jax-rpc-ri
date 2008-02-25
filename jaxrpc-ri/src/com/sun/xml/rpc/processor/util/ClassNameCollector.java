@@ -1,5 +1,5 @@
 /*
- * $Id: ClassNameCollector.java,v 1.2 2006-04-13 01:31:52 ofung Exp $
+ * $Id: ClassNameCollector.java,v 1.2.2.1 2008-02-14 09:16:34 venkatajetti Exp $
  */
 
 /*
@@ -127,6 +127,8 @@ public class ClassNameCollector extends ExtendedModelVisitor
     protected void preVisit(Port port) throws Exception {
         QName wsdlBindingName = (QName) port.getProperty(
             ModelProperties.PROPERTY_WSDL_BINDING_NAME);
+        if (!_allClassNames.contains(port.getJavaInterface().getName())) {
+
         if (!_wsdlBindingNames.contains(wsdlBindingName)) {
             
             // multiple ports can share a binding without causing a conflict
@@ -136,6 +138,8 @@ public class ClassNameCollector extends ExtendedModelVisitor
             ModelProperties.PROPERTY_STUB_CLASS_NAME));
         registerClassName((String) port.getProperty(
             ModelProperties.PROPERTY_TIE_CLASS_NAME));
+        }
+
     }
     
     protected void postVisit(Port port) throws Exception {
