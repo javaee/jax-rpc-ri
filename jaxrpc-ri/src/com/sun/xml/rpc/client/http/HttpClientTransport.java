@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2.2.4 2008-02-20 17:24:29 venkatajetti Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.5 2008-02-25 20:24:48 anbubala Exp $
  */
 
 /*
@@ -7,12 +7,12 @@
  * of the Common Development and Distribution License
  * (the License).  You may not use this file except in
  * compliance with the License.
- * 
+ *
  * You can obtain a copy of the license at
  * https://glassfish.dev.java.net/public/CDDLv1.0.html.
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at https://glassfish.dev.java.net/public/CDDLv1.0.html.
@@ -20,7 +20,7 @@
  * with the fields enclosed by brackets [] replaced by
  * you own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- * 
+ *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -42,6 +42,9 @@ import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import java.security.PrivilegedAction;
 
@@ -68,7 +71,7 @@ import com.sun.xml.rpc.util.localization.Localizable;
 public class HttpClientTransport
     implements ClientTransport, StubPropertyConstants {
     static Logger _logger = Logger.getLogger(HttpClientTransport.class.getName());
-    
+
     public static final String HTTP_SOAPACTION_PROPERTY = "http.soap.action";
     private static final SimpleTypeEncoder base64Encoder =
         XSDBase64BinaryEncoder.getInstance();
@@ -103,13 +106,13 @@ public class HttpClientTransport
             CookieJar cookieJar = sendCookieAsNeeded(context, httpConnection);
 
             moveHeadersFromContextToConnection(context, httpConnection);
-            
+
             if (DEBUG) {
                 checkMessageContentType(httpConnection.getRequestProperty("Content-Type"), false);
             }
 
             writeMessageToConnection(context, httpConnection);
-            
+
             boolean isFailure = connectForResponse(httpConnection, context);
             int statusCode = httpConnection.getResponseCode();
 
@@ -125,7 +128,7 @@ public class HttpClientTransport
             }
 
             MimeHeaders headers = collectResponseMimeHeaders(httpConnection);
-            
+
             saveCookieAsNeeded(context, httpConnection, cookieJar);
 
             SOAPMessage response = null;
@@ -151,7 +154,7 @@ public class HttpClientTransport
             if (DEBUG) {
                 checkMessageContentType(headers.getHeader("Content-Type")[0], true);
             }
-            
+
             context.setMessage(response);
             // do not set the failure flag, because stubs cannot rely on it,
             // since transports different from HTTP may not be able to set it
@@ -170,7 +173,7 @@ public class HttpClientTransport
                     "http.client.failed",
                     new LocalizableExceptionAdapter(e));
             }
-        } 
+        }
     }
 
     public void invokeOneWay(String endpoint, SOAPMessageContext context) {
@@ -258,7 +261,7 @@ public class HttpClientTransport
                 System.out.println("");
             }
         }
-        
+
         SOAPMessage response = _messageFactory.createMessage(headers, in);
 
         contentIn.close();
@@ -300,8 +303,8 @@ public class HttpClientTransport
         try {
             httpConnection.connect();
             // CR-6660386, Merge from JavaCAPS RTS for backward compatibility
-            // If there is an 404 HTTP status code getInputStream() will throw an IOException and will make checkResponseCode unreachable. 
-            //Move this call so that this method will be call in all scenario as it was designed. 
+            // If there is an 404 HTTP status code getInputStream() will throw an IOException and will make checkResponseCode unreachable.
+            //Move this call so that this method will be call in all scenario as it was designed.
             //checkResponseCode can throw IOException which has been designed to supressed.
             checkResponseCode(httpConnection, context);
             httpConnection.getInputStream();
@@ -424,8 +427,8 @@ public class HttpClientTransport
         final HttpURLConnection httpConnection)
         throws IOException, SOAPException {
         //OutputStream contentOut = httpConnection.getOutputStream();
-        //Performance improvement: wrap HttpURLConnection.getOutputStream in a doPrivileged block 
-        //to avoid the call for security check by the security manager for getPropertyAction 
+        //Performance improvement: wrap HttpURLConnection.getOutputStream in a doPrivileged block
+        //to avoid the call for security check by the security manager for getPropertyAction
         OutputStream contentOut = (OutputStream) java.security.AccessController
             .doPrivileged(new PrivilegedAction() {
                 public Object run() {
@@ -435,7 +438,7 @@ public class HttpClientTransport
                         _logger.log(Level.SEVERE, "cannot get httpConnection outputstream", e);
                     }
                     return null;
-                }   
+                }
             });
         context.getMessage().writeTo(contentOut);
         contentOut.flush();
@@ -527,6 +530,26 @@ public class HttpClientTransport
                 "Authorization",
                 "Basic " + credentials);
         }
+
+        //If the proxy is set and the proxy credentials are available
+        //create the Proxy-Authorization header
+        boolean proxySet = Boolean.parseBoolean((String)context.getProperty(HTTP_PROXY_SET_PROPERTY));
+        if (proxySet) {
+            String proxyUser = (String)context.getProperty(HTTP_PROXY_USER_NAME_PROPERTY);
+            //Add auth header only if a user is specified
+            if (proxyUser != null && proxyUser.trim().length() > 0) {
+                String proxyCredentials  =
+                    new StringBuffer(proxyUser)
+                        .append(":")
+                        .append((String) context.getProperty(HTTP_PROXY_USER_PASSWORD_PROPERTY))
+                        .toString();
+
+                proxyCredentials = base64Encoder.objectToString(proxyCredentials.getBytes(), null);
+                context.getMessage()
+                            .getMimeHeaders()
+                            .setHeader("Proxy-Authorization",  "Basic " + proxyCredentials);
+            }
+        }
     }
 
     protected HttpURLConnection createHttpConnection(
@@ -555,7 +578,7 @@ public class HttpClientTransport
 
         checkEndpoints(endpoint);
 
-        HttpURLConnection httpConnection = createConnection(endpoint);
+        HttpURLConnection httpConnection = createConnection(endpoint, context);
 
         if (!verification) {
             // for https hostname verification  - turn off by default
@@ -576,12 +599,32 @@ public class HttpClientTransport
         httpConnection.setRequestMethod("POST");
         // Content type must be xml
         httpConnection.setRequestProperty("Content-Type", "text/xml");
-        
+
         return httpConnection;
     }
 
-    private java.net.HttpURLConnection createConnection(String endpoint)
+    private java.net.HttpURLConnection createConnection(String endpoint, SOAPMessageContext context)
         throws IOException {
+        boolean proxySet = Boolean.parseBoolean((String)context.getProperty(HTTP_PROXY_SET_PROPERTY));
+        //If proxy is set create connection using proxy
+        if (proxySet) {
+            String proxyHost = ((String)context.getProperty(HTTP_PROXY_HOST_PROPERTY)).trim();
+            String proxyPort = ((String)context.getProperty(HTTP_PROXY_PORT_PROPERTY)).trim();
+            //Use proxy only if both host and port are specified.
+            if (proxyHost != null &&
+                 proxyHost.length() > 0 &&
+                 proxyPort != null &&
+                 proxyPort.length() > 0)  {
+                        SocketAddress address = new InetSocketAddress(proxyHost, Integer.parseInt(proxyPort));
+                        Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
+                        return (HttpURLConnection) new URL(endpoint).openConnection(proxy);
+            } else {
+                    if (_logger.isLoggable(Level.WARNING)) {
+                        _logger.log(Level.WARNING, "HTTP Proxy is enabled on the stub, but proxy host/port values not set correctly on the stub; opening connection without the proxy.");
+                    }
+            }
+        }
+
         return (HttpURLConnection) new URL(endpoint).openConnection();
     }
 
@@ -620,47 +663,47 @@ public class HttpClientTransport
 
     private static void checkMessageContentType(String contentType, boolean response) {
         if (contentType.indexOf("text/html") >= 0) {
-            System.out.println("##### WARNING " + 
+            System.out.println("##### WARNING " +
                 (response ? "RESPONSE" : "REQUEST") +
                 " CONTENT TYPE INCLUDES 'text/html'");
             return;     // Allow HTML
         }
-        
+
         System.out.println("##### CHECKING " +
             (response ? "RESPONSE" : "REQUEST") +
             " CONTENT TYPE '" + contentType + "'");
-        
-        String negotiation = 
+
+        String negotiation =
             System.getProperty(com.sun.xml.rpc.client.StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY, "none").intern();
-        
+
         // Use indexOf() to handle Multipart/related types
         if (negotiation == "none") {
             // OK only if XML
             if (contentType.indexOf("text/xml") < 0) {
-                throw new RuntimeException("Invalid content type '" + contentType 
-                    + "' in " + (response ? "response" : "request") + 
+                throw new RuntimeException("Invalid content type '" + contentType
+                    + "' in " + (response ? "response" : "request") +
                     " with conneg set to '" + negotiation + "'.");
             }
         }
         else if (negotiation == "optimistic") {
             // OK only if FI
             if (contentType.indexOf("application/fastinfoset") < 0) {
-                throw new RuntimeException("Invalid content type '" + contentType 
-                    + "' in " + (response ? "response" : "request") + 
+                throw new RuntimeException("Invalid content type '" + contentType
+                    + "' in " + (response ? "response" : "request") +
                     " with conneg set to '" + negotiation + "'.");
             }
         }
         else if (negotiation == "pessimistic") {
             // OK if FI request is anything and response is FI
-            if (response && 
+            if (response &&
                     contentType.indexOf("application/fastinfoset") < 0) {
-                throw new RuntimeException("Invalid content type '" + contentType 
-                    + "' in " + (response ? "response" : "request") + 
+                throw new RuntimeException("Invalid content type '" + contentType
+                    + "' in " + (response ? "response" : "request") +
                     " with conneg set to '" + negotiation + "'.");
             }
         }
     }
-    
+
     // overide default SSL HttpClientVerifier to always return true
     // effectively overiding Hostname client verification when using SSL
     static class HttpClientVerifier implements HostnameVerifier {
@@ -668,16 +711,16 @@ public class HttpClientTransport
             return true;
         }
     }
-    
+
     /**
      * Flag used to enable conneg content type check.
      */
     static private boolean DEBUG;
     static {
-        final String value = System.getProperty("debug", "false");       
-        DEBUG = value.equals("on") || value.equals("true");        
+        final String value = System.getProperty("debug", "false");
+        DEBUG = value.equals("on") || value.equals("true");
     }
-    
+
     private MessageFactory _messageFactory;
     private OutputStream _logStream;
 }
