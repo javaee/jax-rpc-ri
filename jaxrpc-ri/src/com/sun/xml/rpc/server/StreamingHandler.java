@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingHandler.java,v 1.2 2006-04-13 01:32:01 ofung Exp $
+ * $Id: StreamingHandler.java,v 1.2.2.1 2008-02-14 18:01:33 venkatajetti Exp $
  */
 
 /*
@@ -653,19 +653,24 @@ public abstract class StreamingHandler
                 SOAPBody body = request.getSOAPPart().getEnvelope().getBody();
                 if (body != null) {
                     Iterator iter = body.getChildElements();
-                    if (iter.hasNext()) {
-                        SOAPElement firstBodyElement =
-                            (SOAPElement) iter.next();
-                        Name firstBodyElementName =
-                            firstBodyElement.getElementName();
-                        return getOpcodeForFirstBodyElementName(
-                            new QName(
-                                firstBodyElementName.getURI(),
-                                firstBodyElementName.getLocalName()));
-                    } else {
-                        // body is empty
-                        return getOpcodeForFirstBodyElementName(null);
-                    }
+                        // CR-6660314, Merge from JavaCAPS RTS for backward compatibility
+                        while (iter.hasNext()) {
+                            // ckuo: first child may be text node, so we check the instance
+                            Object obj = iter.next();
+                            if (SOAPElement.class.isInstance(obj)) {
+
+                                SOAPElement firstBodyElement =
+                                    (SOAPElement) obj;
+                                Name firstBodyElementName =
+                                    firstBodyElement.getElementName();
+                                return getOpcodeForFirstBodyElementName(
+                                    new QName(
+                                        firstBodyElementName.getURI(),
+                                        firstBodyElementName.getLocalName()));
+                            }
+                        } 
+                    // body is empty
+                    return getOpcodeForFirstBodyElementName(null);
                 }
             } catch (SOAPException e) {
             }
