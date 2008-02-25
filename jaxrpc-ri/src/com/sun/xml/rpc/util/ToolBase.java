@@ -1,5 +1,5 @@
 /*
- * $Id: ToolBase.java,v 1.2 2006-04-13 01:33:51 ofung Exp $
+ * $Id: ToolBase.java,v 1.2.2.2 2008-02-20 17:48:38 venkatajetti Exp $
  */
 
 /*
@@ -29,6 +29,9 @@ package com.sun.xml.rpc.util;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.sun.xml.rpc.util.localization.Localizable;
 import com.sun.xml.rpc.util.localization.LocalizableMessageFactory;
 import com.sun.xml.rpc.util.localization.Localizer;
@@ -49,6 +52,11 @@ public abstract class ToolBase {
 	protected void initialize() {
 		messageFactory = new LocalizableMessageFactory(getResourceBundleName());
 		localizer = new Localizer();
+        // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
+        if (out == null) {
+            logger = Logger.getLogger(ToolBase.class.getName());
+        }
+
 	}
 
 	public boolean run(String[] args) {
@@ -80,21 +88,33 @@ public abstract class ToolBase {
 	protected abstract String getResourceBundleName();
 
 	public void printStackTrace(Throwable t) {
-		PrintStream outstream =
-			out instanceof PrintStream
-				? (PrintStream) out
-				: new PrintStream(out, true);
-		t.printStackTrace(outstream);
-		outstream.flush();
+        // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
+        if (out != null) {
+            PrintStream outstream =
+                out instanceof PrintStream
+                    ? (PrintStream) out
+                    : new PrintStream(out, true);
+            t.printStackTrace(outstream);
+            outstream.flush();
+        } else if (logger != null) {
+            logger.log(Level.SEVERE, "ToolBase Error occured: ", t);
+        }
+
 	}
 
 	protected void report(String msg) {
-		PrintStream outstream =
-			out instanceof PrintStream
-				? (PrintStream) out
-				: new PrintStream(out, true);
-		outstream.println(msg);
-		outstream.flush();
+        // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
+        if (out != null) {
+            PrintStream outstream =
+                out instanceof PrintStream
+                    ? (PrintStream) out
+                    : new PrintStream(out, true);
+            outstream.println(msg);
+            outstream.flush();
+        } else if (logger != null) {
+            logger.log(Level.INFO, msg);
+        }
+
 	}
 
 	protected void report(Localizable msg) {
@@ -139,4 +159,5 @@ public abstract class ToolBase {
 	protected final static String TRUE = "true";
 	protected final static String FALSE = "false";
 
+   private static Logger logger = null;
 }
