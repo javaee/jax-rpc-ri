@@ -1,5 +1,5 @@
 /*
- * $Id: StubBase.java,v 1.2 2006-04-13 01:26:38 ofung Exp $
+ * $Id: StubBase.java,v 1.2.2.1 2008-02-25 20:24:47 anbubala Exp $
  */
 
 /*
@@ -7,12 +7,12 @@
  * of the Common Development and Distribution License
  * (the License).  You may not use this file except in
  * compliance with the License.
- * 
+ *
  * You can obtain a copy of the license at
  * https://glassfish.dev.java.net/public/CDDLv1.0.html.
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at https://glassfish.dev.java.net/public/CDDLv1.0.html.
@@ -20,7 +20,7 @@
  * with the fields enclosed by brackets [] replaced by
  * you own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- * 
+ *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -88,25 +88,33 @@ public abstract class StubBase
         temp.add(StubPropertyConstants.SET_ATTACHMENT_PROPERTY);
         temp.add(StubPropertyConstants.GET_ATTACHMENT_PROPERTY);
         temp.add(StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY);
+
+        //http proxy specific properties
+        temp.add(StubPropertyConstants.HTTP_PROXY_SET_PROPERTY);
+        temp.add(StubPropertyConstants.HTTP_PROXY_HOST_PROPERTY);
+        temp.add(StubPropertyConstants.HTTP_PROXY_PORT_PROPERTY);
+        temp.add(StubPropertyConstants.HTTP_PROXY_USER_NAME_PROPERTY);
+        temp.add(StubPropertyConstants.HTTP_PROXY_USER_PASSWORD_PROPERTY);
+
         _recognizedProperties = Collections.unmodifiableSet(temp);
     }
 
     //implementation for javax.api.xml.rpc.Stub
     protected StubBase(HandlerChain handlerChain) {
-        _handlerChain = handlerChain;        
+        _handlerChain = handlerChain;
         ContentNegotiationProperties.initFromSystemProperties(_properties);
     }
-    
+
     // Redefined to propagate FI property
-    protected StreamingSenderState _start(HandlerChain handlerChain) {       
+    protected StreamingSenderState _start(HandlerChain handlerChain) {
         //create the SOAPMessageContext
-        SOAPMessageContext messageContext = new SOAPMessageContext();        
-        
+        SOAPMessageContext messageContext = new SOAPMessageContext();
+
         ((HandlerChainImpl) handlerChain).addUnderstoodHeaders(_getUnderstoodHeaders());
-        
+
         //create and return StreamingSenderState containing message context
-        //and a handler chain 
-        return new StreamingSenderState(messageContext, handlerChain, 
+        //and a handler chain
+        return new StreamingSenderState(messageContext, handlerChain,
             useFastInfoset(), acceptFastInfoset());
     }
 
@@ -124,19 +132,19 @@ public abstract class StubBase
             _properties.get(StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY);
         return (value == "optimistic");
     }
-    
+
     public boolean acceptFastInfoset() {
         Object value =
             _properties.get(StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY);
         return (value != "none");
     }
-    
+
     public void _setProperty(String name, Object value) {
         if (!_recognizedProperties.contains(name)) {
             throw new JAXRPCException(
                 "Stub does not recognize property: " + name);
         }
-        
+
         // Internalize value of CONTENT_NEGOTIATION_PROPERTY
         if (name.equals(StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY)) {
             _properties.put(name, ((String) value).intern());
@@ -219,12 +227,34 @@ public abstract class StubBase
             messageContext.setProperty(
                 StubPropertyConstants.SECURITY_CONTEXT,
                 securityContext);
-        }        
+        }
+
+        //set the http proxy specific properties
+        Object proxySet = _getProperty(StubPropertyConstants.HTTP_PROXY_SET_PROPERTY);
+        if (proxySet != null) {
+            messageContext.setProperty(StubPropertyConstants.HTTP_PROXY_SET_PROPERTY, proxySet);
+        }
+        Object proxyHost = _getProperty(StubPropertyConstants.HTTP_PROXY_HOST_PROPERTY);
+        if (proxyHost != null) {
+            messageContext.setProperty(StubPropertyConstants.HTTP_PROXY_HOST_PROPERTY, proxyHost);
+        }
+        Object proxyPort = _getProperty(StubPropertyConstants.HTTP_PROXY_PORT_PROPERTY);
+        if (proxyPort != null) {
+            messageContext.setProperty(StubPropertyConstants.HTTP_PROXY_PORT_PROPERTY, proxyPort);
+        }
+        Object proxyUserName= _getProperty(StubPropertyConstants.HTTP_PROXY_USER_NAME_PROPERTY);
+        if (proxyUserName != null) {
+            messageContext.setProperty(StubPropertyConstants.HTTP_PROXY_USER_NAME_PROPERTY, proxyUserName);
+        }
+        Object proxyUserPassword = _getProperty(StubPropertyConstants.HTTP_PROXY_USER_PASSWORD_PROPERTY);
+        if (proxyUserPassword != null) {
+            messageContext.setProperty(StubPropertyConstants.HTTP_PROXY_USER_PASSWORD_PROPERTY, proxyUserPassword);
+        }
     }
 
     protected void _postSendingHook(StreamingSenderState state)
-        throws Exception 
-    {    	
+        throws Exception
+    {
         //post sending hook examines properties from the
         //streaming sender state and matintains session state or cookie state
         //if required
@@ -239,8 +269,8 @@ public abstract class StubBase
                         StubPropertyConstants.HTTP_COOKIE_JAR);
                 _setProperty(StubPropertyConstants.HTTP_COOKIE_JAR, cookieJar);
             }
-        }        
-        
+        }
+
         /*
          * Pessimistic content negotiation: If request in XML and reply in
          * FI, then switch to FI in subsequent calls.
@@ -278,13 +308,13 @@ public abstract class StubBase
     }
 
     /**
-     * Overrides definition in StreamingSender to return an FI factory 
-     * instance when property is set on the stub. The method 
-     * _getXMLReaderFactory() does not need to be redefined since SAAJ 
+     * Overrides definition in StreamingSender to return an FI factory
+     * instance when property is set on the stub. The method
+     * _getXMLReaderFactory() does not need to be redefined since SAAJ
      * already returns an FastInfosetSource.
      */
     protected XMLWriterFactory _getXMLWriterFactory() {
-        Object value = 
+        Object value =
             _getProperty(StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY);
         return (value == "optimistic") ?
             (XMLWriterFactory) FastInfosetWriterFactoryImpl.newInstance() :
