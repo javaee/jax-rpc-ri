@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2 2006-04-13 01:26:56 ofung Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.6 2008-04-10 22:50:12 anbubala Exp $
  */
 
 /*
@@ -36,10 +36,18 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+
+import java.security.PrivilegedAction;
+
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
@@ -62,6 +70,7 @@ import com.sun.xml.rpc.util.localization.Localizable;
  */
 public class HttpClientTransport
     implements ClientTransport, StubPropertyConstants {
+    static Logger _logger = Logger.getLogger(HttpClientTransport.class.getName());
 
     public static final String HTTP_SOAPACTION_PROPERTY = "http.soap.action";
     private static final SimpleTypeEncoder base64Encoder =
@@ -413,9 +422,22 @@ public class HttpClientTransport
 
     protected void writeMessageToConnection(
         SOAPMessageContext context,
-        HttpURLConnection httpConnection)
+        final HttpURLConnection httpConnection)
         throws IOException, SOAPException {
-        OutputStream contentOut = httpConnection.getOutputStream();
+        //OutputStream contentOut = httpConnection.getOutputStream();
+        //Performance improvement: wrap HttpURLConnection.getOutputStream in a doPrivileged block
+        //to avoid the call for security check by the security manager for getPropertyAction
+        OutputStream contentOut = (OutputStream) java.security.AccessController
+            .doPrivileged(new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        return httpConnection.getOutputStream();
+                    } catch (IOException e) {
+                        _logger.log(Level.SEVERE, "cannot get httpConnection outputstream", e);
+                    }
+                    return null;
+                }
+            });
         context.getMessage().writeTo(contentOut);
         contentOut.flush();
         contentOut.close();
@@ -505,6 +527,27 @@ public class HttpClientTransport
                 "Authorization",
                 "Basic " + credentials);
         }
+
+        //If the proxy is set and the proxy credentials are available
+        //create the Proxy-Authorization header
+        boolean proxySet = Boolean.parseBoolean((String)context.getProperty(HTTP_PROXY_SET_PROPERTY));
+        if (proxySet) {
+            String proxyUser = (String)context.getProperty(HTTP_PROXY_USER_NAME_PROPERTY);
+            //Add auth header only if a user is specified
+            if (proxyUser != null && proxyUser.trim().length() > 0) {
+                String proxyCredentials  =
+                    new StringBuffer(proxyUser)
+                        .append(":")
+                        .append((String) context.getProperty(HTTP_PROXY_USER_PASSWORD_PROPERTY))
+                        .toString();
+
+                proxyCredentials = base64Encoder.objectToString(proxyCredentials.getBytes(), null);
+                context.getMessage()
+                            .getMimeHeaders()
+                            .setHeader("Proxy-Authorization",  "Basic " + proxyCredentials);
+            }
+        }
+
     }
 
     protected HttpURLConnection createHttpConnection(
@@ -533,7 +576,7 @@ public class HttpClientTransport
 
         checkEndpoints(endpoint);
 
-        HttpURLConnection httpConnection = createConnection(endpoint);
+        HttpURLConnection httpConnection = createConnection(endpoint, context);
 
         if (!verification) {
             // for https hostname verification  - turn off by default
@@ -558,8 +601,28 @@ public class HttpClientTransport
         return httpConnection;
     }
 
-    private java.net.HttpURLConnection createConnection(String endpoint)
+    private java.net.HttpURLConnection createConnection(String endpoint, SOAPMessageContext context)
         throws IOException {
+        boolean proxySet = Boolean.parseBoolean((String)context.getProperty(HTTP_PROXY_SET_PROPERTY));
+        //If proxy is set create connection using proxy
+        if (proxySet) {
+            String proxyHost = ((String)context.getProperty(HTTP_PROXY_HOST_PROPERTY)).trim();
+            String proxyPort = ((String)context.getProperty(HTTP_PROXY_PORT_PROPERTY)).trim();
+            //Use proxy only if both host and port are specified.
+            if (proxyHost != null &&
+                 proxyHost.length() > 0 &&
+                 proxyPort != null &&
+                 proxyPort.length() > 0)  {
+                        SocketAddress address = new InetSocketAddress(proxyHost, Integer.parseInt(proxyPort));
+                        Proxy proxy = new Proxy(Proxy.Type.HTTP, address);
+                        return (HttpURLConnection) new URL(endpoint).openConnection(proxy);
+            } else {
+                    if (_logger.isLoggable(Level.WARNING)) {
+                        _logger.log(Level.WARNING, "HTTP Proxy is enabled on the stub, but proxy host/port values not set correctly on the stub; opening connection without the proxy.");
+                    }
+            }
+        }
+
         return (HttpURLConnection) new URL(endpoint).openConnection();
     }
 
