@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2.2.5 2008-02-25 20:24:48 anbubala Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.6 2008-04-10 22:50:12 anbubala Exp $
  */
 
 /*
@@ -7,12 +7,12 @@
  * of the Common Development and Distribution License
  * (the License).  You may not use this file except in
  * compliance with the License.
- *
+ * 
  * You can obtain a copy of the license at
  * https://glassfish.dev.java.net/public/CDDLv1.0.html.
  * See the License for the specific language governing
  * permissions and limitations under the License.
- *
+ * 
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at https://glassfish.dev.java.net/public/CDDLv1.0.html.
@@ -20,7 +20,7 @@
  * with the fields enclosed by brackets [] replaced by
  * you own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- *
+ * 
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -93,7 +93,9 @@ public class HttpClientTransport
         }
     }
 
-    public void invoke(String endpoint, SOAPMessageContext context) throws ClientTransportException {
+    public void invoke(String endpoint, SOAPMessageContext context)
+        throws ClientTransportException {
+
         //using an HttpURLConnection the soap message is sent
         //over the wire
         try {
@@ -106,13 +108,13 @@ public class HttpClientTransport
             CookieJar cookieJar = sendCookieAsNeeded(context, httpConnection);
 
             moveHeadersFromContextToConnection(context, httpConnection);
-
+            
             if (DEBUG) {
                 checkMessageContentType(httpConnection.getRequestProperty("Content-Type"), false);
             }
 
             writeMessageToConnection(context, httpConnection);
-
+            
             boolean isFailure = connectForResponse(httpConnection, context);
             int statusCode = httpConnection.getResponseCode();
 
@@ -128,7 +130,7 @@ public class HttpClientTransport
             }
 
             MimeHeaders headers = collectResponseMimeHeaders(httpConnection);
-
+            
             saveCookieAsNeeded(context, httpConnection, cookieJar);
 
             SOAPMessage response = null;
@@ -154,7 +156,7 @@ public class HttpClientTransport
             if (DEBUG) {
                 checkMessageContentType(headers.getHeader("Content-Type")[0], true);
             }
-
+            
             context.setMessage(response);
             // do not set the failure flag, because stubs cannot rely on it,
             // since transports different from HTTP may not be able to set it
@@ -261,7 +263,7 @@ public class HttpClientTransport
                 System.out.println("");
             }
         }
-
+        
         SOAPMessage response = _messageFactory.createMessage(headers, in);
 
         contentIn.close();
@@ -302,12 +304,8 @@ public class HttpClientTransport
 
         try {
             httpConnection.connect();
-            // CR-6660386, Merge from JavaCAPS RTS for backward compatibility
-            // If there is an 404 HTTP status code getInputStream() will throw an IOException and will make checkResponseCode unreachable.
-            //Move this call so that this method will be call in all scenario as it was designed.
-            //checkResponseCode can throw IOException which has been designed to supressed.
-            checkResponseCode(httpConnection, context);
             httpConnection.getInputStream();
+            checkResponseCode(httpConnection, context);
 
         } catch (IOException io) {
         }
@@ -523,9 +521,8 @@ public class HttpClientTransport
         if (credentials != null) {
             credentials += ":"
                 + (String) context.getProperty(PASSWORD_PROPERTY);
-                // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
             credentials =
-                base64Encoder.objectToString(credentials.getBytes("UTF-8"), null);
+                base64Encoder.objectToString(credentials.getBytes(), null);
             context.getMessage().getMimeHeaders().setHeader(
                 "Authorization",
                 "Basic " + credentials);
@@ -550,6 +547,7 @@ public class HttpClientTransport
                             .setHeader("Proxy-Authorization",  "Basic " + proxyCredentials);
             }
         }
+
     }
 
     protected HttpURLConnection createHttpConnection(
@@ -599,7 +597,7 @@ public class HttpClientTransport
         httpConnection.setRequestMethod("POST");
         // Content type must be xml
         httpConnection.setRequestProperty("Content-Type", "text/xml");
-
+        
         return httpConnection;
     }
 
@@ -663,47 +661,47 @@ public class HttpClientTransport
 
     private static void checkMessageContentType(String contentType, boolean response) {
         if (contentType.indexOf("text/html") >= 0) {
-            System.out.println("##### WARNING " +
+            System.out.println("##### WARNING " + 
                 (response ? "RESPONSE" : "REQUEST") +
                 " CONTENT TYPE INCLUDES 'text/html'");
             return;     // Allow HTML
         }
-
+        
         System.out.println("##### CHECKING " +
             (response ? "RESPONSE" : "REQUEST") +
             " CONTENT TYPE '" + contentType + "'");
-
-        String negotiation =
+        
+        String negotiation = 
             System.getProperty(com.sun.xml.rpc.client.StubPropertyConstants.CONTENT_NEGOTIATION_PROPERTY, "none").intern();
-
+        
         // Use indexOf() to handle Multipart/related types
         if (negotiation == "none") {
             // OK only if XML
             if (contentType.indexOf("text/xml") < 0) {
-                throw new RuntimeException("Invalid content type '" + contentType
-                    + "' in " + (response ? "response" : "request") +
+                throw new RuntimeException("Invalid content type '" + contentType 
+                    + "' in " + (response ? "response" : "request") + 
                     " with conneg set to '" + negotiation + "'.");
             }
         }
         else if (negotiation == "optimistic") {
             // OK only if FI
             if (contentType.indexOf("application/fastinfoset") < 0) {
-                throw new RuntimeException("Invalid content type '" + contentType
-                    + "' in " + (response ? "response" : "request") +
+                throw new RuntimeException("Invalid content type '" + contentType 
+                    + "' in " + (response ? "response" : "request") + 
                     " with conneg set to '" + negotiation + "'.");
             }
         }
         else if (negotiation == "pessimistic") {
             // OK if FI request is anything and response is FI
-            if (response &&
+            if (response && 
                     contentType.indexOf("application/fastinfoset") < 0) {
-                throw new RuntimeException("Invalid content type '" + contentType
-                    + "' in " + (response ? "response" : "request") +
+                throw new RuntimeException("Invalid content type '" + contentType 
+                    + "' in " + (response ? "response" : "request") + 
                     " with conneg set to '" + negotiation + "'.");
             }
         }
     }
-
+    
     // overide default SSL HttpClientVerifier to always return true
     // effectively overiding Hostname client verification when using SSL
     static class HttpClientVerifier implements HostnameVerifier {
@@ -711,16 +709,16 @@ public class HttpClientTransport
             return true;
         }
     }
-
+    
     /**
      * Flag used to enable conneg content type check.
      */
     static private boolean DEBUG;
     static {
-        final String value = System.getProperty("debug", "false");
-        DEBUG = value.equals("on") || value.equals("true");
+        final String value = System.getProperty("debug", "false");       
+        DEBUG = value.equals("on") || value.equals("true");        
     }
-
+    
     private MessageFactory _messageFactory;
     private OutputStream _logStream;
 }
