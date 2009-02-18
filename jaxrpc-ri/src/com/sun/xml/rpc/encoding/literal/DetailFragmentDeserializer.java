@@ -1,5 +1,5 @@
 /*
- * $Id: DetailFragmentDeserializer.java,v 1.2.2.1 2008-02-14 17:06:20 venkatajetti Exp $
+ * $Id: DetailFragmentDeserializer.java,v 1.2.2.2 2009-02-18 15:51:28 anbubala Exp $
  */
 
 /*
@@ -122,9 +122,10 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
             Object obj = null;
 
             if (isNull) {
-                if (!isNullable) {
-                    throw new DeserializationException("xsd.unexpectedNull");
-                }
+                // bug fix: 4974593
+//                if (!isNullable) {
+//                    throw new DeserializationException("xsd.unexpectedNull");
+//                }
                 reader.next();
             } else {
                 obj = doDeserialize(reader, context);
@@ -166,10 +167,9 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
             Object obj = null;
 
             if (isNull) {
-                // bug fix: 4974593
-//                if (!isNullable) {
-//                    throw new DeserializationException("xsd.unexpectedNull");
-//                }
+                if (!isNullable) {
+                    throw new DeserializationException("xsd.unexpectedNull");
+                }
                 reader.next();
             } else {
                 obj = doDeserializeElement(reader, context);
@@ -191,12 +191,17 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
             
         Detail detail;
         detail = soapFactory.createDetail();
-        // CR-6660376, Merge from JavaCAPS RTS for backward compatibility
+
+        // CR-6660376, Merge from JavaCAPS RTS for backward compatibility 
+        Name name;
         QName elementName;
         boolean done=false;
-        while(!done) {
+
+        // CR-6666369, Merge from JavaCAPS RTS for backward compatibility
+        while(!done && reader.getState() != XMLReader.EOF) {
+        //while(!done) {
+
         String elementURI = reader.getURI();
-        Name name;
         if (elementURI == null || elementURI.equals("")) {
             name = soapFactory.createName(reader.getLocalName());
         } else {
@@ -209,6 +214,16 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
         DetailEntry entry = detail.addDetailEntry(name);
         doDeserializeElement(entry, reader, context);
         // CR-6660376, Merge from JavaCAPS RTS for backward compatibility
+
+            // CR-6666369, Merge from JavaCAPS RTS for backward compatibility
+            // check if it is the closing tag: </soap:Fault>
+            if (reader.getState() == XMLReader.END) {
+            	QName FAULT_QNAME = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Fault");
+            	if (reader.getName().equals(FAULT_QNAME)) {
+                	break;
+            	}
+            }
+
         reader.nextElementContent();
 		elementName = reader.getName();
 		if (elementName.equals(DETAIL_QNAME)) {
@@ -290,7 +305,7 @@ public class DetailFragmentDeserializer extends LiteralObjectSerializerBase {
         }
 
         reader.next();
-        while (reader.getState() != XMLReader.END) {
+        while (reader.getState() != XMLReader.END && reader.getState() != XMLReader.EOF) {
             int state = reader.getState();
             if (state == XMLReader.START) {
                 SOAPElement child =
