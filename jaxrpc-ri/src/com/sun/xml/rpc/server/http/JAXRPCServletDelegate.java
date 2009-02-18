@@ -1,5 +1,5 @@
 /*
- * $Id: JAXRPCServletDelegate.java,v 1.2.2.1 2008-02-19 10:51:31 venkatajetti Exp $
+ * $Id: JAXRPCServletDelegate.java,v 1.2.2.2 2009-02-18 16:27:37 anbubala Exp $
  */
 
 /*
@@ -705,7 +705,7 @@ public class JAXRPCServletDelegate implements ServletDelegate {
         MimeHeaders headers,
         HttpServletResponse res) {
         headers.removeHeader("Content-Type");
-        // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+        // CR-6495282, Merge from JavaCAPS RTS for backward compatibility
         //headers.removeHeader("Content-Length");
         Iterator it = headers.getAllHeaders();
         while (it.hasNext()) {
