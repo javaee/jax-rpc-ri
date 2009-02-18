@@ -1,5 +1,5 @@
 /*
- * $Id: SchemaElement.java,v 1.2 2006-04-13 01:34:22 ofung Exp $
+ * $Id: SchemaElement.java,v 1.2.2.1 2009-02-18 15:58:10 anbubala Exp $
  */
 
 /*
@@ -282,9 +282,11 @@ public class SchemaElement {
             prefix = "";
         }
         String uri = getURIForPrefix(prefix);
+        /* CR-6692113, Merge from JavaCAPS RTS for backward compatibility
         if (uri == null) {
             throw new ValidationException("validation.invalidPrefix", prefix);
         }
+         */
         String localPart = XmlUtil.getLocalPart(s);
         return new QName(uri, localPart);
     }
