@@ -1,5 +1,5 @@
 /*
- * $Id: LiteralFragmentSerializer.java,v 1.2.2.2 2008-02-19 10:51:24 venkatajetti Exp $
+ * $Id: LiteralFragmentSerializer.java,v 1.2.2.3 2009-02-18 16:20:53 anbubala Exp $
  */
 
 /*
@@ -217,7 +217,7 @@ public class LiteralFragmentSerializer extends LiteralObjectSerializerBase {
                 if(child != null) {
                 	element.addChildElement(child);
                 } else {
-                    // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+                    // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
 
                         //child = soapFactory.createElement(reader.getLocalName(), FIRST_PREFIX, reader.getURI());
 
