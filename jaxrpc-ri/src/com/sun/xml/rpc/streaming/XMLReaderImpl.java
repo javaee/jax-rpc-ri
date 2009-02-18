@@ -1,5 +1,5 @@
 /*
- * $Id: XMLReaderImpl.java,v 1.2.2.1 2008-02-19 10:51:18 venkatajetti Exp $
+ * $Id: XMLReaderImpl.java,v 1.2.2.2 2009-02-18 16:42:02 anbubala Exp $
  */
 
 /*
@@ -198,7 +198,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public int getLength() {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getLength();
             int temp = 0;
             if (_attr != null) {
@@ -209,7 +209,7 @@ public class XMLReaderImpl extends XMLReaderBase {
 
         public boolean isNamespaceDeclaration(int index) {
             // use "==" instead of equals() because we know that the string will always be interned
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getURI(index) == XMLNS_NAMESPACE_URI;
             boolean temp = false;
             if (_attr != null) {
@@ -223,7 +223,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getURI(int index) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getURI(index);
             String temp = null;
             if (_attr != null) {
@@ -233,7 +233,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getLocalName(int index) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getLocalName(index);
             String temp = null;
             if (_attr != null) {
@@ -243,7 +243,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getPrefix(int index) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //String qname = _attr.getQName(index);
             String qname = null;
             if (_attr != null) {
@@ -257,7 +257,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getValue(int index) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getValue(index);
             String temp = null;
             if (_attr != null) {
@@ -267,7 +267,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public int getIndex(QName name) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getIndex(name.getNamespaceURI(), name.getLocalPart());
             int temp = 0;
             if (_attr != null) {
@@ -277,7 +277,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public int getIndex(String uri, String localName) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getIndex(uri, localName);
             int temp = 0;
             if (_attr != null) {
@@ -287,7 +287,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public int getIndex(String localName) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getIndex(localName);
             int temp = 0;
             if (_attr != null) {
@@ -297,7 +297,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getValue(QName name) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getValue(name.getNamespaceURI(), name.getLocalPart());
             String temp = null;
             if (_attr != null) {
@@ -307,7 +307,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getValue(String uri, String localName) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getValue(uri, localName);
             String temp = null;
             if (_attr != null) {
@@ -317,7 +317,7 @@ public class XMLReaderImpl extends XMLReaderBase {
         }
 
         public String getValue(String localName) {
-            // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
+            // CR-6626576, Merge from JavaCAPS RTS for backward compatibility
             //return _attr.getValue(localName);
             String temp = null;
             if (_attr != null) {
