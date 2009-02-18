@@ -21,7 +21,7 @@
  */
 
 /*
- * $Id: TieGenerator.java,v 1.2.2.2 2008-02-13 01:16:57 anbubala Exp $
+ * $Id: TieGenerator.java,v 1.2 2006-04-13 01:29:00 ofung Exp $
  */
 
 /*
@@ -192,23 +192,7 @@ public class TieGenerator extends StubTieGeneratorBase {
     }
 
     protected void preVisitOperation(Operation operation) throws Exception {
-        // CR-6660354, Merge from JavaCAPS RTS for backward compatibility
-        //String name = operation.getName().getLocalPart();
-        //Modified to use operation's QName instead of the operation's name. 
-        //In case of document/literal style wsdl, if there are multiple operations in the port type and all the operations'
-        //input message refer the same element then incorrect operation is getting invoked. 
-        //To overcome this problem made the webservice operation invocation based on soap action        
-        QName name = null;
-    	 Message message = operation.getRequest();
-         boolean hasEmptyBody = message.getBodyBlockCount() == 0;
-         if (message.getBodyBlockCount() > 1) {
-            // throw an exception - we cannot dispatch unless there is exactly one body block
-            fail("generator.tie.cannot.dispatch", operation.getName().getLocalPart());
-         }
-         if (!(hasEmptyBody)) {
-            Block bodyBlock = (Block) message.getBodyBlocks().next();
-            name = bodyBlock.getName();
-         }
+        String name = operation.getName().getLocalPart();
         if (operationNames.contains(name)) {
             hasUniqueOperationNames = false;
         }
@@ -1845,19 +1829,6 @@ public class TieGenerator extends StubTieGeneratorBase {
             }
             p.pln();
             addAttachmentsToResponse(p, operation.getResponse().getParameters());
-
-            //CR-6660354, Merge from JavaCAPS RTS for backward compatibility
-            //Check if the parts in the output message are empty
-            //If so send the output message name in the response rather than sending an empty body             
-            if(!operation.getResponse().getParameters().hasNext()){
-                Block resBlock = (Block) message.getBodyBlocks().next();
-
-                p.pln("SOAPBlockInfo bodyBlock = new SOAPBlockInfo("+
-                                env.getNames().getBlockQNameName(operation, resBlock)+");");
-                String serializer = writerFactory.createWriter(servicePackage, (LiteralType)responseBlockType).serializerMemberName();
-                p.pln("bodyBlock.setSerializer("+serializer+");");
-                p.pln("state.getResponse().setBody(bodyBlock);");
-            }
         }
         writeCatchClauses(p, operation);
         p.pOln("}"); // catch

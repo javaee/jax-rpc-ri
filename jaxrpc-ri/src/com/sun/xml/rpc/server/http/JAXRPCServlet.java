@@ -1,5 +1,5 @@
 /*
- * $Id: JAXRPCServlet.java,v 1.2.2.2 2008-02-13 23:49:12 anbubala Exp $
+ * $Id: JAXRPCServlet.java,v 1.2 2006-04-13 01:32:07 ofung Exp $
  */
 
 /*
@@ -102,7 +102,7 @@ public class JAXRPCServlet extends HttpServlet {
                         new Object[] { e }));
             logger.log(Level.SEVERE, message, e);
             throw new ServletException(message);
-        } 
+        }
     }
 
     public void destroy() {

@@ -1,5 +1,5 @@
 /*
- * $Id: ClientProcessorEnvironment.java,v 1.2.2.1 2008-02-13 10:59:39 venkatajetti Exp $
+ * $Id: ClientProcessorEnvironment.java,v 1.2 2006-04-13 01:31:53 ofung Exp $
  */
 
 /*
@@ -169,7 +169,6 @@ public class ClientProcessorEnvironment extends ProcessorEnvironmentBase
     public void shutdown() {
         listener = null;
         generatedFiles = null;
-        super.shutdown();
     }
     
     public void error(Localizable msg) {
