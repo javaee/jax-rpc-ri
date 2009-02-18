@@ -1,5 +1,5 @@
 /*
- * $Id: Names.java,v 1.2 2006-04-13 01:28:48 ofung Exp $
+ * $Id: Names.java,v 1.2.2.1 2009-02-18 16:51:49 anbubala Exp $
  */
 
 /*
@@ -769,6 +769,8 @@ public class Names
         reservedWords.put("void", "_void");
         reservedWords.put("volatile", "_volatile");
         reservedWords.put("while", "_while");
+        // CR-6737840: Merge from JavaCAPS for backward compatibility
+        reservedWords.put("Exception", "_Exception");
 
         holderClassNames = new HashMap();
         holderClassNames.put("int", "javax.xml.rpc.holders.IntHolder");
