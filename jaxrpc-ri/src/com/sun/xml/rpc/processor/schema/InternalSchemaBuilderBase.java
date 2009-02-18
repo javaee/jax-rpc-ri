@@ -1,5 +1,5 @@
 /*
- * $Id: InternalSchemaBuilderBase.java,v 1.2 2006-04-13 01:31:45 ofung Exp $
+ * $Id: InternalSchemaBuilderBase.java,v 1.2.2.1 2009-02-18 15:35:06 anbubala Exp $
  */
 
 /*
@@ -57,6 +57,7 @@ import com.sun.xml.rpc.wsdl.parser.Constants;
  */
 public abstract class InternalSchemaBuilderBase {
     private boolean _noDataBinding = false;
+    
     public InternalSchemaBuilderBase(AbstractDocument document,
         Properties options) {
             
@@ -168,12 +169,25 @@ public abstract class InternalSchemaBuilderBase {
             throw new ModelException(e);
         }
     }
-    
-    public ModelGroupDefinitionComponent buildModelGroupDefinition(QName name) {
-        
-        // TODO - implement this
-        failUnimplemented("F002");
-        return null; // keep compiler happy
+    public ModelGroupDefinitionComponent buildModelGroupDefinition(QName name, ComplexTypeDefinitionComponent scope) {
+    	 // CR-6610901, Merge from JavaCAPS RTS for backward compatibility 
+    	 try {    
+    		 ModelGroupDefinitionComponent component = (ModelGroupDefinitionComponent) _wellKnownModelGroups.get(name);
+             if (component != null) {
+                 return component;
+             }
+    		 
+             SchemaEntity entity = (SchemaEntity) _document.find(SchemaKinds.XSD_GROUP, name);
+             SchemaElement element = entity.getElement();
+             component = buildTopLevelModelGroupDefinition(element,scope,_schema);
+             _wellKnownModelGroups.put(component.getName(), component);
+             
+             _schema.add(component);
+             
+             return component;
+         } catch (ValidationException e) {
+             throw new ModelException(e);
+         }
     }
     
     public ComplexTypeDefinitionComponent getUrType() {
@@ -215,6 +229,36 @@ public abstract class InternalSchemaBuilderBase {
                 Constants.ATTR_MAX_OCCURS, element.getLocalName());
         }
         return component;
+    }
+    
+    // CR-6610901, Merge from JavaCAPS RTS for backward compatibility  
+    protected ModelGroupDefinitionComponent buildTopLevelModelGroupDefinition(SchemaElement element, ComplexTypeDefinitionComponent scope, InternalSchema schema) {
+
+        // SPEC - 3.6
+        ModelGroupDefinitionComponent modelGroupDefComp = new ModelGroupDefinitionComponent();
+
+        // property: name, targetNamespace
+        String nameAttr = element.getValueOfMandatoryAttribute(Constants.ATTR_NAME);
+        modelGroupDefComp.setName(new QName(element.getSchema().getTargetNamespaceURI(), nameAttr));
+
+        ModelGroupComponent modelGroupComp = null;
+        
+        // property: attribute uses, attribute wildcard
+       for (Iterator iter = element.children(); iter.hasNext();) {
+            SchemaElement child = (SchemaElement) iter.next();
+            
+            if (child.getQName().equals(SchemaConstants.QNAME_ALL) || child.getQName().equals(SchemaConstants.QNAME_CHOICE) 
+            		||child.getQName().equals(SchemaConstants.QNAME_SEQUENCE))
+            {
+            	modelGroupComp = buildModelGroup(child, scope, schema);
+            }
+       }
+
+       if (modelGroupComp != null)
+       {
+    	   modelGroupDefComp.addModelGroup(modelGroupComp);
+       }
+        return modelGroupDefComp;
     }
     
     protected AttributeGroupDefinitionComponent
@@ -396,6 +440,7 @@ public abstract class InternalSchemaBuilderBase {
     
     protected void internalBuildElementDeclaration(
             ElementDeclarationComponent component, SchemaElement element, InternalSchema schema) {
+
         // property: type definition
         boolean foundType = false;
         for (Iterator iter = element.children(); iter.hasNext();) {
@@ -1492,6 +1537,11 @@ public abstract class InternalSchemaBuilderBase {
         } else if (element.getQName().equals(SchemaConstants.QNAME_ANY)) {
             component.setTermTag(ParticleComponent.TERM_WILDCARD);
             component.setWildcardTerm(buildAnyWildcard(element, scope, schema));
+            
+        // CR-6610901, Merge from JavaCAPS RTS for backward compatibility 
+        } else if (element.getQName().equals(SchemaConstants.QNAME_GROUP)) {
+        	ModelGroupDefinitionComponent modelGroup = buildModelGroupDefinition(element.getValueOfQNameAttributeOrNull("ref"), scope);
+        	
         } else {
             failValidation("validation.invalidElement", element.getLocalName());
         }
@@ -1922,6 +1972,7 @@ public abstract class InternalSchemaBuilderBase {
     private Map _wellKnownAttributes;
     private Map _wellKnownAttributeGroups;
     private Map _wellKnownElements;
+    private Map _wellKnownModelGroups = new HashMap();     // CR-6610901, Merge from JavaCAPS RTS for backward compatibility 
     private ComplexTypeDefinitionComponent _urType;
     private SimpleTypeDefinitionComponent _simpleUrType;
     private Map _namedTypeComponentsBeingDefined;

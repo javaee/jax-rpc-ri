@@ -1,5 +1,5 @@
 /*
- * $Id: InternalSchema.java,v 1.2 2006-04-13 01:31:42 ofung Exp $
+ * $Id: InternalSchema.java,v 1.2.2.1 2009-02-18 15:35:05 anbubala Exp $
  */
 
 /*
@@ -149,8 +149,10 @@ public class InternalSchema {
     public ModelGroupDefinitionComponent findModelGroupDefinition(QName name) {
         Object result = _modelGroupDefinitions.get(name);
         if (result == null) {
-            try {
-                result = _builder.buildModelGroupDefinition(name);
+             try {
+                // CR-6610901, Merge from JavaCAPS RTS for backward compatibility
+                //result = _builder.buildModelGroupDefinition(name);
+                result = _builder.buildModelGroupDefinition(name, null);
             } catch (ModelException e) {
                 result = e;
                 _modelGroupDefinitions.put(name, result);

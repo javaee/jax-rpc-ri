@@ -1,5 +1,5 @@
 /*
- * $Id: ModelGroupDefinitionComponent.java,v 1.2 2006-04-13 01:31:47 ofung Exp $
+ * $Id: ModelGroupDefinitionComponent.java,v 1.2.2.1 2009-02-18 15:35:07 anbubala Exp $
  */
 
 /*
@@ -39,11 +39,27 @@ public class ModelGroupDefinitionComponent extends Component {
     public QName getName() {
         return _name;
     }
-    
+
+    // CR-6610901, Merge from JavaCAPS RTS for backward compatibility  
+    public void setName(QName name) {
+        _name = name;
+    }
+
     public void accept(ComponentVisitor visitor) throws Exception {
         visitor.visit(this);
     }
-    
+
+    // CR-6610901, Merge from JavaCAPS RTS for backward compatibility 
+    public void addModelGroup(ModelGroupComponent modelGroup) {
+       _modelGroup = modelGroup;
+    }
+
+    // CR-6610901, Merge from JavaCAPS RTS for backward compatibility
+    public ModelGroupComponent getModelGroup()
+    {
+    	return _modelGroup;
+    }
+
     private QName _name;
     private ModelGroupComponent _modelGroup;
     private AnnotationComponent _annotation;
