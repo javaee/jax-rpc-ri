@@ -1,5 +1,5 @@
 /*
- * $Id: ProcessorEnvironmentBase.java,v 1.2.2.2 2008-02-13 11:39:41 venkatajetti Exp $
+ * $Id: ProcessorEnvironmentBase.java,v 1.2 2006-04-13 01:31:58 ofung Exp $
  */
 
 /*
@@ -27,13 +27,10 @@
 package com.sun.xml.rpc.processor.util;
 
 import java.io.File;
-import java.net.URLClassLoader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -42,34 +39,18 @@ import java.util.StringTokenizer;
  */
 public abstract class ProcessorEnvironmentBase implements ProcessorEnvironment {
     
-    private JaxClassLoader classLoader = null;
+    protected URLClassLoader classLoader = null;
     
     /**
      * Get a URLClassLoader from using the classpath
      */
-    public ClassLoader getClassLoader() {
+    public URLClassLoader getClassLoader() {
         if (classLoader == null) {
-            URL[] urls = pathToURLs(getClassPath().toString());
-            JaxClassLoader l = new JaxClassLoader();
-            for (int i = 0; i < urls.length; i++) {
-                l.appendURL(urls[i]);
-            }
-            classLoader = l;
-//            classLoader = new URLClassLoader(urls);
+            classLoader = 
+                new URLClassLoader(pathToURLs(getClassPath().toString()),
+                    this.getClass().getClassLoader());
         }
         return classLoader;
-        }
-    /**
-     * Release resources, if any.
-     */
-    public void shutdown() {
-        if (classLoader != null) {
-//            if (classLoader instanceof JaxClassLoader) {
-//                ((JaxClassLoader) classLoader).done();
-//            }
-            classLoader.done();
-            classLoader = null;
-        }
     }
     
     /**
@@ -83,14 +64,10 @@ public abstract class ProcessorEnvironmentBase implements ProcessorEnvironment {
         StringTokenizer st = new StringTokenizer(path, File.pathSeparator);
         URL[] urls = new URL[st.countTokens()];
         int count = 0;
-        Set usedTokens = new HashSet();
         while (st.hasMoreTokens()) {
-            String element = st.nextToken();
-            if (usedTokens.add(element)) {
-            URL url = fileToURL(new File(element));
+            URL url = fileToURL(new File(st.nextToken()));
             if (url != null) {
                 urls[count++] = url;
-                }
             }
         }
         if (urls.length != count) {
