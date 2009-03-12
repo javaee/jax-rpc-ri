@@ -1,5 +1,5 @@
 /*
- * $Id: HandlerChainImpl.java,v 1.2.2.1 2008-02-19 10:51:17 venkatajetti Exp $
+ * $Id: HandlerChainImpl.java,v 1.2.2.2 2009-03-12 04:00:41 anbubala Exp $
  */
 
 /*
@@ -247,9 +247,11 @@ public class HandlerChainImpl extends Vector implements HandlerChain {
 
     public boolean checkMustUnderstand(MessageContext mc)
         throws SOAPException {
-        // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
-        /*
-        if (roles != null && !isEmpty()) {
+        // CR 6516595; Onyx 106067, 105821; For Java CAPS
+        // Check for the presence of roles first to avoid the cost of
+        // soapMessage.getSOAPPart().getEnvelope().getHeader() 
+        // to improve performance.
+        if (roles != null && roles.length > 0) {
             SOAPMessage soapMessage = ((SOAPMessageContext) mc).getMessage();
             SOAPHeader header =
                 soapMessage.getSOAPPart().getEnvelope().getHeader();
@@ -271,7 +273,6 @@ public class HandlerChainImpl extends Vector implements HandlerChain {
                 }
             }
         }
-        */
         return true;
     }
 }
