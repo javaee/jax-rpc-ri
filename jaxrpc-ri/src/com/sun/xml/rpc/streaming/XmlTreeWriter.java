@@ -176,7 +176,7 @@ public class XmlTreeWriter extends XMLWriterBase implements XMLWriter {
      */
 
     public void writeAttribute(String localName, String uri, String value) {
-        value = quote(value);
+        //6809678 value = quote(value);
         writeAttributeUnquoted(localName, uri, value);
     }
 
