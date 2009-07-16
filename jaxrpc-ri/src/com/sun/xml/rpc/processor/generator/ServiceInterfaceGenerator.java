@@ -1,5 +1,5 @@
 /*
- * $Id: ServiceInterfaceGenerator.java,v 1.2.2.1 2008-02-14 11:54:48 venkatajetti Exp $
+ * $Id: ServiceInterfaceGenerator.java,v 1.2 2006-04-13 01:28:56 ofung Exp $
  */
 
 /*
@@ -139,8 +139,7 @@ public class ServiceInterfaceGenerator implements ProcessorAction {
                     VersionUtil.isVersion103(sourceVersion)) {
                     getPortMethodStr += ";";
                 } else {
-                     // CR-6660366, Merge from JavaCAPS RTS for backward compatibility
-                    getPortMethodStr += " throws javax.xml.rpc.ServiceException;";
+                    getPortMethodStr += " throws ServiceException;";
                 }
                 out.pln(getPortMethodStr);
             }
