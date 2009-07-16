@@ -1,5 +1,5 @@
 /*
- * $Id: LiteralObjectSerializerBase.java,v 1.2 2006-04-13 01:27:36 ofung Exp $
+ * $Id: LiteralObjectSerializerBase.java,v 1.2.2.1 2009-07-16 03:21:04 anbubala Exp $
  */
 
 /*
@@ -228,7 +228,9 @@ public abstract class LiteralObjectSerializerBase
                 if (!isNullable) {
                     throw new DeserializationException("xsd.unexpectedNull");
                 }
-                reader.next();
+                // CR 6846935 Get a NAMESPACE_ERR error after calling an external web service
+                //reader.next();
+                obj = doDeserialize(reader, context);
             } else {
                 obj = doDeserialize(reader, context);
             }
