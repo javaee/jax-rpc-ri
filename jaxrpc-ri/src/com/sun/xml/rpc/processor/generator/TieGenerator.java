@@ -21,7 +21,7 @@
  */
 
 /*
- * $Id: TieGenerator.java,v 1.2.2.2 2008-02-13 01:16:57 anbubala Exp $
+ * $Id: TieGenerator.java,v 1.2.2.3 2009-10-01 18:28:35 anbubala Exp $
  */
 
 /*
@@ -1846,6 +1846,7 @@ public class TieGenerator extends StubTieGeneratorBase {
             p.pln();
             addAttachmentsToResponse(p, operation.getResponse().getParameters());
 
+/* Comment out this to make the failing 104 JAX-RPC CTS tests to pass
             //CR-6660354, Merge from JavaCAPS RTS for backward compatibility
             //Check if the parts in the output message are empty
             //If so send the output message name in the response rather than sending an empty body             
@@ -1858,6 +1859,7 @@ public class TieGenerator extends StubTieGeneratorBase {
                 p.pln("bodyBlock.setSerializer("+serializer+");");
                 p.pln("state.getResponse().setBody(bodyBlock);");
             }
+*/
         }
         writeCatchClauses(p, operation);
         p.pOln("}"); // catch
