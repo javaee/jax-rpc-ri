@@ -1,5 +1,5 @@
 /*
- * $Id: ToolPluginFactory.java,v 1.3 2007-07-13 23:36:35 ofung Exp $
+ * $Id: ToolPluginFactory.java,v 1.4 2009-10-16 19:21:01 anbubala Exp $
  */
 
 /*
@@ -195,10 +195,27 @@ public class ToolPluginFactory {
             ".toolplugin");
         localizer = new Localizer();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        final String toolPluginFile = "META-INF/jaxrpc/ToolPlugin.xml";
         try {
-            Enumeration urls = loader.getResources("META-INF/jaxrpc/ToolPlugin.xml");
+            Enumeration urls = loader.getResources(toolPluginFile);
+
+            // won't be null, but doesn't hurt to check
+            if (urls == null || !urls.hasMoreElements()) {
+                if (logger.isLoggable(Level.FINE)) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("No resources found for ");
+                    sb.append(toolPluginFile);
+                    sb.append(" with current thread's classloader. ");
+                    sb.append("Trying getClass().getClassLoader() instead.");
+                    logger.fine(sb.toString());
+                }
+                urls = getClass().getClassLoader().getResources(toolPluginFile);
+            }
             while (urls != null && urls.hasMoreElements()) {
                 URL url = (URL) urls.nextElement();
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.fine(String.format("Attempting to load '%s'", url));
+                }
                 InputStream in = new BufferedInputStream(url.openStream());
                 XMLReader reader =
                     XMLReaderFactory.newInstance().createXMLReader(in);
