@@ -21,7 +21,7 @@
  */
 
 /*
- * $Id: TieGenerator.java,v 1.2.2.3 2009-10-01 18:28:35 anbubala Exp $
+ * $Id: TieGenerator.java,v 1.2.2.4 2009-10-21 21:39:17 anbubala Exp $
  */
 
 /*
@@ -457,7 +457,10 @@ public class TieGenerator extends StubTieGeneratorBase {
                 p.plnI(
                     "if (soapaction.equals(\"\\\""
                         + operation.getSOAPAction()
-                        + "\\\"\")) {");
+                        //CR 6792259 - Added condition to support soap action without the quotes also
+                        + "\\\"\") || soapaction.equals(\""
+                        + operation.getSOAPAction()
+                        + "\" )) {");
                 p.pln(
                     "state.getRequest().setOperationCode("
                         + env.getNames().getOPCodeName(operation.getUniqueName())
