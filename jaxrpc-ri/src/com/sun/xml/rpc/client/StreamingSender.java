@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingSender.java,v 1.2.2.3 2008-02-20 17:48:38 venkatajetti Exp $
+ * $Id: StreamingSender.java,v 1.2 2006-04-13 01:26:37 ofung Exp $
  */
 
 /*
@@ -37,13 +37,7 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.handler.HandlerChain;
 import javax.xml.rpc.soap.SOAPFaultException;
 import javax.xml.soap.Detail;
-import javax.xml.soap.DetailEntry;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -55,7 +49,6 @@ import com.sun.xml.rpc.encoding.SOAPDeserializationState;
 import com.sun.xml.rpc.encoding.SOAPFaultInfoSerializer;
 import com.sun.xml.rpc.encoding.SOAPSerializationContext;
 import com.sun.xml.rpc.encoding.soap.SOAPConstants;
-import com.sun.xml.rpc.soap.message.InternalSOAPMessage;
 import com.sun.xml.rpc.soap.message.SOAPBlockInfo;
 import com.sun.xml.rpc.soap.message.SOAPFaultInfo;
 import com.sun.xml.rpc.soap.message.SOAPHeaderBlockInfo;
@@ -528,46 +521,6 @@ public abstract class StreamingSender {
                         fault.getString(),
                         obj));
             }
-            
-            // CR-6660308, Merge from JavaCAPS RTS for backward compatibility
-
-            //If the header is not set in the InternalSOAPMessage, still look for it
-            //in the received soap message.  It is assumed here that the header in
-            //the SOAP response has the headerfault details.
-            //This will cover cases where the wsdl does not define the 
-            //headerfault SOAP binding, yet the server is throwing the
-            //headerfault.  For instance, even though the wsdl does not describe
-            //that the web service expects the ws-security header, the client
-            //is aware that it needs to send the ws-security header and therefore
-            //need to handle the headerfaults for the ws-security header.
-            //We put the SOAPFaultException inside the RemoteException to 
-            //indicate this fact.
-            Detail lDetail = null;
-            try {
-                SOAPMessage lMsg = ((InternalSOAPMessage) state.getResponse()).getMessage();
-                SOAPHeader lHeader = lMsg.getSOAPHeader();
-                if (lHeader != null) {
-                    SOAPFactory sf = SOAPFactory.newInstance();
-                    lDetail = sf.createDetail();
-                    DetailEntry lEntry = lDetail.addDetailEntry(sf.createName("Header", "env", "http://schemas.xmlsoap.org/soap/envelope/"));
-                    for (Iterator lIt = lHeader.examineAllHeaderElements(); lIt.hasNext();) {
-                        lEntry.addChildElement((SOAPElement) lIt.next());
-                    }
-                }
-            } catch (SOAPException e) {
-                //Failed to get the header; just ignore this excepion
-                //SOAPFaultException will be thrown without the detail
-                //by the code below.
-            }
-            
-            if (lDetail != null) {
-                throw new RemoteException(fault.getString(), 
-                                          new SOAPFaultException(fault.getCode(), fault.getString(), fault.getActor(), lDetail));
-            }
-            
-            //If header is null, a SOAPFaultException is thrown without detail
-            //by the code below.
-
         }
 
         if (fault.getCode().equals(SOAPConstants.FAULT_CODE_SERVER)) {
@@ -647,18 +600,11 @@ public abstract class StreamingSender {
         //look for request namspaces and write those
         String[] namespaceDeclarations = _getNamespaceDeclarations();
         if (namespaceDeclarations != null) {
-        // CR-6660363, Merge from JavaCAPS RTS for backward compatibility
-
-            /* 101878
-             * since the referenced namespaces will be declared at the subnodes inside both of the soap:Header and soap:Body, 
-             * we remove them from the top soap:Envelop node
-
             for (int i = 0; i < namespaceDeclarations.length; i += 2) {
                 writer.writeNamespaceDeclaration(
                     namespaceDeclarations[i],
                     namespaceDeclarations[i + 1]);
             }
-             */
         }
 
         if (_getDefaultEnvelopeEncodingStyle() != null) {
