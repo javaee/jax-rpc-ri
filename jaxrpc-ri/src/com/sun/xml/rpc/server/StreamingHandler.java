@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingHandler.java,v 1.2.2.1 2008-02-14 18:01:33 venkatajetti Exp $
+ * $Id: StreamingHandler.java,v 1.2.2.2 2009-11-10 18:05:03 lx194240 Exp $
  */
 
 /*
@@ -774,6 +774,9 @@ public abstract class StreamingHandler
             "enc",
             SOAPNamespaceConstants.ENCODING);
 
+       /* CR-6868347, Merge from JavaCAPS RTS for backward compatibility
+        * since the referenced namespaces will be declared at the subnodes inside both of the soap:Header and soap:Body, 
+        * we remove them from the top soap:Envelop node
         String[] namespaceDeclarations = getNamespaceDeclarations();
         if (namespaceDeclarations != null) {
             for (int i = 0; i < namespaceDeclarations.length; i += 2) {
@@ -782,6 +785,7 @@ public abstract class StreamingHandler
                     namespaceDeclarations[i + 1]);
             }
         }
+        */
 
         if (getDefaultEnvelopeEncodingStyle() != null) {
             pushedEncodingStyle =
