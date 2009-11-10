@@ -1,5 +1,5 @@
 /*
- * $Id: WSDLModelerBase.java,v 1.4 2006-09-18 22:29:42 vivekp Exp $
+ * $Id: WSDLModelerBase.java,v 1.4.2.1 2009-11-10 18:14:24 lx194240 Exp $
  */
 
 /*
@@ -634,7 +634,10 @@ public abstract class WSDLModelerBase implements Modeler {
                     operationNames.add(operation.getName());
 
                     for (Iterator itr = binding.operations();
-                        iter.hasNext();
+
+                        // CR-6653686, Fixed when merging from JavaCAPS RTS for backward compatibility                        //iter.hasNext();
+                        itr.hasNext();
+
                         ) {
                         BindingOperation bindingOperation =
                             (BindingOperation)itr.next();
@@ -1018,8 +1021,8 @@ public abstract class WSDLModelerBase implements Modeler {
                 getQNameOf(inputMessage));
 
         // Process parameterOrder and get the parameterList    
-        Set inputParameterNames = new HashSet();
-        Set outputParameterNames = new HashSet();
+        java.util.List inputParameterNames = new java.util.ArrayList(0); //6653686 Set inputParameterNames = new HashSet();
+        java.util.List outputParameterNames = new java.util.ArrayList(0);//6653686 Set outputParameterNames = new HashSet();
         String resultParameterName = null;
         StringBuffer result = new StringBuffer();
 
@@ -2319,8 +2322,8 @@ public abstract class WSDLModelerBase implements Modeler {
                 getQNameOf(inputMessage));        
         
         // Process parameterOrder and get the parameterList    
-        Set inputParameterNames = new HashSet();
-        Set outputParameterNames = new HashSet();
+        java.util.List inputParameterNames = new java.util.ArrayList(0); //6653686 Set inputParameterNames = new HashSet();
+        java.util.List outputParameterNames = new java.util.ArrayList(0);//6653686 Set outputParameterNames = new HashSet();        
         Set mimeContentParameterNames = new HashSet();
         String resultParameterName = null;
         StringBuffer result = new StringBuffer();
@@ -2464,7 +2467,7 @@ public abstract class WSDLModelerBase implements Modeler {
         // create a definitive list of parameters to match what we'd like to get
         // in the java interface (which is generated much later), parameterOrder
         List definitiveParameterList = new ArrayList();
-
+        /* CR-6653686, Merge from JavaCAPS RTS for backward compatibility
         Parameter inParameter, outParameter;
         for (Iterator iter = parameterList.iterator(); iter.hasNext();) {
             String name = (String)iter.next();
@@ -2612,6 +2615,200 @@ public abstract class WSDLModelerBase implements Modeler {
                             ModelProperties.PROPERTY_PARAM_MESSAGE_PART_NAME,
                             part.getName());
                     response.addParameter(outParameter);
+                    if (inParameter == null) {
+                        definitiveParameterList.add(outParameter.getName());
+                    } else {                    
+                        Parameter inParam =
+                            request.getParameterByName(
+                                    inParameter.getName());
+                        
+                        List inMimeTypes = ((LiteralAttachmentType)inParameter.getType()).getAlternateMIMETypes();
+                        List outMimeTypes = ((LiteralAttachmentType)outParameter.getType()).getAlternateMIMETypes();
+                        boolean sameMimeTypes = true;
+                        if(inMimeTypes.size() == outMimeTypes.size()) {
+                            //now that alternate mimeTypes are same size, lets compare them
+                            Iterator inTypesIter = inMimeTypes.iterator();
+                            Iterator outTypesIter = outMimeTypes.iterator();
+                            while(inTypesIter.hasNext()){
+                                String inTypeName = (String)inTypesIter.next();
+                                String outTypeName = (String)outTypesIter.next();
+                                if(!inTypeName.equals(outTypeName)) {
+                                    sameMimeTypes = false;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        String inMimeType = ((LiteralAttachmentType)inParam.getType()).getMIMEType();
+                        String outMimeType = ((LiteralAttachmentType)outParameter.getType()).getMIMEType();
+                        if(inParameter.getType().getName().equals(outParameter.getType().getName()) &&
+                                sameMimeTypes) {
+                            outParameter.setLinkedParameter(inParameter);
+                            inParameter.setLinkedParameter(outParameter);                                                                                                
+                        }
+                    
+                    }
+                }
+            }
+        }
+         */
+        Parameter inParameter = null;
+        for (Iterator iter = inputParameterNames.iterator(); iter.hasNext();) {
+            String name = (String)iter.next();
+
+            if (!parameterList.contains(name)) {
+                continue; 
+            }
+
+            if (isBoundToSOAPBody(inputMessage.getPart(name))) {
+                MessagePart part = inputMessage.getPart(name);
+                LiteralType literalType;
+                if (part.getDescriptorKind() == SchemaKinds.XSD_TYPE) {
+                    literalType =
+                        _analyzer.schemaTypeToLiteralType(part.getDescriptor());
+                } else {
+                    literalType =
+                        getElementTypeToLiteralType(part.getDescriptor());
+                }
+
+                // bug fix: 4923650
+                literalType =
+                    (LiteralType)verifyParameterType(literalType,
+                        part.getName(),
+                        info.operation);
+
+                inParameter =
+                    new Parameter(
+                        _env.getNames().validJavaMemberName(part.getName()));
+                // bug fix: 4931493
+                inParameter.setProperty(
+                    ModelProperties.PROPERTY_PARAM_MESSAGE_PART_NAME,
+                    part.getName());
+                inParameter.setEmbedded(true);
+                inParameter.setType(literalType);
+                inParameter.setBlock(reqBlock);
+                request.addParameter(inParameter);
+                definitiveParameterList.add(inParameter.getName());
+                addParameterToStructures(
+                    part,
+                    inParameter,
+                    reqType,
+                    requestBodyJavaType);
+            }else if(isBoundToMimeContent(inputMessage.getPart(name))) {                
+                //handle mime:part
+                MessagePart part = inputMessage.getPart(name);
+                List mimeContents = getMimeContents(info.bindingOperation.getInput(),
+                                    getInputMessage(), name);
+                
+                LiteralAttachmentType mimeModelType = getAttachmentType(mimeContents, part);
+                //create Parameters in request or response
+                Block block = new Block(new QName(part.getName()),
+                        mimeModelType);                
+                    request.addAttachmentBlock(block);                
+                    inParameter =
+                    new Parameter(
+                            getEnvironment()
+                            .getNames()
+                            .validJavaMemberName(
+                                    part.getName()));
+                inParameter.setEmbedded(false);
+                inParameter.setType(mimeModelType);
+                inParameter.setBlock(block);
+                inParameter.setProperty(
+                    ModelProperties.PROPERTY_PARAM_MESSAGE_PART_NAME,
+                    part.getName());
+                request.addParameter(inParameter);
+                definitiveParameterList.add(inParameter.getName());
+            }
+        }
+        Parameter outParameter = null;
+        for (Iterator iter = outputParameterNames.iterator(); iter.hasNext();) {
+            String name = (String)iter.next();
+
+            if (!parameterList.contains(name)) {
+                continue;
+            }
+
+            if (isBoundToSOAPBody(outputMessage.getPart(name))) {
+                MessagePart part = outputMessage.getPart(name);
+                LiteralType literalType;
+                if (part.getDescriptorKind() == SchemaKinds.XSD_TYPE) {
+                    literalType =
+                        _analyzer.schemaTypeToLiteralType(part.getDescriptor());
+                } else {
+                    literalType =
+                        getElementTypeToLiteralType(part.getDescriptor());
+                }
+                // bug fix: 4923650
+                literalType =
+                    (LiteralType)verifyParameterType(literalType,
+                        part.getName(),
+                        info.operation);
+
+                outParameter =
+                    new Parameter(
+                        _env.getNames().validJavaMemberName(part.getName()));
+                // bug fix: 4931493
+                outParameter.setProperty(
+                    ModelProperties.PROPERTY_PARAM_MESSAGE_PART_NAME,
+                    part.getName());
+                outParameter.setEmbedded(true);
+                outParameter.setType(literalType);
+                outParameter.setBlock(resBlock);
+                response.addParameter(outParameter);
+                addParameterToStructures(
+                    part,
+                    outParameter,
+                    resType,
+                    responseBodyJavaType);
+
+                inParameter = null;
+                if (inputMessage != null) {
+                	part = inputMessage.getPart(name);
+                	if (part != null) {
+                    		inParameter = request.getParameterByName(_env.getNames().validJavaMemberName(part.getName()));
+                	}
+                }
+            
+                if (inParameter == null) {
+                    definitiveParameterList.add(outParameter.getName());
+                } else {
+                    inParameter.setLinkedParameter(outParameter);
+                    outParameter.setLinkedParameter(inParameter);
+                }
+            }else if(isBoundToMimeContent(outputMessage.getPart(name))) {
+                //handle mime:part
+                MessagePart part = outputMessage.getPart(name);
+                if(part != null) {                    
+                    List mimeContents = getMimeContents(info.bindingOperation.getOutput(),
+                            getOutputMessage(), name);                
+                    LiteralAttachmentType mimeModelType = getAttachmentType(mimeContents, part);
+                    //create Parameters in request or response
+                    Block block = new Block(new QName(part.getName()),
+                            mimeModelType);                
+                    response.addAttachmentBlock(block);                
+                    outParameter =
+                        new Parameter(
+                                getEnvironment()
+                                .getNames()
+                                .validJavaMemberName(
+                                        part.getName()));
+                    outParameter.setEmbedded(false);
+                    outParameter.setType(mimeModelType);
+                    outParameter.setBlock(block);
+                    outParameter.setProperty(
+                            ModelProperties.PROPERTY_PARAM_MESSAGE_PART_NAME,
+                            part.getName());
+                    response.addParameter(outParameter);
+
+                    inParameter = null;
+                    if (inputMessage != null) {
+                	part = inputMessage.getPart(name);
+                	if (part != null) {
+                    		inParameter = request.getParameterByName(_env.getNames().validJavaMemberName(part.getName()));
+                	}
+                    }
+
                     if (inParameter == null) {
                         definitiveParameterList.add(outParameter.getName());
                     } else {                    
@@ -5616,4 +5813,163 @@ public abstract class WSDLModelerBase implements Modeler {
 
     protected WSDLParser parser;
     protected HashSet hSet;
+
+    protected java.util.List processParameterOrder(
+        java.util.List inputParameterNames,
+        java.util.List outputParameterNames,
+        StringBuffer resultParameterName) {
+        if (resultParameterName == null)
+            resultParameterName = new StringBuffer();
+        SOAPBody soapRequestBody = getSOAPRequestBody();
+        com.sun.xml.rpc.wsdl.document.Message inputMessage = getInputMessage();
+        boolean isRequestResponse =
+            info.portTypeOperation.getStyle()
+                == OperationStyle.REQUEST_RESPONSE;
+        SOAPBody soapResponseBody = null;
+        com.sun.xml.rpc.wsdl.document.Message outputMessage = null;
+
+        String parameterOrder = info.portTypeOperation.getParameterOrder();
+        java.util.List parameterList = null;
+        boolean buildParameterList = false;
+
+        //bug 4741083, parameterOrder set to empty string is considered same as no parameterOrder
+        if ((parameterOrder != null) && !(parameterOrder.trim().equals(""))) {
+            parameterList = XmlUtil.parseTokenList(parameterOrder);
+        } else {
+            parameterList = new ArrayList();
+            buildParameterList = true;
+        }
+
+        //bug fix 6468446 and 6471360
+        Set partNames = new LinkedHashSet();
+        boolean gotOne = false;
+
+        List inputMessageParts = getMessageParts(soapRequestBody, inputMessage, true);
+
+		//find out the SOAP operation extension, if any
+		SOAPOperation soapOperation =
+			(SOAPOperation) getExtensionOfType(info.bindingOperation,
+				SOAPOperation.class);
+		
+        for(Iterator iter = inputMessageParts.iterator(); iter.hasNext();) {
+            MessagePart part = (MessagePart)iter.next();
+			// bugfix: 4939641
+			// check wsdl:part attribute for different style
+            if ((part.getBindingExtensibilityElementKind() == MessagePart.SOAP_BODY_BINDING) &&
+                    !isStyleAndPartMatch(soapOperation, part)) {
+            	continue;
+			}
+            partNames.add(part.getName());
+            inputParameterNames.add(part.getName());
+            if (buildParameterList) {
+                parameterList.add(part.getName());
+            }
+            gotOne = true;
+        }
+        
+        boolean inputIsEmpty = !gotOne;
+
+        if (isRequestResponse) {
+            outputMessage = getOutputMessage();
+            soapResponseBody = getSOAPResponseBody();
+            gotOne = false;
+            List outputMessageParts = getMessageParts(soapResponseBody, outputMessage, false);
+            Iterator partsIter = outputMessageParts.iterator();
+            while(partsIter.hasNext()) {
+                MessagePart part = (MessagePart)partsIter.next();
+                
+				// bugfix: 4939641
+				// check wsdl:part attribute for different style
+				if ((part.getBindingExtensibilityElementKind() == MessagePart.SOAP_BODY_BINDING) && 
+                        !isStyleAndPartMatch(soapOperation, part)) {
+					continue;
+				}
+
+				partNames.add(part.getName());
+                // bugid 4721551, parameterOrder bug.
+                // return void if no parameterOrder, all the return params go as holder in method in param      
+                if (!partsIter.hasNext()
+                    && (outputParameterNames.size() == 0)
+                    && buildParameterList
+                    //bug fix: 4922107
+                    // if there is just one output param and its inout then it 
+                    // should go as holder and return should be void
+                    && !isSingleInOutPart(inputParameterNames, part)
+                    ) {
+                    resultParameterName.append(part.getName());
+                } else {
+                    outputParameterNames.add(part.getName());
+                    if (buildParameterList) {
+                        if (!inputParameterNames.contains(part.getName())) {
+                            parameterList.add(part.getName());
+                        }
+                    }
+                }
+                gotOne = true;
+            }
+        }
+
+        if (!buildParameterList) {
+            // do some validation of the given parameter order
+            for (Iterator iter = parameterList.iterator(); iter.hasNext();) {
+                String name = (String)iter.next();
+                if (!partNames.contains(name)) {
+                    throw new ModelerException(
+                        "wsdlmodeler.invalid.parameterorder.parameter",
+                        new Object[] {
+                            name,
+                            info.operation.getName().getLocalPart()});
+                }
+                partNames.remove(name);
+            }
+
+            // now we should be left with at most one part
+            if (partNames.size() > 1) {
+
+                for (Iterator partNameIterator = partNames.iterator();
+                    partNameIterator.hasNext();
+                    ) {
+                    String name = (String)partNameIterator.next();
+                    //bug fix 4922088, throw exception only when an input part is found unlisted in parameterOrder
+                    if (inputParameterNames.contains(name)
+                        && !outputParameterNames.contains(name)) {
+                        throw new ModelerException(
+                            "wsdlmodeler.invalid.parameterOrder.tooManyUnmentionedParts",
+                            new Object[] {
+                                 info.operation.getName().getLocalPart()});
+                    } else if (outputParameterNames.contains(name)) {
+                        //this is output part not listed in the parameterOrder
+                        parameterList.add(name);
+                    } //ignore the part listed in parameterOrder and dont appear in in/out parts.
+                }
+            }
+            if (partNames.size() == 1) {
+                // This is a fix for bug: 4734459
+                String partName = (String)partNames.iterator().next();
+                if (outputParameterNames.contains(partName)) {
+                    resultParameterName.append(partName);
+                }
+            }
+        }
+        return parameterList;
+    }
+    
+    protected boolean isSingleInOutPart(java.util.List inputParameterNames, MessagePart outputPart) {
+        // As of now, we dont have support for in/out in doc-lit. So return false.
+        SOAPOperation soapOperation =
+            (SOAPOperation) getExtensionOfType(info.bindingOperation,
+                    SOAPOperation.class);
+        if((soapOperation != null) && 
+                (soapOperation.isDocument() || info.soapBinding.isDocument()))
+            return false;
+        
+        com.sun.xml.rpc.wsdl.document.Message inputMessage = getInputMessage();
+        if(inputParameterNames.contains(outputPart.getName())) {
+            if (inputMessage.getPart(outputPart.getName()).getDescriptor().equals(outputPart.getDescriptor())) {
+                return true;
+            }
+        }
+        return false; 
+    }
+
 }
