@@ -1,5 +1,5 @@
 /*
- * $Id: StreamingSender.java,v 1.2.2.3 2008-02-20 17:48:38 venkatajetti Exp $
+ * $Id: StreamingSender.java,v 1.2.2.4 2009-12-24 18:48:39 lx194240 Exp $
  */
 
 /*
@@ -862,6 +862,11 @@ public abstract class StreamingSender {
             }
             try {
                 handlerChain.handleResponse(state.getMessageContext());
+
+            // CR-6894009, Merge from JavaCAPS RTS for backward compatibility
+            } catch (SOAPFaultException sfe) {
+            	throw sfe;
+
             } catch (RuntimeException e) {
                 throw new RemoteException("response handler error: ", e);
             }
