@@ -1,5 +1,5 @@
 /*
- * $Id: HttpClientTransport.java,v 1.2.2.7 2010-04-02 05:07:47 anbubala Exp $
+ * $Id: HttpClientTransport.java,v 1.2.2.8 2010-04-07 18:06:10 anbubala Exp $
  */
 
 /*
@@ -329,16 +329,12 @@ public class HttpClientTransport
             context.setProperty(
                 StubPropertyConstants.HTTP_STATUS_CODE,
                 Integer.toString(statusCode));
-			/* 
-			//CR 6940467 - Even for one-way operation, in Java CAPS,
-			 //webservice clients need to be notified when an HTTP 5xx error has occured.
+			
             if ((httpConnection.getResponseCode()
                 == HttpURLConnection.HTTP_INTERNAL_ERROR)) {
                isFailure = true;
                 //added HTTP_ACCEPT for 1-way operations
-            } else 
-			*/
-			if (
+            } else if (
                 httpConnection.getResponseCode()
                     == HttpURLConnection.HTTP_UNAUTHORIZED) {
 
@@ -367,8 +363,9 @@ public class HttpClientTransport
                         getStatusMessage(httpConnection)});
                 }
             } else if (
-		        //CR 6940467 - Even for one-way operation, in Java CAPS,
-			    //webservice clients need to be notified when an HTTP 5xx error has occured.
+                //CR 6940467 - Even for one-way operation, in Java CAPS,
+                //webservice clients need to be notified when an HTTP 5xx error has occured.
+                //ToDo: However, exception is not thrown here for 500 due to some CTS test failures.
                 statusCode < 200 || (statusCode >= 303 && statusCode <= 505)) {
                 throw new ClientTransportException(
                     "http.status.code",
