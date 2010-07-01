@@ -1,5 +1,5 @@
 /*
- * $Id: InputEntity.java,v 1.2 2006-04-13 01:32:33 ofung Exp $
+ * $Id: InputEntity.java,v 1.2.2.1 2010-07-01 18:45:06 sunchunchen Exp $
  */
 
 /*
@@ -527,7 +527,8 @@ final class InputEntity implements Locator {
                         if (reader == null || isClosed)
                             continue;
                         if (last == first)
-                            throw new InternalError("fillbuf");
+                            continue;
+			    //throw new InternalError ("fillbuf");
                         last--;
                         if (last > first) {
                             sawContent = true;
