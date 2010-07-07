@@ -1,5 +1,5 @@
 /*
- * $Id: InternalSchemaBuilderBase.java,v 1.2.2.1 2009-02-18 15:35:06 anbubala Exp $
+ * $Id: InternalSchemaBuilderBase.java,v 1.2.2.2 2010-07-07 19:19:06 lx194240 Exp $
  */
 
 /*
@@ -57,9 +57,15 @@ import com.sun.xml.rpc.wsdl.parser.Constants;
  */
 public abstract class InternalSchemaBuilderBase {
     private boolean _noDataBinding = false;
+
+    // CR-6907202, Merge from JavaCAPS RTS for backward compatibility 
+    private Map processedTypes; 
     
     public InternalSchemaBuilderBase(AbstractDocument document,
         Properties options) {
+
+        // CR-6907202, Merge from JavaCAPS RTS for backward compatibility 
+        processedTypes  = new HashMap();
             
         _document = document;
         _schema = new InternalSchema(this);
@@ -141,6 +147,11 @@ public abstract class InternalSchemaBuilderBase {
                 (SchemaEntity) _document.find(SchemaKinds.XSD_ELEMENT, name);
             SchemaElement element = entity.getElement();
             component = buildTopLevelElementDeclaration(element, _schema);
+
+            // CR-6907202, Merge from JavaCAPS RTS for backward compatibility 
+            _schema.add(component);
+            _wellKnownElements.put(name,component );
+
             return component;
         } catch (ValidationException e) {
             throw new ModelException(e);
@@ -438,8 +449,43 @@ public abstract class InternalSchemaBuilderBase {
         component.setElementTerm(term);
     }
     
+    private QName getGlobalElementQName(SchemaElement element) {
+        if (element != null) {
+            SchemaElement schema = element.getParent();
+            if (schema != null) {
+                QName schemaName = new QName("http://www.w3.org/2001/XMLSchema", "schema");
+                if (schemaName.equals(schema.getQName())) { 
+                    String ns = "";
+                    SchemaAttribute attr = schema.getAttribute("targetNamespace");
+                    if (attr != null) {
+                        ns = attr.getValue();
+                    }
+                    
+                    attr  = element.getAttribute("name");
+                    if (attr != null) {
+                        String name  = attr.getValue();
+                        return new QName(ns, name);
+                    }
+                }
+            }
+        }
+        
+        return  null;
+    }
+
     protected void internalBuildElementDeclaration(
             ElementDeclarationComponent component, SchemaElement element, InternalSchema schema) {
+
+        // CR-6907202, Merge from JavaCAPS RTS for backward compatibility 
+        QName globalElementQName = getGlobalElementQName(element);
+        if (globalElementQName != null) {
+            if (processedTypes.containsKey(globalElementQName)) {
+                component = (ElementDeclarationComponent)processedTypes.get(globalElementQName);
+                return;
+            } else {
+                processedTypes.put(globalElementQName, component);
+            }
+        }       
 
         // property: type definition
         boolean foundType = false;
@@ -509,7 +555,9 @@ public abstract class InternalSchemaBuilderBase {
             component.setValueKind(Symbol.DEFAULT);
             if (component.getTypeDefinition() instanceof
                 ComplexTypeDefinitionComponent) {
-                    
+
+                // CR-6907202, Merge from JavaCAPS RTS for backward compatibility
+                if (!isSimpleContent(component.getTypeDefinition()))
                 failValidation("validation.notSimpleType",
                     component.getName().getLocalPart());
             }
@@ -519,7 +567,9 @@ public abstract class InternalSchemaBuilderBase {
             component.setValueKind(Symbol.FIXED);
             if (component.getTypeDefinition() instanceof
                 ComplexTypeDefinitionComponent) {
-                    
+
+                // CR-6907202, Merge from JavaCAPS RTS for backward compatibility
+                if (!isSimpleContent(component.getTypeDefinition()))
                 failValidation("validation.notSimpleType",
                     component.getName().getLocalPart());
             }
@@ -600,7 +650,23 @@ public abstract class InternalSchemaBuilderBase {
         
         // NOTE - annotations are ignored
     }
-    
+
+    private boolean isSimpleContent(TypeDefinitionComponent typeDefinition) {
+        boolean temp = false;
+
+        TypeDefinitionComponent def = typeDefinition;
+        while (def != null) {
+            if (def.isSimple()) {
+                temp = true;
+                break;
+            } else {
+                def = ((ComplexTypeDefinitionComponent)def).getBaseTypeDefinition();
+            }
+        }
+
+        return temp;
+    }
+
     protected TypeDefinitionComponent buildTopLevelTypeDefinition(
         SchemaElement element, InternalSchema schema) {
             
