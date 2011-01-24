@@ -1,5 +1,5 @@
 /*
- * $Id: InternalTypeMappingRegistryImpl.java,v 1.2 2006-04-13 01:27:11 ofung Exp $
+ * $Id: InternalTypeMappingRegistryImpl.java,v 1.2 2006/04/13 01:27:11 ofung Exp $
  */
 
 /*
@@ -207,11 +207,11 @@ public class InternalTypeMappingRegistryImpl
         return (hash & 0x7FFFFFFF) % table.length;
     }
     
-    private Entry get(int hash) {
+    synchronized private Entry get(int hash) {
         return table[hashToIndex(hash)];
     }
     
-    private Entry put(int hash, Row row) {
+    synchronized private Entry put(int hash, Row row) {
         if (count >= threshold) {
             rehash();
         }
