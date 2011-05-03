@@ -527,7 +527,8 @@ final class InputEntity implements Locator {
                         if (reader == null || isClosed)
                             continue;
                         if (last == first)
-                            throw new InternalError("fillbuf");
+                           continue;
+			   //throw new InternalError ("fillbuf");
                         last--;
                         if (last > first) {
                             sawContent = true;
