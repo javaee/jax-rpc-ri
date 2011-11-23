@@ -206,12 +206,16 @@ public class InternalTypeMappingRegistryImpl
     private int hashToIndex(int hash) {
         return (hash & 0x7FFFFFFF) % table.length;
     }
-    
-    private Entry get(int hash) {
+
+    // CR-13398854, Merge from JavaCAPS RTS for backward compatibility
+    //private Entry get(int hash) {
+    synchronized private Entry get(int hash) {
         return table[hashToIndex(hash)];
     }
-    
-    private Entry put(int hash, Row row) {
+
+    // CR-13398854, Merge from JavaCAPS RTS for backward compatibility
+    //private Entry put(int hash, Row row) {
+    synchronized private Entry put(int hash, Row row) {
         if (count >= threshold) {
             rehash();
         }
