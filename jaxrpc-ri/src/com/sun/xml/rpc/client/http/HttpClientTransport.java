@@ -426,11 +426,13 @@ public class HttpClientTransport
         }
     }
 
+    IOException writeMessageToConnectionIOE = null;
     protected void writeMessageToConnection(
         SOAPMessageContext context,
         final HttpURLConnection httpConnection)
         throws IOException, SOAPException {
         //OutputStream contentOut = httpConnection.getOutputStream();
+        writeMessageToConnectionIOE = null;
         //Performance improvement: wrap HttpURLConnection.getOutputStream in a doPrivileged block
         //to avoid the call for security check by the security manager for getPropertyAction
         OutputStream contentOut = (OutputStream) java.security.AccessController
@@ -440,10 +442,13 @@ public class HttpClientTransport
                         return httpConnection.getOutputStream();
                     } catch (IOException e) {
                         _logger.log(Level.SEVERE, "cannot get httpConnection outputstream", e);
+                        writeMessageToConnectionIOE = e;
                     }
                     return null;
                 }
             });
+        if (writeMessageToConnectionIOE != null)
+            throw writeMessageToConnectionIOE;
         context.getMessage().writeTo(contentOut);
         contentOut.flush();
         contentOut.close();
