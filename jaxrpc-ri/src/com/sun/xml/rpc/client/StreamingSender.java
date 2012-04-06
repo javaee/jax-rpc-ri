@@ -436,13 +436,14 @@ public abstract class StreamingSender {
                     reader,
                     deserializationContext,
                     state);
-            if (!succeeded && mustUnderstand) {
+            return;
+            /*if (!succeeded && mustUnderstand) {
                 throw new SOAPFaultException(
                     SOAPConstants.FAULT_CODE_MUST_UNDERSTAND,
                     MUST_UNDERSTAND_FAULT_MESSAGE_STRING,
                     _getActor(),
                     null);
-            }
+            }*/
         } else {
             // not intended for us: check mustUnderstand
             // just ignore it
