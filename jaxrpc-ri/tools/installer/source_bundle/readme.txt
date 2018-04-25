@@ -9,7 +9,6 @@ $JWSDP_HOME/jwsdp-shared/lib/activation.jar
 $JWSDP_HOME/jwsdp-shared/lib/jax-qname.jar
 $JWSDP_HOME/jwsdp-shared/lib/mail.jar
 $JWSDP_HOME/jwsdp-shared/lib/relaxngDatatype.jar
-$JWSDP_HOME/jwsdp-shared/lib/xsdlib.jar
 $JWSDP_HOME/common/lib/servlet-api.jar
 $JWSDP_HOME/jaxrpc/lib/jaxrpc-api.jar
 

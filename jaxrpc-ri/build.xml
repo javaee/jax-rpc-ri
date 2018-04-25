@@ -3,7 +3,7 @@
 <!--
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  
- Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  
  The contents of this file are subject to the terms of either the GNU
  General Public License Version 2 only ("GPL") or the Common Development
@@ -145,7 +145,6 @@
   <property name="saaj-api.jar" value="${lib.home}/saaj-api.jar"/>
   <property name="saaj-impl.jar" value="${lib.home}/saaj-impl.jar"/>
   <property name="relaxngDatatype.jar" value="${lib.home}/relaxngDatatype.jar"/>
-  <property name="xsdlib.jar" value="${lib.home}/xsdlib.jar"/>
   <property name="jax-qname.jar" value="${lib.home}/jax-qname.jar"/>
   <property name="ant.jar" value="${lib.home}/ant.jar"/>
   <property name="jcert.jar" value="${lib.home}/jcert.jar"/>
@@ -187,7 +186,6 @@
     <pathelement location="${saaj-impl.jar}"/>
     <pathelement location="${jaxrpc-api.jar}"/>
     <pathelement location="${relaxngDatatype.jar}"/>
-    <pathelement location="${xsdlib.jar}"/>
     <pathelement location="${jax-qname.jar}"/>
     <pathelement location="${ant.jar}"/>
     <pathelement location="${jcert.jar}"/>

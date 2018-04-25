@@ -2,7 +2,7 @@
  <modelVersion>4.0.0</modelVersion>
  <groupId>com.sun.xml.rpc</groupId>
  <artifactId>jaxrpc-impl</artifactId>
- <version>1.1.3_01</version>
+ <version>1.1.4_01</version>
  <dependencies>
 
    <dependency>
@@ -24,9 +24,9 @@
    </dependency>
 
    <dependency>
-     <groupId>org.jvnet.fastinfoset</groupId>
+     <groupId>com.sun.xml.fastinfoset</groupId>
      <artifactId>FastInfoset</artifactId>
-     <version>1.0.2</version>
+     <version>1.2.13</version>
    </dependency>
 
  </dependencies>

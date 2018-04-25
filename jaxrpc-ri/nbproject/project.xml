@@ -3,7 +3,7 @@
 <!--
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  
- Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  
  The contents of this file are subject to the terms of either the GNU
  General Public License Version 2 only ("GPL") or the Common Development
@@ -109,7 +109,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">lib/activation.jar;lib/ant.jar;lib/dom.jar;lib/FastInfoset.jar;lib/jax-qname.jar;lib/jaxp-api.jar;lib/jaxrpc-api.jar;lib/jsr173_api.jar;lib/junit.jar;lib/mail.jar;lib/optional.jar;lib/relaxngDatatype.jar;lib/saaj-api.jar;lib/saaj-impl.jar;lib/sax.jar;lib/servlet.jar;lib/stax-utils.jar;lib/xalan.jar;lib/xercesImpl.jar;lib/xsdlib.jar</classpath>
+                <classpath mode="compile">lib/activation.jar;lib/ant.jar;lib/dom.jar;lib/FastInfoset.jar;lib/jax-qname.jar;lib/jaxp-api.jar;lib/jaxrpc-api.jar;lib/jsr173_api.jar;lib/junit.jar;lib/mail.jar;lib/optional.jar;lib/relaxngDatatype.jar;lib/saaj-api.jar;lib/saaj-impl.jar;lib/sax.jar;lib/servlet.jar;lib/stax-utils.jar;lib/xalan.jar;lib/xercesImpl.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>

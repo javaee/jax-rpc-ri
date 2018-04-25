@@ -3,7 +3,7 @@
 #
 # DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 # 
-# Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+# Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
 # 
 # The contents of this file are subject to the terms of either the GNU
 # General Public License Version 2 only ("GPL") or the Common Development
@@ -47,7 +47,7 @@ if [ -z "$JAXRPC_HOME" ]; then
 fi
 
 
-CLASSPATH=.:$JAXRPC_HOME/lib/jaxrpc-impl.jar:$JAXRPC_HOME/lib/jaxrpc-api.jar:$JAXRPC_HOME/lib/jaxrpc-spi.jar:$JAXRPC_HOME/lib/activation.jar:$JAXRPC_HOME/lib/saaj-api.jar:$JAXRPC_HOME/lib/saaj-impl.jar:$JAXRPC_HOME/lib/mail.jar:$JAXRPC_HOME/lib/jaxp-api.jar:$JAXRPC_HOME/lib/dom.jar:$JAXRPC_HOME/lib/sax.jar:$JAXRPC_HOME/lib/xalan.jar:$JAXRPC_HOME/lib/xercesImpl.jar:$JAXRPC_HOME/lib/jcert.jar:$JAXRPC_HOME/lib/jnet.jar:$JAXRPC_HOME/lib/jsse.jar:$JAVA_HOME/lib/tools.jar:$JAXRPC_HOME/lib/jax-qname.jar:$JAXRPC_HOME/lib/relaxngDatatype.jar:$JAXRPC_HOME/lib/xsdlib.jar
+CLASSPATH=.:$JAXRPC_HOME/lib/jaxrpc-impl.jar:$JAXRPC_HOME/lib/jaxrpc-api.jar:$JAXRPC_HOME/lib/jaxrpc-spi.jar:$JAXRPC_HOME/lib/activation.jar:$JAXRPC_HOME/lib/saaj-api.jar:$JAXRPC_HOME/lib/saaj-impl.jar:$JAXRPC_HOME/lib/mail.jar:$JAXRPC_HOME/lib/jaxp-api.jar:$JAXRPC_HOME/lib/dom.jar:$JAXRPC_HOME/lib/sax.jar:$JAXRPC_HOME/lib/xalan.jar:$JAXRPC_HOME/lib/xercesImpl.jar:$JAXRPC_HOME/lib/jcert.jar:$JAXRPC_HOME/lib/jnet.jar:$JAXRPC_HOME/lib/jsse.jar:$JAVA_HOME/lib/tools.jar:$JAXRPC_HOME/lib/jax-qname.jar:$JAXRPC_HOME/lib/relaxngDatatype.jar
 
 $JAVA_HOME/bin/java -cp "$CLASSPATH" com.sun.xml.rpc.tools.wscompile.Main "$@"
 
