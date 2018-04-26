@@ -5,7 +5,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -47,7 +47,6 @@ import java.util.GregorianCalendar;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
-import com.sun.msv.datatype.xsd.DateTimeType;
 import com.sun.xml.rpc.streaming.XMLReader;
 import com.sun.xml.rpc.streaming.XMLWriter;
 import com.sun.xml.rpc.util.VersionUtil;

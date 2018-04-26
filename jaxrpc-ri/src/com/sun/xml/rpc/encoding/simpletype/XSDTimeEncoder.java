@@ -5,7 +5,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -40,9 +40,10 @@
 
 package com.sun.xml.rpc.encoding.simpletype;
 
-import com.sun.msv.datatype.xsd.TimeType;
 import com.sun.xml.rpc.streaming.XMLReader;
 import com.sun.xml.rpc.streaming.XMLWriter;
+
+import java.util.Calendar;
 
 /**
  * Encoder for xsd:time. For this type returns java.util.Calendar object.
@@ -52,6 +53,7 @@ import com.sun.xml.rpc.streaming.XMLWriter;
 
 public class XSDTimeEncoder extends SimpleTypeEncoderBase {
     private static final SimpleTypeEncoder encoder = new XSDTimeEncoder();
+    private static final String FORMAT = "%h:%m:%s%z";
 
     protected XSDTimeEncoder() {
     }
@@ -65,7 +67,11 @@ public class XSDTimeEncoder extends SimpleTypeEncoderBase {
             
         if (null == obj)
             return null;
-        return TimeType.theInstance.serializeJavaObject(obj, null);
+
+
+        if(!(obj instanceof Calendar))    throw new IllegalArgumentException();
+
+        return CalendarFormatter.format( FORMAT, (Calendar)obj );
     }
 
     public Object stringToObject(String str, XMLReader reader)
@@ -74,7 +80,7 @@ public class XSDTimeEncoder extends SimpleTypeEncoderBase {
         if (str == null)
             return null;
 
-        return TimeType.theInstance._createJavaObject(str, null);
+        return CalendarParser.parse(FORMAT, str);
     }
 
 }

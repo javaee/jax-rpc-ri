@@ -5,7 +5,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -40,7 +40,6 @@
 
 package com.sun.xml.rpc.encoding.simpletype;
 
-import com.sun.msv.datatype.xsd.UnsignedShortType;
 import com.sun.xml.rpc.streaming.XMLReader;
 import com.sun.xml.rpc.streaming.XMLWriter;
 
@@ -51,6 +50,8 @@ import com.sun.xml.rpc.streaming.XMLWriter;
 public class XSDUnsignedShortEncoder extends SimpleTypeEncoderBase {
     private static final SimpleTypeEncoder encoder =
         new XSDUnsignedShortEncoder();
+
+    private static final int upperBound = 65535;
 
     private XSDUnsignedShortEncoder() {
     }
@@ -74,12 +75,21 @@ public class XSDUnsignedShortEncoder extends SimpleTypeEncoderBase {
         if (str == null) {
             return null;
         }
-        Object obj = UnsignedShortType.theInstance._createJavaObject(str, null);
-        if (obj != null)
-            return obj;
-        throw new com.sun.xml.rpc.encoding.DeserializationException(
-            "xsd.invalid.unsignedShort",
-            str);
+
+        try {
+            Integer value = Integer.valueOf(str);
+            if (value < 0 || value > upperBound) {
+                throw new com.sun.xml.rpc.encoding.DeserializationException(
+                        "xsd.invalid.unsignedShort",
+                        str);
+            }
+            return value;
+        } catch (NumberFormatException e) {
+            throw new com.sun.xml.rpc.encoding.DeserializationException(
+                    "xsd.invalid.unsignedShort",
+                    str);
+        }
+
     }
 
     public void writeValue(Object obj, XMLWriter writer) throws Exception {

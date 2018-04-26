@@ -5,7 +5,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -42,7 +42,6 @@ package com.sun.xml.rpc.encoding.simpletype;
 
 import java.math.BigInteger;
 
-import com.sun.msv.datatype.xsd.NegativeIntegerType;
 import com.sun.xml.rpc.streaming.XMLReader;
 import com.sun.xml.rpc.streaming.XMLWriter;
 
@@ -76,13 +75,14 @@ public class XSDNegativeIntegerEncoder extends SimpleTypeEncoderBase {
         if (str == null) {
             return null;
         }
-        Object obj =
-            NegativeIntegerType.theInstance._createJavaObject(str, null);
-        if (obj != null)
-            return obj;
-        throw new com.sun.xml.rpc.encoding.DeserializationException(
-            "xsd.invalid.negativeInteger",
-            str);
+
+        try {
+            return new BigInteger(str);
+        } catch (NumberFormatException e) {
+            throw new com.sun.xml.rpc.encoding.DeserializationException(
+                    "xsd.invalid.negativeInteger",
+                    str);
+        }
     }
 
     public void writeValue(Object obj, XMLWriter writer) throws Exception {
