@@ -1,8 +1,5 @@
-# Copyright 2002 Microsystems, Inc.  All Rights Reserved.
+# Copyright 2002-2018 Microsystems, Inc.  All Rights Reserved.
 # Use is subject to license terms.
-#
-#	$Id: depend,v 1.1 2006-04-13 20:53:20 jitu Exp $
-#
 # This package information file defines software dependencies associated
 # with the pkg.  You can define three types of pkg dependencies with this file:
 #	 P indicates a prerequisite for installation

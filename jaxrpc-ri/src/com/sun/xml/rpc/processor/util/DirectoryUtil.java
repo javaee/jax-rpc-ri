@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -34,9 +34,6 @@
  * holder.
  */
 
-/*
- * $Id: DirectoryUtil.java,v 1.3 2007-07-13 23:36:22 ofung Exp $
- */
 
 package com.sun.xml.rpc.processor.util;
 

@@ -1,8 +1,7 @@
-// @(#) 1.3 jsr109ri/src/java/com/ibm/webservices/ri/tools/xrpcc/TypeVisitor.java, jsr109ri, jsr10911, b0242.09 10/25/02 14:59:11 [10/28/02 10:12:39]
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
- * Copyright 1997-2007 Sun Microsystems, Inc. All rights reserved.
+ * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
  * 
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
