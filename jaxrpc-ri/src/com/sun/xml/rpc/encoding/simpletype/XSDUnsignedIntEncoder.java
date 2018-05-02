@@ -1,8 +1,4 @@
 /*
- * $Id: XSDUnsignedIntEncoder.java,v 1.3 2007-07-13 23:35:59 ofung Exp $
- */
-
-/*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  * 
  * Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
