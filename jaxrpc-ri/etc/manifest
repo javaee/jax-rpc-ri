@@ -3,6 +3,6 @@ Specification-Title: Java API for XML Based RPC
 Specification-Version: 1.1
 Implementation-Title:  JAXRPC Implementation
 Implementation-Version: 1.1.3_01
-Implementation-Vendor: Sun Microsystems Inc
+Implementation-Vendor: Oracle and/or its affiliates
 Implementation-Vendor-Id: com.sun
 Extension-Name: com.sun.xml.rpc
