@@ -2,6 +2,7 @@
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002 International Business Machines Corp. 2002. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -38,27 +39,6 @@
  * holder.
  */
 
-// @(#) 1.3 jsr109ri/src/java/com/ibm/webservices/ri/etools/xmlschema/beans/ComplexType.java, jsr109ri, jsr10911, b0240.03 9/30/02 11:48:42 [10/7/02 11:54:12]
-/*************************************************************************
-   Licensed Materials - Property of IBM
-   (C) COPYRIGHT International Business Machines Corp. 2002
-   All Rights Reserved
-   US Government Users Restricted Rights - Use, duplication, or
-   disclosure restricted by GSA ADP Schedule Contract  with 
-   IBM Corp.
-**************************************************************************/
-/**
- * <copyright>
- * IBM WebSphere Studio Application Developer XML Tools
- * (C) Copyright IBM Corp. 2001.
- * </copyright>
- */
-/*********************************************************************
-Change History
-Date     user       defect    purpose
----------------------------------------------------------------------------
-09/30/02 mcheng     148356    XML Schema support
-*********************************************************************/
 package com.sun.xml.rpc.processor.modeler.j2ee.xml;
 import java.util.Date;
 

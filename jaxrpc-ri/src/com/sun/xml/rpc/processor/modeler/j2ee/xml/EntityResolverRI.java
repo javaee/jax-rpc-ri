@@ -2,6 +2,7 @@
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002 International Business Machines Corp. 2002. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -38,26 +39,6 @@
  * holder.
  */
 
-/*************************************************************************
-   Licensed Materials - Property of IBM
-   5639-D57
-   (C) COPYRIGHT International Business Machines Corp. 2002
-   All Rights Reserved
-   US Government Users Restricted Rights - Use, duplication, or
-   disclosure restricted by GSA ADP Schedule Contract  with 
-   IBM Corp.
-**************************************************************************/
-/*********************************************************************
-Change History
-Date     user       defect    purpose
----------------------------------------------------------------------------
-08/06/02 mcheng    141298     move to new DTD
-07/13/02 mcheng    142177     Add support for deploy.xml
-08/21/02 mcheng    143206     move to proposed final DTD
-08/28/02 mcheng    144340     new DOCTYPE
-09/30/02 mcheng    148356     XML schema support
-09/30/02 mcheng    148405     sun-j2ee-ri_1_4.dtd
-*********************************************************************/
 package com.sun.xml.rpc.processor.modeler.j2ee.xml;
 
 import java.io.IOException;

@@ -2,6 +2,7 @@
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
  * Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002 International Business Machines Corp. 2002. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -38,25 +39,6 @@
  * holder.
  */
 
-// @(#) 1.3 jsr109ri/src/java/com/ibm/webservices/ri/tools/wsdlc1_1/JSR109ModelInfo.java, jsr109ri, jsr10911, b0240.03 10/6/02 20:26:09 [10/7/02 11:55:32]
-/*************************************************************************
-   Licensed Materials - Property of IBM
-   5639-D57, 5630-A36, 5630-A37, 5724-D18 (C) COPYRIGHT International Business M
-achines Corp. 2002
-   All Rights Reserved
-   US Government Users Restricted Rights - Use, duplication, or
-   disclosure restricted by GSA ADP Schedule Contract  with
-   IBM Corp.
-**************************************************************************/
-/*********************************************************************
-Change History
-Date     user       defect    purpose
----------------------------------------------------------------------------
-08/12/02 mcheng     142035    new code drop
-09/02/02 mcheng     144753    more changes to support mapping meta-data
-09/12/02 mcheng     146157    changes to accommodate javaWsdlMapping javabean
-10/06/02 mcheng     149269    merge in JSR109 1.0 changes
-*********************************************************************/
 package com.sun.xml.rpc.processor.config;
 
 import com.sun.xml.rpc.processor.ProcessorOptions;
