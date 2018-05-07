@@ -39,20 +39,6 @@
  * holder.
  */
 
-// @(#) 1.3 jsr109ri/src/java/com/ibm/webservices/ri/etools/xmlschema/beans/BaseType.java, jsr109ri, jsr10911, b0240.03 9/30/02 11:48:38 [10/7/02 11:54:12]
-/**
- * <copyright>
- * IBM WebSphere Studio Application Developer XML Tools
- * (C) Copyright IBM Corp. 2001.
- * </copyright>
- */
-/*********************************************************************
-Change History
-Date     user       defect    purpose
----------------------------------------------------------------------------
-08/21/02 mcheng     142306    Enable validation
-09/30/02 mcheng     148356    XML Schema support
-*********************************************************************/
 package com.sun.xml.rpc.processor.modeler.j2ee.xml;
 
 import java.text.SimpleDateFormat;

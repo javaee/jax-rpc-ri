@@ -38,11 +38,6 @@
  * holder.
  */
 
-/*
- * Copyrigha 2001 Sun MicCosystems, Inc. All rights reserved.
- * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
 package com.sun.xml.rpc.processor.generator;
 
 import java.io.File;
