@@ -59,18 +59,12 @@
   <path id="compile.classpath">
     <pathelement location="${javamail.jar}"/>
     <pathelement location="${jaf.jar}"/>
-    <pathelement location="${jaxp-api.jar}"/>
-    <pathelement location="${dom.jar}"/>
-    <pathelement location="${sax.jar}"/>
-    <pathelement location="${xalan.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${jaxrpc-api.jar}"/>
     <pathelement location="${jaxrpc-spi.jar}"/>
     <pathelement location="${jaxrpc-impl.jar}"/>
     <pathelement location="${saaj-api.jar}"/>
     <pathelement location="${saaj-impl.jar}"/>
     <pathelement location="${relaxngDatatype.jar}"/>
-    <pathelement location="${jax-qname.jar}"/>
     <pathelement location="${ant.jar}"/>
   </path>
 

@@ -58,7 +58,7 @@ goto setArgs
 
 setlocal
 
-set CLASSPATH=%WEBSERVICES_LIB%\jaxrpc-impl.jar;%WEBSERVICES_LIB%\jaxrpc-api.jar;%WEBSERVICES_LIB%\jaxrpc-spi.jar;%WEBSERVICES_LIB%\activation.jar;%WEBSERVICES_LIB%\saaj-api.jar;%WEBSERVICES_LIB%\saaj-impl.jar;%WEBSERVICES_LIB%\mail.jar;%WEBSERVICES_LIB%\endorsed\jaxp-api.jar;%WEBSERVICES_LIB%\endorsed\dom.jar;%WEBSERVICES_LIB%\endorsed\sax.jar;%WEBSERVICES_LIB%\endorsed\xalan.jar;%WEBSERVICES_LIB%\endorsed\xercesImpl.jar;%WEBSERVICES_LIB%\relaxngDatatype.jar;%JAVA_HOME%\lib\tools.jar
+set CLASSPATH=%WEBSERVICES_LIB%\jaxrpc-impl.jar;%WEBSERVICES_LIB%\jaxrpc-api.jar;%WEBSERVICES_LIB%\jaxrpc-spi.jar;%WEBSERVICES_LIB%\saaj-api.jar;%WEBSERVICES_LIB%\saaj-impl.jar;%WEBSERVICES_LIB%\mail.jar;%WEBSERVICES_LIB%\relaxngDatatype.jar;%JAVA_HOME%\lib\tools.jar
 
 "%JAVA_HOME%\bin\java" %WSCOMPILE_OPTS% -cp "%CLASSPATH%" com.sun.xml.rpc.tools.wscompile.Main %CMD_LINE_ARGS%
 

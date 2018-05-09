@@ -52,6 +52,6 @@ WEBSERVICES_LIB=`cd $bin_dir/../share/lib; pwd`
 WEBSERVICES_PRIVATE_LIB=`cd $bin_dir/../private/share/lib; pwd`
 
 # Set CLASSPATH
-CLASSPATH=.:$WEBSERVICES_LIB/jaxrpc-impl.jar:$WEBSERVICES_LIB/jaxrpc-api.jar:$WEBSERVICES_PRIVATE_LIB/jaxrpc-spi.jar:$WEBSERVICES_LIB/activation.jar:$WEBSERVICES_LIB/saaj-api.jar:$WEBSERVICES_LIB/saaj-impl.jar:$WEBSERVICES_LIB/mail.jar:$WEBSERVICES_LIB/endorsed/dom.jar:$WEBSERVICES_LIB/endorsed/xalan.jar:$WEBSERVICES_LIB/endorsed/xercesImpl.jar:$WEBSERVICES_LIB/endorsed/lib/jaxp-api.jar:$WEBSERVICES_LIB/endorsed/sax.jar:$WEBSERVICES_PRIVATE_LIB/relaxngDatatype.jar:$JAVA_HOME/lib/tools.jar
+CLASSPATH=.:$WEBSERVICES_LIB/jaxrpc-impl.jar:$WEBSERVICES_LIB/jaxrpc-api.jar:$WEBSERVICES_PRIVATE_LIB/jaxrpc-spi.jar:$WEBSERVICES_LIB/saaj-api.jar:$WEBSERVICES_LIB/saaj-impl.jar:$WEBSERVICES_LIB/mail.jar:$WEBSERVICES_PRIVATE_LIB/relaxngDatatype.jar:$JAVA_HOME/lib/tools.jar
 
 $JAVA_HOME/bin/java $WSDEPLOY_OPTS -classpath "$CLASSPATH" com.sun.xml.rpc.tools.wsdeploy.Main "$@"

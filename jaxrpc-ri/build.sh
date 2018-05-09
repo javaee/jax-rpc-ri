@@ -53,6 +53,6 @@ fi
 
 JAVACMD=$JAVA_HOME/bin/java
 
-cp=$JAVA_HOME/lib/tools.jar:./lib/jaxp-api.jar:./lib/dom.jar:./lib/sax.jar:./lib/xalan.jar:./lib/xercesImpl.jar:./lib/jnet.jar:./lib/jsse.jar:./lib/jcert.jar:./lib/ant.jar:./lib/optional.jar:./lib/junit.jar
+cp=$JAVA_HOME/lib/tools.jar:./lib/jnet.jar:./lib/jsse.jar:./lib/jcert.jar:./lib/ant.jar:./lib/optional.jar:./lib/junit.jar
 
 $JAVACMD -classpath $cp:$CLASSPATH org.apache.tools.ant.Main "$@"

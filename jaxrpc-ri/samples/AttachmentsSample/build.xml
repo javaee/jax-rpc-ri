@@ -68,25 +68,18 @@
   <path id="compile.classpath">
     <pathelement location="${javamail.jar}"/>
     <pathelement location="${jaf.jar}"/>
-    <pathelement location="${jaxp-api.jar}"/>
-    <pathelement location="${dom.jar}"/>
-    <pathelement location="${sax.jar}"/>
-    <pathelement location="${xalan.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${jaxrpc-api.jar}"/>
     <pathelement location="${jaxrpc-spi.jar}"/>
     <pathelement location="${jaxrpc-impl.jar}"/>
     <pathelement location="${saaj-api.jar}"/>
     <pathelement location="${saaj-impl.jar}"/>
     <pathelement location="${relaxngDatatype.jar}"/>
-    <pathelement location="${jax-qname.jar}"/>
     <pathelement location="${ant.jar}"/>
     <pathelement location="${samplesbuild}/${appname}/classes/util"/>
     <pathelement location="${tomcat.servlet.jar}"/>
     <pathelement location="${sjsas.servlet.jar}"/>
     <pathelement location="${sjsws.servlet.jar}"/>
     <pathelement location="${FastInfoset.jar}"/>
-    <pathelement location="${jsr173_api.jar}"/>
   </path>
   <taskdef name="wscompile" classname="com.sun.xml.rpc.tools.ant.Wscompile">
     <classpath refid="compile.classpath"/>
@@ -219,7 +212,6 @@
   <path id="run.classpath">
     <path refid="compile.classpath"/>
     <pathelement location="${samplesbuild}/${appname}/classes/client"/>
-    <pathelement location="${jaxrpchome}/lib/jsr173_api.jar"/>
     <pathelement location="${jaxrpchome}/lib/FastInfoset.jar"/>
   </path>
   

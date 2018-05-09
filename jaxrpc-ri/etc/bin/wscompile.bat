@@ -60,7 +60,7 @@ goto setArgs
 
 setlocal
 
-set CLASSPATH=.;%JAXRPC_HOME%\lib\jaxrpc-impl.jar;%JAXRPC_HOME%\lib\jaxrpc-api.jar;%JAXRPC_HOME%\lib\jaxrpc-spi.jar;%JAXRPC_HOME%\lib\activation.jar;%JAXRPC_HOME%\lib\saaj-api.jar;%JAXRPC_HOME%\lib\saaj-impl.jar;%JAXRPC_HOME%\lib\mail.jar;%JAXRPC_HOME%\lib\jaxp-api.jar;%JAXRPC_HOME%\lib\dom.jar;%JAXRPC_HOME%\lib\sax.jar;%JAXRPC_HOME%\lib\xalan.jar;%JAXRPC_HOME%\lib\xercesImpl.jar;%JAXRPC_HOME%\lib\jax-qname.jar;%JAXRPC_HOME%\lib\relaxngDatatype.jar;%JAXRPC_HOME%\lib\jcert.jar;%JAXRPC_HOME%\lib\jnet.jar;%JAXRPC_HOME%\lib\jsse.jar;%JAVA_HOME%\lib\tools.jar
+set CLASSPATH=.;%JAXRPC_HOME%\lib\jaxrpc-impl.jar;%JAXRPC_HOME%\lib\jaxrpc-api.jar;%JAXRPC_HOME%\lib\jaxrpc-spi.jar;%JAXRPC_HOME%\lib\saaj-api.jar;%JAXRPC_HOME%\lib\saaj-impl.jar;%JAXRPC_HOME%\lib\mail.jar;%JAXRPC_HOME%\lib\relaxngDatatype.jar;%JAXRPC_HOME%\lib\jcert.jar;%JAXRPC_HOME%\lib\jnet.jar;%JAXRPC_HOME%\lib\jsse.jar;%JAVA_HOME%\lib\tools.jar
 
 %JAVA_HOME%\bin\java -cp "%CLASSPATH%" com.sun.xml.rpc.tools.wscompile.Main %CMD_LINE_ARGS%
 
