@@ -253,7 +253,7 @@
     <copy    todir="${build.home}/lib">
       <fileset dir="${lib.home}/" 
                includes="**/*.jar" 
-                   excludes="ant.jar, optional.jar, junit.jar, servlet.jar"/>
+                   excludes="ant.jar, junit.jar, servlet.jar"/>
     </copy>
 
     <!-- Copy the J2EE mapping schema -->

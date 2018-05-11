@@ -114,7 +114,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
             <compilation-unit>
                 <package-root>src</package-root>
-                <classpath mode="compile">lib/ant.jar;lib/FastInfoset.jar;lib/jaxrpc-api.jar;lib/junit.jar;lib/mail.jar;lib/optional.jar;lib/relaxngDatatype.jar;lib/saaj-api.jar;lib/saaj-impl.jar;lib/servlet.jar;lib/stax-utils.jar;</classpath>
+                <classpath mode="compile">lib/ant.jar;lib/FastInfoset.jar;lib/jaxrpc-api.jar;lib/junit.jar;lib/mail.jar;lib/relaxngDatatype.jar;lib/saaj-api.jar;lib/saaj-impl.jar;lib/servlet.jar;</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>

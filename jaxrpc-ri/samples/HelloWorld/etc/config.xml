@@ -44,7 +44,7 @@
 <configuration
     xmlns="http://java.sun.com/xml/ns/jax-rpc/ri/config">
     <wsdl
-        location="./etc/HelloWorldService.wsdl"
+        location="/home/roma/dev/java/bravehorsie/jax-rpc-ri/jaxrpc-ri/samples/HelloWorld/./etc/HelloWorldService.wsdl"
         packageName="hello">
         <!--
         <handlerChains>
