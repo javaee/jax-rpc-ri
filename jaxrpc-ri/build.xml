@@ -134,6 +134,9 @@
   <!-- The zip distribution directory -->
   <property name="zip.release.dir"    value="${basedir}/zip-dist"/>
 
+  <!-- The maven distribution directory -->
+  <property name="maven.dist.dir"    value="${build.home}/maven-distribution"/>
+
 <!-- ************ Dependencies **** *************************************** -->
   <!-- The locations of necessary jar files -->
   <property name="javamail.jar" value="${lib.home}/mail.jar"/>
@@ -1009,6 +1012,106 @@
     </java>
     
     <echo>source installer produced at ${source.installer.class}</echo>
+  </target>
+
+  <!-- Prepare files uploaded to maven repository -->
+  <target name="maven-distribution" depends="image">
+    <mkdir dir="${maven.dist.dir}" />
+
+    <!-- Copy jars -->
+    <copy file="${build.home}/lib/jaxrpc-api.jar" todir="${maven.dist.dir}" />
+    <copy file="${build.home}/lib/jaxrpc-spi.jar" todir="${maven.dist.dir}" />
+    <copy file="${build.home}/lib/jaxrpc-impl.jar" todir="${maven.dist.dir}" />
+
+    <!-- Make the SPI sources jar -->
+    <jar jarfile="${maven.dist.dir}/jaxrpc-spi-sources.jar">
+      <fileset dir="${source.home}/">
+        <include name="com/sun/xml/rpc/spi/**"/>
+      </fileset>
+    </jar>
+
+    <!-- Make the RI sources jar -->
+    <jar jarfile="${maven.dist.dir}/jaxrpc-impl-sources.jar">
+      <fileset dir="${source.home}/">
+        <exclude name="com/sun/xml/rpc/spi/**"/>
+      </fileset>
+    </jar>
+
+    <javadoc packagenames="com.sun.*"
+             sourcepath="${source.home}"
+             excludepackagenames="com.sun.xml.rpc.spi.*"
+             destdir="${maven.dist.dir}/impl-javadoc"
+             author="false"
+             version="false"
+             windowtitle="${Name} Generated Documentation"
+             doctitle="${Name}"
+             bottom="Copyright &#169; 2001 Oracle and/or its affiliates. All Rights Reserved.">
+      <classpath refid="compile.classpath"/>
+    </javadoc>
+
+    <jar basedir="${maven.dist.dir}/impl-javadoc" destfile="${maven.dist.dir}/jaxrpc-impl-javadoc.jar" />
+
+    <javadoc packagenames="com.sun.xml.rpc.spi.*"
+             sourcepath="${source.home}"
+             destdir="${maven.dist.dir}/spi-javadoc"
+             author="false"
+             version="false"
+             windowtitle="${Name} Generated Documentation"
+             doctitle="${Name}"
+             bottom="Copyright &#169; 2001 Oracle and/or its affiliates. All Rights Reserved.">
+      <classpath refid="compile.classpath"/>
+    </javadoc>
+
+    <jar basedir="${maven.dist.dir}/spi-javadoc" destfile="${maven.dist.dir}/jaxrpc-spi-javadoc.jar" />
+
+    <copy file="${basedir}/maven/jaxrpc-api.pom" todir="${maven.dist.dir}" />
+    <copy file="${basedir}/maven/jaxrpc-spi.pom" todir="${maven.dist.dir}" />
+    <copy file="${basedir}/maven/jaxrpc-impl.pom" todir="${maven.dist.dir}" />
+
+    <!-- signing -->
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-api.pom" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl.pom" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi.pom" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-api.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi.jar" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-sources.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-sources.jar" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-javadoc.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-javadoc.jar" />
+    </exec>
   </target>
   
   <target name="main" depends="image"/>
