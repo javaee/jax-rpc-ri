@@ -40,20 +40,36 @@
 
 -->
 <project>
- <modelVersion>4.0.0</modelVersion>
- <!--
-      ideally the group ID should be javax.xml.jaxrpc but
-      I'm following the existing Maven conventions
-  -->
- <groupId>javax.xml</groupId>
- <artifactId>jaxrpc-api</artifactId>
- <version>1.1</version>
- <dependencies>
-   <dependency>
-     <groupId>javax.xml.soap</groupId>
-     <artifactId>saaj-api</artifactId>
-     <!-- Actually it is SAAJ 1.2, but that's not there in repository -->
-     <version>1.3</version>
-   </dependency>
- </dependencies>
+    <modelVersion>4.0.0</modelVersion>
+    <!--
+         ideally the group ID should be javax.xml.jaxrpc but
+         I'm following the existing Maven conventions
+     -->
+    <groupId>javax.xml</groupId>
+    <artifactId>jaxrpc-api</artifactId>
+    <version>1.1</version>
+    <name>JAXRPC API</name>
+    <description>JAXRPC API</description>
+    <url>https://github.com/javaee/javax.xml.rpc</url>
+    <licenses>
+        <license>
+            <name>CDDL + GPLv2 with classpath exception</name>
+            <url>https://oss.oracle.com/licenses/CDDL+GPL-1.1</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:git@github.com:javaee/javax.xml.rpc.git</connection>
+        <developerConnection>scm:git:git@github.com:javaee/javax.xml.rpc.git</developerConnection>
+        <url>https://github.com/javaee/javax.xml.rpc</url>
+    </scm>
+    <dependencies>
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>saaj-api</artifactId>
+            <!-- Actually it is SAAJ 1.2, but that's not there in repository -->
+            <version>1.3</version>
+        </dependency>
+    </dependencies>
 </project>
