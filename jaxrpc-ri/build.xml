@@ -47,8 +47,8 @@
 
   <property name="Name" value="JAX-RPC RI"/>
   <property name="name" value="jaxrpc-ri"/>
-  <property name="pkg.version" value="1.1.3_01"/>
-  <property name="rpm.version" value="1.1.3"/>
+  <property name="pkg.version" value="1.1.4_01"/>
+  <property name="rpm.version" value="1.1.4"/>
   <property name="version" value="${pkg.version}-INTERNAL"/>
   <property name="rpm.release" value="1"/>
   <property name="zip.release" value="1"/>
@@ -1019,19 +1019,19 @@
     <mkdir dir="${maven.dist.dir}" />
 
     <!-- Copy jars -->
-    <copy file="${build.home}/lib/jaxrpc-api.jar" todir="${maven.dist.dir}" />
-    <copy file="${build.home}/lib/jaxrpc-spi.jar" todir="${maven.dist.dir}" />
-    <copy file="${build.home}/lib/jaxrpc-impl.jar" todir="${maven.dist.dir}" />
+    <copy file="${build.home}/lib/jaxrpc-api.jar" tofile="${maven.dist.dir}/jaxrpc-api-${pkg.version}.jar" />
+    <copy file="${build.home}/lib/jaxrpc-spi.jar" tofile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.jar" />
+    <copy file="${build.home}/lib/jaxrpc-impl.jar" tofile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.jar" />
 
     <!-- Make the SPI sources jar -->
-    <jar jarfile="${maven.dist.dir}/jaxrpc-spi-sources.jar">
+    <jar jarfile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-sources.jar">
       <fileset dir="${source.home}/">
         <include name="com/sun/xml/rpc/spi/**"/>
       </fileset>
     </jar>
 
     <!-- Make the RI sources jar -->
-    <jar jarfile="${maven.dist.dir}/jaxrpc-impl-sources.jar">
+    <jar jarfile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-sources.jar">
       <fileset dir="${source.home}/">
         <exclude name="com/sun/xml/rpc/spi/**"/>
       </fileset>
@@ -1049,7 +1049,7 @@
       <classpath refid="compile.classpath"/>
     </javadoc>
 
-    <jar basedir="${maven.dist.dir}/impl-javadoc" destfile="${maven.dist.dir}/jaxrpc-impl-javadoc.jar" />
+    <jar basedir="${maven.dist.dir}/impl-javadoc" destfile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-javadoc.jar" />
 
     <javadoc packagenames="com.sun.xml.rpc.spi.*"
              sourcepath="${source.home}"
@@ -1062,55 +1062,55 @@
       <classpath refid="compile.classpath"/>
     </javadoc>
 
-    <jar basedir="${maven.dist.dir}/spi-javadoc" destfile="${maven.dist.dir}/jaxrpc-spi-javadoc.jar" />
+    <jar basedir="${maven.dist.dir}/spi-javadoc" destfile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-javadoc.jar" />
 
-    <copy file="${basedir}/maven/jaxrpc-api.pom" todir="${maven.dist.dir}" />
-    <copy file="${basedir}/maven/jaxrpc-spi.pom" todir="${maven.dist.dir}" />
-    <copy file="${basedir}/maven/jaxrpc-impl.pom" todir="${maven.dist.dir}" />
+    <copy file="${basedir}/maven/jaxrpc-api.pom" tofile="${maven.dist.dir}/jaxrpc-api-${pkg.version}.pom" />
+    <copy file="${basedir}/maven/jaxrpc-spi.pom" tofile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.pom" />
+    <copy file="${basedir}/maven/jaxrpc-impl.pom" tofile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.pom" />
 
     <!-- signing -->
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-api.pom" />
+      <arg value="${maven.dist.dir}/jaxrpc-api-${pkg.version}.pom" />
     </exec>
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-impl.pom" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.pom" />
     </exec>
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-spi.pom" />
-    </exec>
-
-    <exec executable="gpg">
-      <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-api.jar" />
-    </exec>
-    <exec executable="gpg">
-      <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-impl.jar" />
-    </exec>
-    <exec executable="gpg">
-      <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-spi.jar" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.pom" />
     </exec>
 
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-impl-sources.jar" />
+      <arg value="${maven.dist.dir}/jaxrpc-api-${pkg.version}.jar" />
     </exec>
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-spi-sources.jar" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.jar" />
     </exec>
 
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-impl-javadoc.jar" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-sources.jar" />
     </exec>
     <exec executable="gpg">
       <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-spi-javadoc.jar" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-sources.jar" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-javadoc.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-javadoc.jar" />
     </exec>
   </target>
   

@@ -63,7 +63,7 @@
         <para>The Fast Infoset specification (ITU-T Rec. X.891 | ISO/IEC 24824-1) describes an open,
             standards-based "binary XML" format that is based on the XML Information Set <xref
                 linkend="Infoset"/>. JWSDP 2.0 now supports this optimized encoding as part of
-            JAX-RPC 1.1.3_01 EA. For ease of deployment, this new version of JAX-RPC also support a form
+            JAX-RPC 1.1.4_01 EA. For ease of deployment, this new version of JAX-RPC also support a form
             of HTTP content negotiation that can be used to "turn on" Fast Infoset during message
             exchanges. By default, the Fast Infoset encoding is turned off. For more information on
             how to use this feature see <xref linkend="Using-FI"/>.</para>
@@ -88,7 +88,7 @@
             format.</para>
         <para>Fast Infoset @ Java.net <xref linkend="FI-Java.net"/> is an open-source project
             initiated by Oracle to provide access to a fast, fully-featured and robust
-            implementation of the Fast Infoset specification. JAX-RPC 1.1.3_01 EA employs the basic Fast
+            implementation of the Fast Infoset specification. JAX-RPC 1.1.4_01 EA employs the basic Fast
             Infoset parsers and serializers that are available from that project.</para>
     </sect1>
     <sect1 id="Using-FI">
@@ -141,12 +141,12 @@
             as it is the case in JAX-RPC, a value of this type must be encoded before transmission
             and decoded before binding. The encoding and decoding process is expensive and linear to
             the size of the binary object.</para>
-        <para>JAX-RPC 1.1.3_01 EA provides support for the so-called Fast Infoset base64 encoding
+        <para>JAX-RPC 1.1.4_01 EA provides support for the so-called Fast Infoset base64 encoding
             algorithm. This is one of several built-in encoding algorithms in Fast Infoset that
             facilitate the encoding of character chunks (or text nodes) using a more efficient
             representation. More specifically, in the case of value of type xsd:base64Binary, byte
             sequences that are used to represent these blobs in memory can be parsed and serialized
-            directly without the need for any encoding or decoding step. In JAX-RPC 1.1.3_01 EA, this
+            directly without the need for any encoding or decoding step. In JAX-RPC 1.1.4_01 EA, this
             optimization is supported only for element content of type xsd:base64Binary; it is
             currently <emphasis>not</emphasis> supported for attribute values.</para>
         <para>The SOAP Message Transmission Optimization Mechanism <xref linkend="MTOM"/>, paired
@@ -267,7 +267,7 @@
         <para>Fast Infoset @ Java.net <xref linkend="FI-Java.net"/> is still a young project, and
             the performance potentials of this technology are yet to be fully explored (especially
             in relation to advanced features like encoding algorithms, restricted alphabets and
-            external vocabularies). The integration of Fast Infoset into JAX-RPC 1.1.3_01 EA is just a
+            external vocabularies). The integration of Fast Infoset into JAX-RPC 1.1.4_01 EA is just a
             first step towards understanding the benefits of using this technology to speed up Web
             services. Future versions of JAX-RPC and JWSDP will provide support for many more of the
             advanced features defined in the Fast Infoset specification.</para>
