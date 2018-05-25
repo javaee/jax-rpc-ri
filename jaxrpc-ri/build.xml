@@ -1,41 +1,45 @@
 <?xml version="1.0"?>
-
 <!--
- DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- 
- Copyright 1997-2018 Sun Microsystems, Inc. All rights reserved.
- 
- The contents of this file are subject to the terms of either the GNU
- General Public License Version 2 only ("GPL") or the Common Development
- and Distribution License("CDDL") (collectively, the "License").  You
- may not use this file except in compliance with the License. You can obtain
- a copy of the License at https://glassfish.dev.java.net/public/CDDL+GPL.html
- or glassfish/bootstrap/legal/LICENSE.txt.  See the License for the specific
- language governing permissions and limitations under the License.
- 
- When distributing the software, include this License Header Notice in each
- file and include the License file at glassfish/bootstrap/legal/LICENSE.txt.
- Sun designates this particular file as subject to the "Classpath" exception
- as provided by Sun in the GPL Version 2 section of the License file that
- accompanied this code.  If applicable, add the following below the License
- Header, with the fields enclosed by brackets [] replaced by your own
- identifying information: "Portions Copyrighted [year]
- [name of copyright owner]"
- 
- Contributor(s):
- 
- If you wish your version of this file to be governed by only the CDDL or
- only the GPL Version 2, indicate your decision by adding "[Contributor]
- elects to include this software in this distribution under the [CDDL or GPL
- Version 2] license."  If you don't indicate a single choice of license, a
- recipient has the option to distribute your version of this file under
- either the CDDL, the GPL Version 2 or to extend the choice of license to
- its licensees as provided above.  However, if you add GPL Version 2 code
- and therefore, elected the GPL Version 2 license, then the option applies
- only if the new code is made subject to such option by the copyright
- holder.
--->
 
+    DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
+
+    Copyright (c) 1997, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    The contents of this file are subject to the terms of either the GNU
+    General Public License Version 2 only ("GPL") or the Common Development
+    and Distribution License("CDDL") (collectively, the "License").  You
+    may not use this file except in compliance with the License.  You can
+    obtain a copy of the License at
+    https://oss.oracle.com/licenses/CDDL+GPL-1.1
+    or LICENSE.txt.  See the License for the specific
+    language governing permissions and limitations under the License.
+
+    When distributing the software, include this License Header Notice in each
+    file and include the License file at LICENSE.txt.
+
+    GPL Classpath Exception:
+    Oracle designates this particular file as subject to the "Classpath"
+    exception as provided by Oracle in the GPL Version 2 section of the License
+    file that accompanied this code.
+
+    Modifications:
+    If applicable, add the following below the License Header, with the fields
+    enclosed by brackets [] replaced by your own identifying information:
+    "Portions Copyright [year] [name of copyright owner]"
+
+    Contributor(s):
+    If you wish your version of this file to be governed by only the CDDL or
+    only the GPL Version 2, indicate your decision by adding "[Contributor]
+    elects to include this software in this distribution under the [CDDL or GPL
+    Version 2] license."  If you don't indicate a single choice of license, a
+    recipient has the option to distribute your version of this file under
+    either the CDDL, the GPL Version 2 or to extend the choice of license to
+    its licensees as provided above.  However, if you add GPL Version 2 code
+    and therefore, elected the GPL Version 2 license, then the option applies
+    only if the new code is made subject to such option by the copyright
+    holder.
+
+-->
 
 <!-- ************ JAX-RPC build file ************************************** -->
 
@@ -43,8 +47,8 @@
 
   <property name="Name" value="JAX-RPC RI"/>
   <property name="name" value="jaxrpc-ri"/>
-  <property name="pkg.version" value="1.1.3_01"/>
-  <property name="rpm.version" value="1.1.3"/>
+  <property name="pkg.version" value="1.1.4_01"/>
+  <property name="rpm.version" value="1.1.4"/>
   <property name="version" value="${pkg.version}-INTERNAL"/>
   <property name="rpm.release" value="1"/>
   <property name="zip.release" value="1"/>
@@ -130,28 +134,24 @@
   <!-- The zip distribution directory -->
   <property name="zip.release.dir"    value="${basedir}/zip-dist"/>
 
+  <!-- The maven distribution directory -->
+  <property name="maven.dist.dir"    value="${build.home}/maven-distribution"/>
+
 <!-- ************ Dependencies **** *************************************** -->
   <!-- The locations of necessary jar files -->
   <property name="javamail.jar" value="${lib.home}/mail.jar"/>
   <property name="jaf.jar" value="${lib.home}/activation.jar"/>
-  <property name="jaxp-api.jar" value="${lib.home}/jaxp-api.jar"/>
-  <property name="dom.jar" value="${lib.home}/dom.jar"/>
-  <property name="sax.jar" value="${lib.home}/sax.jar"/>
-  <property name="xalan.jar" value="${lib.home}/xalan.jar"/>
-  <property name="xercesImpl.jar" value="${lib.home}/xercesImpl.jar"/>
   <property name="servlet.jar" value="${lib.home}/servlet.jar"/>
   <property name="junit.jar" value="${lib.home}/junit.jar"/>
   <property name="jaxrpc-api.jar" value="${lib.home}/jaxrpc-api.jar"/>
   <property name="saaj-api.jar" value="${lib.home}/saaj-api.jar"/>
   <property name="saaj-impl.jar" value="${lib.home}/saaj-impl.jar"/>
   <property name="relaxngDatatype.jar" value="${lib.home}/relaxngDatatype.jar"/>
-  <property name="jax-qname.jar" value="${lib.home}/jax-qname.jar"/>
   <property name="ant.jar" value="${lib.home}/ant.jar"/>
   <property name="jcert.jar" value="${lib.home}/jcert.jar"/>
   <property name="jnet.jar"  value="${lib.home}/jnet.jar"/>
   <property name="jsse.jar" value="${lib.home}/jsse.jar"/>
 
-  <property name="jsr173_api.jar" value="${lib.home}/jsr173_api.jar"/>
   <property name="FastInfoset.jar" value="${lib.home}/FastInfoset.jar"/>
   
   <!--
@@ -176,22 +176,15 @@
     <pathelement location="${build.home}/classes"/>
     <pathelement location="${javamail.jar}"/>
     <pathelement location="${jaf.jar}"/>
-    <pathelement location="${jaxp-api.jar}"/>
-    <pathelement location="${dom.jar}"/>
-    <pathelement location="${sax.jar}"/>
-    <pathelement location="${xalan.jar}"/>
-    <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${servlet.jar}"/>
     <pathelement location="${saaj-api.jar}"/>
     <pathelement location="${saaj-impl.jar}"/>
     <pathelement location="${jaxrpc-api.jar}"/>
     <pathelement location="${relaxngDatatype.jar}"/>
-    <pathelement location="${jax-qname.jar}"/>
     <pathelement location="${ant.jar}"/>
     <pathelement location="${jcert.jar}"/>
     <pathelement location="${jnet.jar}"/>
     <pathelement location="${jsse.jar}"/>
-    <pathelement location="${jsr173_api.jar}"/>
     <pathelement location="${FastInfoset.jar}"/>
   </path>
 
@@ -263,7 +256,7 @@
     <copy    todir="${build.home}/lib">
       <fileset dir="${lib.home}/" 
                includes="**/*.jar" 
-                   excludes="ant.jar, optional.jar, junit.jar, servlet.jar"/>
+                   excludes="ant.jar, junit.jar, servlet.jar"/>
     </copy>
 
     <!-- Copy the J2EE mapping schema -->
@@ -338,8 +331,6 @@
     </copy>
 
     <!-- add a copy of the license and README files to the top level -->
-<!--    <copy todir="${dist.home}"
-          file="LICENSE.html" /> -->
     <copy todir="${dist.home}"
           file="README" />
   </target>
@@ -388,7 +379,7 @@
              version="false"
              windowtitle="${Name} Generated Documentation"
              doctitle="${Name}"
-             bottom="Copyright &#169; 2001 Sun Microsystems, Inc. All Rights Reserved.">
+             bottom="Copyright &#169; 2001 Oracle and/or its affiliates. All Rights Reserved.">
         <classpath refid="compile.classpath"/>
     </javadoc>
   </target>
@@ -1021,6 +1012,106 @@
     </java>
     
     <echo>source installer produced at ${source.installer.class}</echo>
+  </target>
+
+  <!-- Prepare files uploaded to maven repository -->
+  <target name="maven-distribution" depends="image">
+    <mkdir dir="${maven.dist.dir}" />
+
+    <!-- Copy jars -->
+    <copy file="${build.home}/lib/jaxrpc-api.jar" tofile="${maven.dist.dir}/jaxrpc-api-${pkg.version}.jar" />
+    <copy file="${build.home}/lib/jaxrpc-spi.jar" tofile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.jar" />
+    <copy file="${build.home}/lib/jaxrpc-impl.jar" tofile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.jar" />
+
+    <!-- Make the SPI sources jar -->
+    <jar jarfile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-sources.jar">
+      <fileset dir="${source.home}/">
+        <include name="com/sun/xml/rpc/spi/**"/>
+      </fileset>
+    </jar>
+
+    <!-- Make the RI sources jar -->
+    <jar jarfile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-sources.jar">
+      <fileset dir="${source.home}/">
+        <exclude name="com/sun/xml/rpc/spi/**"/>
+      </fileset>
+    </jar>
+
+    <javadoc packagenames="com.sun.*"
+             sourcepath="${source.home}"
+             excludepackagenames="com.sun.xml.rpc.spi.*"
+             destdir="${maven.dist.dir}/impl-javadoc"
+             author="false"
+             version="false"
+             windowtitle="${Name} Generated Documentation"
+             doctitle="${Name}"
+             bottom="Copyright &#169; 2001 Oracle and/or its affiliates. All Rights Reserved.">
+      <classpath refid="compile.classpath"/>
+    </javadoc>
+
+    <jar basedir="${maven.dist.dir}/impl-javadoc" destfile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-javadoc.jar" />
+
+    <javadoc packagenames="com.sun.xml.rpc.spi.*"
+             sourcepath="${source.home}"
+             destdir="${maven.dist.dir}/spi-javadoc"
+             author="false"
+             version="false"
+             windowtitle="${Name} Generated Documentation"
+             doctitle="${Name}"
+             bottom="Copyright &#169; 2001 Oracle and/or its affiliates. All Rights Reserved.">
+      <classpath refid="compile.classpath"/>
+    </javadoc>
+
+    <jar basedir="${maven.dist.dir}/spi-javadoc" destfile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-javadoc.jar" />
+
+    <copy file="${basedir}/maven/jaxrpc-api.pom" tofile="${maven.dist.dir}/jaxrpc-api-${pkg.version}.pom" />
+    <copy file="${basedir}/maven/jaxrpc-spi.pom" tofile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.pom" />
+    <copy file="${basedir}/maven/jaxrpc-impl.pom" tofile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.pom" />
+
+    <!-- signing -->
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-api-${pkg.version}.pom" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.pom" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.pom" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-api-${pkg.version}.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.jar" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-sources.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-sources.jar" />
+    </exec>
+
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}-javadoc.jar" />
+    </exec>
+    <exec executable="gpg">
+      <arg value="-ab" />
+      <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-javadoc.jar" />
+    </exec>
   </target>
   
   <target name="main" depends="image"/>

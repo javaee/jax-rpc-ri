@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Specification-Title: Java API for XML Based RPC
 Specification-Version: 1.1
 Implementation-Title:  JAXRPC Implementation
-Implementation-Version: 1.1.3_01
-Implementation-Vendor: Sun Microsystems Inc
+Implementation-Version: 1.1.4_01
+Implementation-Vendor: Oracle and/or its affiliates
 Implementation-Vendor-Id: com.sun
 Extension-Name: com.sun.xml.rpc
-Class-Path: jaxrpc-spi.jar ../../private/share/lib/jaxrpc-spi.jar saaj-api.jar saaj-impl.jar jax-qname.jar namespace.jar relaxngDatatype.jar ../../private/share/lib/relaxngDatatype.jar FastInfoset.jar ../../../opt/SUNWjax/share/lib/FastInfoset.jar jsr173_api.jar
+Class-Path: jaxrpc-spi.jar ../../private/share/lib/jaxrpc-spi.jar saaj-api.jar saaj-impl.jar namespace.jar relaxngDatatype.jar ../../private/share/lib/relaxngDatatype.jar FastInfoset.jar ../../../opt/SUNWjax/share/lib/FastInfoset.jar
 

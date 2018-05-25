@@ -2,11 +2,8 @@ Build process
 -------------
 * Copy the following jars from JWSDP-1.3 to the lib directory
 
-$JWSDP_HOME/jaxp/lib/jaxp-api.jar
 $JWSDP_HOME/jaxp/lib/endorsed/*.jar
 $JWSDP_HOME/saaj/lib/*.jar
-$JWSDP_HOME/jwsdp-shared/lib/activation.jar
-$JWSDP_HOME/jwsdp-shared/lib/jax-qname.jar
 $JWSDP_HOME/jwsdp-shared/lib/mail.jar
 $JWSDP_HOME/jwsdp-shared/lib/relaxngDatatype.jar
 $JWSDP_HOME/common/lib/servlet-api.jar
