@@ -895,9 +895,6 @@
 
     <!-- make directory for installer to work with and create zip file of contents -->
     <property name="installer.stage" value="${build.home}/binary-installer"/>
-    <property name="binary.installer.className" value="JAXRPC_SI_${DSTAMP}"/>
-    <property name="binary.installer.class"
-              value="${build.home}/${binary.installer.className}.class" />
     <property name="installer.name" value="installer"/>
     
     <mkdir dir="${installer.stage}"/>
@@ -920,14 +917,6 @@
           fullpath="license.txt"/>
     </jar>
 
-    <!-- pack it into a class -->
-    <java jar="${basedir}/tools/lib/sfx4j-1.0-RC.jar" fork="true">
-      <arg path ="${build.home}/binary-installer.jar"/>
-      <arg value="${binary.installer.className}"/>
-      <arg path ="${binary.installer.class}"/>
-    </java>
-    
-    <echo>binary installer produced at ${binary.installer.class}</echo>
   </target>
   
   <target name="generate-source-bundle" depends="prepare"
@@ -979,9 +968,6 @@
 
     <!-- make directory for installer to work with and create zip file of contents -->
     <property name="installer.stage" value="${build.home}/source-installer"/>
-    <property name="source.installer.className" value="JAXRPC_SI_source_${DSTAMP}"/>
-    <property name="source.installer.class"
-              value="${build.home}/${source.installer.className}.class" />
     <property name="installer.name" value="installer"/>
     
     <mkdir dir="${installer.stage}"/>
@@ -1004,14 +990,6 @@
           fullpath="license.txt"/>
     </jar>
 
-    <!-- pack it into a class -->
-    <java jar="${basedir}/tools/lib/sfx4j-1.0-RC.jar" fork="true">
-      <arg path ="${build.home}/source-installer.jar"/>
-      <arg value="${source.installer.className}"/>
-      <arg path ="${source.installer.class}"/>
-    </java>
-    
-    <echo>source installer produced at ${source.installer.class}</echo>
   </target>
 
   <!-- Prepare files uploaded to maven repository -->
