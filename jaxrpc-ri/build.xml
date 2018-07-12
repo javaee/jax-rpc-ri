@@ -992,7 +992,11 @@
 
   </target>
 
-  <!-- Prepare files uploaded to maven repository -->
+  <!-- Prepare files uploaded to maven repository.
+  Generates binary jars, source jars, javadoc jars
+  and its *.asc signatures for maven upload in ${build.home} directory.
+
+  These files should be manually uploaded to maven than.-->
   <target name="maven-distribution" depends="image">
     <mkdir dir="${maven.dist.dir}" />
 
