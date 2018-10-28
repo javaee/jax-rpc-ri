@@ -1001,7 +1001,6 @@
     <mkdir dir="${maven.dist.dir}" />
 
     <!-- Copy jars -->
-    <copy file="${build.home}/lib/jaxrpc-api.jar" tofile="${maven.dist.dir}/jaxrpc-api-${pkg.version}.jar" />
     <copy file="${build.home}/lib/jaxrpc-spi.jar" tofile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.jar" />
     <copy file="${build.home}/lib/jaxrpc-impl.jar" tofile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.jar" />
 
@@ -1046,15 +1045,10 @@
 
     <jar basedir="${maven.dist.dir}/spi-javadoc" destfile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}-javadoc.jar" />
 
-    <copy file="${basedir}/maven/jaxrpc-api.pom" tofile="${maven.dist.dir}/jaxrpc-api-${pkg.version}.pom" />
     <copy file="${basedir}/maven/jaxrpc-spi.pom" tofile="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.pom" />
     <copy file="${basedir}/maven/jaxrpc-impl.pom" tofile="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.pom" />
 
     <!-- signing -->
-    <exec executable="gpg">
-      <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-api-${pkg.version}.pom" />
-    </exec>
     <exec executable="gpg">
       <arg value="-ab" />
       <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.pom" />
@@ -1064,10 +1058,6 @@
       <arg value="${maven.dist.dir}/jaxrpc-spi-${pkg.version}.pom" />
     </exec>
 
-    <exec executable="gpg">
-      <arg value="-ab" />
-      <arg value="${maven.dist.dir}/jaxrpc-api-${pkg.version}.jar" />
-    </exec>
     <exec executable="gpg">
       <arg value="-ab" />
       <arg value="${maven.dist.dir}/jaxrpc-impl-${pkg.version}.jar" />
